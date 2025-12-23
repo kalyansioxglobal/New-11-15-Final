@@ -12,6 +12,9 @@ const LoginPage: PageWithLayout = () => {
   const [loading, setLoading] = useState(false);
   const [codeSent, setCodeSent] = useState(false);
   const [idleLogoutMessage, setIdleLogoutMessage] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+  const [lockoutTime, setLockoutTime] = useState<Date | null>(null);
   
   useEffect(() => {
     if (router.query.reason === "idle") {
@@ -50,6 +53,14 @@ const LoginPage: PageWithLayout = () => {
 
   async function handleVerifyCode(e: React.FormEvent) {
     e.preventDefault();
+    
+    // Check if locked
+    if (isLocked && lockoutTime && new Date() < lockoutTime) {
+      const remainingSeconds = Math.ceil((lockoutTime.getTime() - Date.now()) / 1000);
+      setError(`Account locked. Try again in ${remainingSeconds} seconds.`);
+      return;
+    }
+    
     setError("");
     setLoading(true);
 
@@ -62,9 +73,31 @@ const LoginPage: PageWithLayout = () => {
     setLoading(false);
 
     if (result?.error) {
-      setError("Invalid or expired code. Please try again.");
+      // Check if account is locked
+      if (result.error.includes("locked") || result.error.includes("Too many")) {
+        setIsLocked(true);
+        setLockoutTime(new Date(Date.now() + 5 * 60 * 1000)); // 5 minutes
+        setError("Too many failed attempts. Account locked for 5 minutes.");
+      } else {
+        const newFailedAttempts = failedAttempts + 1;
+        setFailedAttempts(newFailedAttempts);
+        const remainingAttempts = 3 - newFailedAttempts;
+        if (remainingAttempts > 0) {
+          setError(`Invalid or expired code. ${remainingAttempts} attempt${remainingAttempts === 1 ? '' : 's'} remaining.`);
+        } else {
+          setError("Invalid or expired code. Please try again.");
+        }
+      }
     } else {
       router.push("/overview");
+    }
+  }
+
+  function handleCodeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    // Only allow digits
+    if (/^\d*$/.test(value)) {
+      setCode(value);
     }
   }
 
@@ -73,6 +106,9 @@ const LoginPage: PageWithLayout = () => {
     setCode("");
     setError("");
     setCodeSent(false);
+    setFailedAttempts(0);
+    setIsLocked(false);
+    setLockoutTime(null);
   }
 
   return (
@@ -151,14 +187,17 @@ const LoginPage: PageWithLayout = () => {
             <div>
               <label className="block text-sm font-medium mb-1">Verification Code</label>
               <input
-                type="text"
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md text-sm text-gray-900 bg-white text-center tracking-widest text-lg"
+                onChange={handleCodeChange}
+                className="w-full px-3 py-2 border rounded-md text-sm text-gray-900 bg-white text-center tracking-widest text-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="123456"
                 maxLength={6}
+                disabled={isLocked}
                 required
-                autoFocus
+                autoFocus={!isLocked}
               />
             </div>
 
@@ -176,10 +215,10 @@ const LoginPage: PageWithLayout = () => {
 
             <button
               type="submit"
-              disabled={loading || code.length < 6}
-              className="w-full py-2 px-4 bg-gray-900 text-white rounded-md text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
+              disabled={loading || code.length < 6 || isLocked}
+              className="w-full py-2 px-4 bg-gray-900 text-white rounded-md text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Verifying..." : "Verify & Sign In"}
+              {loading ? "Verifying..." : isLocked ? "Account Locked" : "Verify & Sign In"}
             </button>
 
             <button
