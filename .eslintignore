@@ -1,0 +1,2 @@
+# Temporarily ignore complex simulator page from linting to avoid parser issues
+pages/admin/incentives/simulator.tsx

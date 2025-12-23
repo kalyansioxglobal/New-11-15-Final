@@ -1,0 +1,73 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fce4ec', 'primaryBorderColor': '#c2185b'}}}%%
+flowchart TD
+    subgraph VERTICALS["Business Verticals"]
+        V1["Freight: Load DELIVERED<br/>with billingDate"]
+        V2["BPO: BpoCallLog created<br/>callStartedAt"]
+        V3["Hospitality: HotelReview<br/>respondedById set"]
+        V4["Hospitality: HotelKpiDaily<br/>uploaded"]
+    end
+
+    subgraph SCHEDULED["Scheduled Job (7:00 AM EST)"]
+        S1["Incentive Daily Commit<br/>lib/jobs/incentiveDailyJob.ts"]
+        S2["For each active Venture + IncentivePlan"]
+    end
+
+    subgraph ENGINE["Incentive Engine<br/>lib/incentives/engine.ts"]
+        E1["loadFreightMetrics()<br/>Reads: Load WHERE DELIVERED"]
+        E2["loadBpoMetrics()<br/>Reads: BpoCallLog"]
+        E3["loadHotelMetrics()<br/>Reads: HotelReview, HotelKpiDaily"]
+        E4["Aggregates metrics per user:<br/>loads_completed, loads_revenue,<br/>bpo_dials, bpo_connects,<br/>hotel_reviews_responded, hotel_adr"]
+    end
+
+    subgraph RULES["Incentive Rules"]
+        R1["Apply PERCENT_OF_METRIC<br/>rate * metricValue"]
+        R2["Apply FLAT_PER_UNIT<br/>rate * metricValue"]
+        R3["Apply BONUS_ON_TARGET<br/>bonusAmount if threshold met"]
+        R4["Apply other calc types"]
+    end
+
+    subgraph OUTPUT["Output"]
+        O1["DELETE existing IncentiveDaily<br/>for venture + date"]
+        O2["CREATE fresh IncentiveDaily records<br/>per user with breakdown"]
+        O3["JobRunLog created"]
+    end
+
+    V1 -.->|"Reads on 7 AM job"| S1
+    V2 -.->|"Reads on 7 AM job"| S1
+    V3 -.->|"Reads on 7 AM job"| S1
+    V4 -.->|"Reads on 7 AM job"| S1
+
+    S1 --> S2
+    S2 --> E1
+    S2 --> E2
+    S2 --> E3
+    E1 --> E4
+    E2 --> E4
+    E3 --> E4
+    E4 --> R1
+    E4 --> R2
+    E4 --> R3
+    E4 --> R4
+    R1 --> O1
+    R2 --> O1
+    R3 --> O1
+    R4 --> O1
+    O1 --> O2
+    O2 --> O3
+
+    style S1 fill:#e3f2fd
+    style E4 fill:#fff9c4
+    style O2 fill:#c8e6c9
+    style O3 fill:#c8e6c9
+
+    classDef vertical fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef scheduled fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef engine fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef output fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+
+    class V1,V2,V3,V4 vertical
+    class S1,S2 scheduled
+    class E1,E2,E3,E4,R1,R2,R3,R4 engine
+    class O1,O2,O3 output
+
+

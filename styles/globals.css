@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+@source "../pages/**/*.{js,ts,jsx,tsx}";
+@source "../components/**/*.{js,ts,jsx,tsx}";
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:root.font-small {
+  font-size: 14px;
+}
+
+:root.font-medium {
+  font-size: 16px;
+}
+
+:root.font-large {
+  font-size: 18px;
+}
+
+:root.theme-light {
+  color-scheme: light;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-card: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-label: #374151;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --input-bg: #ffffff;
+  --input-text: #111827;
+  --input-border: #d1d5db;
+}
+
+:root.theme-dark {
+  color-scheme: dark;
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-card: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-label: #e5e7eb;
+  --text-muted: #9ca3af;
+  --border-color: #374151;
+  --input-bg: #374151;
+  --input-text: #f9fafb;
+  --input-border: #4b5563;
+}
+
+/* Form inputs in dark mode */
+.theme-dark input,
+.theme-dark textarea,
+.theme-dark select {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border-color: var(--input-border);
+}
+
+.theme-dark input::placeholder,
+.theme-dark textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.theme-dark input:focus,
+.theme-dark textarea:focus,
+.theme-dark select:focus {
+  border-color: #10b981;
+  outline: none;
+}
+
+/* Form labels in dark mode */
+.theme-dark label {
+  color: var(--text-label);
+}
+
+/* Card backgrounds */
+.theme-dark .bg-white {
+  background-color: var(--bg-card) !important;
+}
+
+.theme-dark .bg-gray-50,
+.theme-dark .bg-gray-100 {
+  background-color: #1f2937 !important;
+}
+
+/* Text colors for labels and descriptions in dark mode */
+.theme-dark .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+.theme-dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+.theme-dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.theme-dark .text-gray-700 {
+  color: #e5e7eb !important;
+}
+
+.theme-dark .text-gray-800 {
+  color: #f3f4f6 !important;
+}
+
+.theme-dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+/* Border colors in dark mode */
+.theme-dark .border-gray-100,
+.theme-dark .border-gray-200,
+.theme-dark .border-gray-300 {
+  border-color: var(--border-color) !important;
+}
+
+/* Selection/highlight backgrounds in dark mode */
+.theme-dark .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.theme-dark .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+.theme-dark .text-blue-800 {
+  color: #93c5fd !important;
+}
+
+.theme-dark .text-blue-700 {
+  color: #93c5fd !important;
+}
+
+/* Yellow/amber highlights */
+.theme-dark .bg-yellow-50 {
+  background-color: rgba(234, 179, 8, 0.2) !important;
+}
+
+.theme-dark .bg-yellow-100 {
+  background-color: rgba(234, 179, 8, 0.3) !important;
+}
+
+/* Green highlights */
+.theme-dark .bg-green-50 {
+  background-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+.theme-dark .bg-green-100 {
+  background-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+/* Red/error highlights */
+.theme-dark .bg-red-50 {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.theme-dark .bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.3) !important;
+}

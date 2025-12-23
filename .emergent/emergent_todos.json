@@ -1,0 +1,34 @@
+[
+  {
+    "content": "Review existing Prisma schema and freight/logistics libs to understand current carrier, load, FMCSA, and matching structures",
+    "status": "in_progress"
+  },
+  {
+    "content": "Design and implement minimal Prisma schema additions for FMCSA snapshots and shipper bonus rules, plus any needed migration scaffolding",
+    "status": "pending"
+  },
+  {
+    "content": "Implement FMCSA autosync helper and APIs (jobs/fmcsa-sync, carriers/[id]/fmcsa-refresh) with proper auth and logging",
+    "status": "pending"
+  },
+  {
+    "content": "Implement deliveryStats helper and refactor/create matching engine 2.0 in lib/logistics/matching.ts",
+    "status": "pending"
+  },
+  {
+    "content": "Implement /api/freight/loads/[id]/matches to expose the new matching engine and return enriched match info",
+    "status": "pending"
+  },
+  {
+    "content": "Wire updated matches API into pages/logistics/loads/[id].tsx UI with score, reasons, FMCSA, on-time, and bonus indicators",
+    "status": "pending"
+  },
+  {
+    "content": "Run yarn lint, yarn test --runInBand, and yarn build; fix any issues introduced by Wave 18",
+    "status": "pending"
+  },
+  {
+    "content": "Prepare final Wave 18 summary with files changed and scoring/fmcs/bonus/on-time behavior description",
+    "status": "pending"
+  }
+]

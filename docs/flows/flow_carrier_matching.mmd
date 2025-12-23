@@ -1,0 +1,73 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fff3e0', 'primaryBorderColor': '#e65100'}}}%%
+flowchart TD
+    subgraph UI["UI Layer"]
+        U1["/freight/loads/[id]/find-carriers"]
+        U2["/freight/coverage-war-room"]
+    end
+
+    subgraph API["API Layer"]
+        A1["GET /api/freight/loads/[id]/carrier-suggestions"]
+        A2["GET /api/freight/carriers/search"]
+        A3["GET /api/freight/carriers/match"]
+    end
+
+    subgraph LIB["Library: lib/freight/carrierSearch.ts"]
+        L1["searchCarriersForLoad(input)"]
+        L2["getCarrierLaneHistory()"]
+        L3["getCarrierRegionHistory()"]
+        L4["getCarrierRecentActivity()"]
+        L5["getCarrierOriginPickupHistory()"]
+        L6["calculateProfileScore()"]
+        L7["calculateEquipmentScore()"]
+        L8["calculateServiceAreaScore()"]
+        L9["calculateOriginProximityScore()"]
+    end
+
+    subgraph DB["Database Layer"]
+        D1[("Load<br/>pickupZip, dropZip, equipmentType")]
+        D2[("Carrier<br/>active, equipmentTypes, serviceAreas")]
+        D3[("Load history<br/>(for lane scoring)")]
+    end
+
+    U1 -->|"Click Find Carriers"| A1
+    A1 -->|"Fetch load details"| D1
+    A1 -->|"Call search"| L1
+    L1 -->|"Fetch active carriers"| D2
+    L1 --> L2
+    L1 --> L3
+    L1 --> L4
+    L1 --> L5
+    L2 -->|"Query delivered loads by ZIP3"| D3
+    L3 -->|"Query region loads"| D3
+    L4 -->|"Query recent activity"| D3
+    L5 -->|"Query origin pickups"| D3
+
+    L1 --> L6
+    L1 --> L7
+    L1 --> L8
+    L1 --> L9
+
+    subgraph SCORING["Scoring Algorithm"]
+        S1["Lane Score (0-30 weighted)"]
+        S2["Proximity Score (0-20 weighted)"]
+        S3["Equipment Score (0-15 weighted)"]
+        S4["Profile Score (0-20 weighted)"]
+        S5["Recent Activity (0-15 weighted)"]
+        S6["TOTAL SCORE = Sum"]
+    end
+
+    L2 --> S1
+    L9 --> S2
+    L7 --> S3
+    L6 --> S4
+    L4 --> S5
+    S1 & S2 & S3 & S4 & S5 --> S6
+
+    subgraph OUTPUT["Output"]
+        O1["recommendedCarriers[]<br/>(has lane history OR near origin)"]
+        O2["newCarriers[]<br/>(no history, not near origin)"]
+    end
+
+    S6 --> O1
+    S6 --> O2
+    O1 & O2 -->|"Return to UI"| U1

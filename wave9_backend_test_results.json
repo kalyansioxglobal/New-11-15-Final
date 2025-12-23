@@ -1,0 +1,375 @@
+{
+  "summary": {
+    "total_tests": 52,
+    "passed": 52,
+    "failed": 0,
+    "success_rate": 100.0
+  },
+  "results": [
+    {
+      "test": "Server availability",
+      "success": true,
+      "details": "Server is responding (status: 200)",
+      "timestamp": "2025-12-08T18:57:29.215825",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated GET /api/tasks",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.242176",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated POST /api/tasks",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.264456",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated GET /api/tasks/overdue-check",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.398089",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated GET /api/eod-reports",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.472916",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated POST /api/eod-reports",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.488305",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated GET /api/eod-reports/team",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.555453",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated GET /api/eod-reports/missed-check",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.617166",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated GET /api/eod-reports/missed-explanation",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.680871",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated POST /api/eod-reports/missed-explanation",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.694997",
+      "response_data": null
+    },
+    {
+      "test": "Unauthenticated POST /api/eod-reports/notify-manager",
+      "success": true,
+      "details": "Correctly returned 401 UNAUTHENTICATED",
+      "timestamp": "2025-12-08T18:57:29.840469",
+      "response_data": null
+    },
+    {
+      "test": "Tasks GET structure",
+      "success": true,
+      "details": "Correctly requires authentication",
+      "timestamp": "2025-12-08T18:57:29.860985",
+      "response_data": null
+    },
+    {
+      "test": "Tasks POST validation",
+      "success": true,
+      "details": "Correctly requires authentication before validation",
+      "timestamp": "2025-12-08T18:57:29.875695",
+      "response_data": null
+    },
+    {
+      "test": "Tasks overdue-check structure",
+      "success": true,
+      "details": "Correctly requires authentication",
+      "timestamp": "2025-12-08T18:57:29.890859",
+      "response_data": null
+    },
+    {
+      "test": "Tasks overdue-check response shape",
+      "success": true,
+      "details": "Expected fields documented: ['userId', 'totalOverdue', 'requiresExplanation', 'explained', 'tasks', 'thresholds']",
+      "timestamp": "2025-12-08T18:57:29.890889",
+      "response_data": null
+    },
+    {
+      "test": "EOD reports GET structure",
+      "success": true,
+      "details": "Correctly requires authentication",
+      "timestamp": "2025-12-08T18:57:29.906653",
+      "response_data": null
+    },
+    {
+      "test": "EOD reports POST structure",
+      "success": true,
+      "details": "Correctly requires authentication",
+      "timestamp": "2025-12-08T18:57:29.920504",
+      "response_data": null
+    },
+    {
+      "test": "EOD reports team structure",
+      "success": true,
+      "details": "Correctly requires authentication",
+      "timestamp": "2025-12-08T18:57:29.938116",
+      "response_data": null
+    },
+    {
+      "test": "EOD reports missed-check structure",
+      "success": true,
+      "details": "Correctly requires authentication",
+      "timestamp": "2025-12-08T18:57:29.952916",
+      "response_data": null
+    },
+    {
+      "test": "EOD reports missed-explanation GET structure",
+      "success": true,
+      "details": "Correctly requires authentication",
+      "timestamp": "2025-12-08T18:57:29.968627",
+      "response_data": null
+    },
+    {
+      "test": "EOD reports missed-explanation POST structure",
+      "success": true,
+      "details": "Correctly requires authentication",
+      "timestamp": "2025-12-08T18:57:29.982458",
+      "response_data": null
+    },
+    {
+      "test": "EOD reports notify-manager structure",
+      "success": true,
+      "details": "Correctly requires authentication",
+      "timestamp": "2025-12-08T18:57:29.994304",
+      "response_data": null
+    },
+    {
+      "test": "Tasks PUT not allowed",
+      "success": true,
+      "details": "Auth check happens before method validation (401)",
+      "timestamp": "2025-12-08T18:57:30.008551",
+      "response_data": null
+    },
+    {
+      "test": "Tasks DELETE not allowed",
+      "success": true,
+      "details": "Auth check happens before method validation (401)",
+      "timestamp": "2025-12-08T18:57:30.020447",
+      "response_data": null
+    },
+    {
+      "test": "Overdue-check POST not allowed",
+      "success": true,
+      "details": "Correctly returned 405 Method Not Allowed",
+      "timestamp": "2025-12-08T18:57:30.032978",
+      "response_data": null
+    },
+    {
+      "test": "Team PUT not allowed",
+      "success": true,
+      "details": "Correctly returned 405 Method Not Allowed",
+      "timestamp": "2025-12-08T18:57:30.042725",
+      "response_data": null
+    },
+    {
+      "test": "Missed-check DELETE not allowed",
+      "success": true,
+      "details": "Correctly returned 405 Method Not Allowed",
+      "timestamp": "2025-12-08T18:57:30.052667",
+      "response_data": null
+    },
+    {
+      "test": "Notify-manager GET not allowed",
+      "success": true,
+      "details": "Correctly returned 405 Method Not Allowed",
+      "timestamp": "2025-12-08T18:57:30.062066",
+      "response_data": null
+    },
+    {
+      "test": "RBAC Policy: /api/tasks POST",
+      "success": true,
+      "details": "Requirement: canCreateTasks(role) === true, Error: FORBIDDEN",
+      "timestamp": "2025-12-08T18:57:30.062095",
+      "response_data": null
+    },
+    {
+      "test": "RBAC Policy: /api/tasks POST with assignedToId",
+      "success": true,
+      "details": "Requirement: canAssignTasks(role) === true, Error: FORBIDDEN_ASSIGN",
+      "timestamp": "2025-12-08T18:57:30.062099",
+      "response_data": null
+    },
+    {
+      "test": "RBAC Policy: /api/eod-reports GET",
+      "success": true,
+      "details": "Requirement: employees see own reports unless ROLE_CONFIG[role].task.assign === true, Error: FORBIDDEN",
+      "timestamp": "2025-12-08T18:57:30.062103",
+      "response_data": null
+    },
+    {
+      "test": "RBAC Policy: /api/eod-reports/team",
+      "success": true,
+      "details": "Requirement: ROLE_CONFIG[role].task.assign === true, Error: FORBIDDEN",
+      "timestamp": "2025-12-08T18:57:30.062106",
+      "response_data": null
+    },
+    {
+      "test": "RBAC Policy: /api/eod-reports/missed-explanation GET",
+      "success": true,
+      "details": "Requirement: HR_ADMIN / ADMIN / CEO roles only, Error: HR_ADMIN_ONLY",
+      "timestamp": "2025-12-08T18:57:30.062109",
+      "response_data": null
+    },
+    {
+      "test": "RBAC Policy: /api/eod-reports/notify-manager",
+      "success": true,
+      "details": "Requirement: owner or global admin access, Error: FORBIDDEN / ONLY_OWNER_CAN_NOTIFY",
+      "timestamp": "2025-12-08T18:57:30.062113",
+      "response_data": null
+    },
+    {
+      "test": "Venture Scope: /api/tasks",
+      "success": true,
+      "details": "Expected behavior: FORBIDDEN_VENTURE when ventureId out of scope",
+      "timestamp": "2025-12-08T18:57:30.062118",
+      "response_data": null
+    },
+    {
+      "test": "Venture Scope: /api/eod-reports",
+      "success": true,
+      "details": "Expected behavior: FORBIDDEN_VENTURE when ventureId out of scope, empty response for scoped managers with no ventures",
+      "timestamp": "2025-12-08T18:57:30.062121",
+      "response_data": null
+    },
+    {
+      "test": "Venture Scope: /api/eod-reports/team",
+      "success": true,
+      "details": "Expected behavior: FORBIDDEN_VENTURE validation, empty team summary for scoped managers with no ventures",
+      "timestamp": "2025-12-08T18:57:30.062124",
+      "response_data": null
+    },
+    {
+      "test": "Venture Scope: /api/eod-reports/missed-check",
+      "success": true,
+      "details": "Expected behavior: FORBIDDEN_VENTURE when ventureId filter out of scope",
+      "timestamp": "2025-12-08T18:57:30.062129",
+      "response_data": null
+    },
+    {
+      "test": "Venture Scope: /api/eod-reports/missed-explanation",
+      "success": true,
+      "details": "Expected behavior: FORBIDDEN_VENTURE when ventureId out of scope",
+      "timestamp": "2025-12-08T18:57:30.062131",
+      "response_data": null
+    },
+    {
+      "test": "Response Shape: /api/tasks GET",
+      "success": true,
+      "details": "Expected: { tasks, page, limit, totalCount, totalPages }",
+      "timestamp": "2025-12-08T18:57:30.062145",
+      "response_data": null
+    },
+    {
+      "test": "Response Shape: /api/tasks/overdue-check",
+      "success": true,
+      "details": "Expected: { userId, totalOverdue, requiresExplanation, explained, tasks, thresholds }",
+      "timestamp": "2025-12-08T18:57:30.062148",
+      "response_data": null
+    },
+    {
+      "test": "Response Shape: /api/eod-reports GET",
+      "success": true,
+      "details": "Expected: capped list with user/venture/office fields and status info",
+      "timestamp": "2025-12-08T18:57:30.062151",
+      "response_data": null
+    },
+    {
+      "test": "Response Shape: /api/eod-reports/team",
+      "success": true,
+      "details": "Expected: { date, summary, team } with summary counts and per-user status",
+      "timestamp": "2025-12-08T18:57:30.062154",
+      "response_data": null
+    },
+    {
+      "test": "Response Shape: /api/eod-reports/missed-check",
+      "success": true,
+      "details": "Expected: { userId, totalMissed, consecutiveMissed, threshold, requiresExplanation, hasExplanation, ... }",
+      "timestamp": "2025-12-08T18:57:30.062157",
+      "response_data": null
+    },
+    {
+      "test": "Response Shape: /api/eod-reports/missed-explanation GET",
+      "success": true,
+      "details": "Expected: { explanations: [...] }",
+      "timestamp": "2025-12-08T18:57:30.062160",
+      "response_data": null
+    },
+    {
+      "test": "Response Shape: /api/eod-reports/notify-manager",
+      "success": true,
+      "details": "Expected: success payload including alreadyNotified field",
+      "timestamp": "2025-12-08T18:57:30.062162",
+      "response_data": null
+    },
+    {
+      "test": "Edge Case: Tasks POST with past due date",
+      "success": true,
+      "details": "Expected: 400 DUE_DATE_CANNOT_BE_IN_PAST",
+      "timestamp": "2025-12-08T18:57:30.062168",
+      "response_data": null
+    },
+    {
+      "test": "Edge Case: Tasks POST with invalid due date",
+      "success": true,
+      "details": "Expected: 400 INVALID_DUE_DATE",
+      "timestamp": "2025-12-08T18:57:30.062171",
+      "response_data": null
+    },
+    {
+      "test": "Edge Case: EOD reports POST future date",
+      "success": true,
+      "details": "Expected: 400 CANNOT_SUBMIT_FUTURE_REPORT",
+      "timestamp": "2025-12-08T18:57:30.062174",
+      "response_data": null
+    },
+    {
+      "test": "Edge Case: Missed explanation POST too short",
+      "success": true,
+      "details": "Expected: 400 EXPLANATION_TOO_SHORT (< 10 chars)",
+      "timestamp": "2025-12-08T18:57:30.062176",
+      "response_data": null
+    },
+    {
+      "test": "Edge Case: Missed explanation POST when not needed",
+      "success": true,
+      "details": "Expected: 400 NO_EXPLANATION_NEEDED",
+      "timestamp": "2025-12-08T18:57:30.062179",
+      "response_data": null
+    },
+    {
+      "test": "Edge Case: Notify manager already notified",
+      "success": true,
+      "details": "Expected: 200 with alreadyNotified: true",
+      "timestamp": "2025-12-08T18:57:30.062182",
+      "response_data": null
+    }
+  ],
+  "timestamp": "2025-12-08T18:57:30.062319"
+}

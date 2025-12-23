@@ -1,0 +1,387 @@
+{
+  "test_run_timestamp": "2025-12-07T07:10:04.494018",
+  "total_tests": 14,
+  "base_url": "http://localhost:3000",
+  "test_date": "2024-01-15",
+  "test_plan_id": 1,
+  "results": [
+    {
+      "endpoint": "/api/admin/auto-seed-test-data",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "seeded": false,
+        "message": "Test data already exists",
+        "hasData": true
+      },
+      "test_description": "Setup basic test data",
+      "headers": {},
+      "request_body": null,
+      "timestamp": "2025-12-07T07:10:03.939429"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "GET",
+      "status_code": 405,
+      "response": {
+        "error": "Method not allowed"
+      },
+      "test_description": "Method validation - GET should return 405",
+      "headers": {},
+      "request_body": null,
+      "timestamp": "2025-12-07T07:10:04.051201"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "PUT",
+      "status_code": 405,
+      "response": {
+        "error": "Method not allowed"
+      },
+      "test_description": "Method validation - PUT should return 405",
+      "headers": {},
+      "request_body": null,
+      "timestamp": "2025-12-07T07:10:04.064190"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "DELETE",
+      "status_code": 405,
+      "response": {
+        "error": "Method not allowed"
+      },
+      "test_description": "Method validation - DELETE should return 405",
+      "headers": {},
+      "request_body": null,
+      "timestamp": "2025-12-07T07:10:04.076607"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "POST",
+      "status_code": 400,
+      "response": {
+        "error": "planId is required and must be a positive number"
+      },
+      "test_description": "Missing planId should return 400",
+      "headers": {},
+      "request_body": {},
+      "timestamp": "2025-12-07T07:10:04.092500"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "POST",
+      "status_code": 400,
+      "response": {
+        "error": "planId is required and must be a positive number"
+      },
+      "test_description": "Invalid planId (string) should return 400",
+      "headers": {},
+      "request_body": {
+        "planId": "invalid"
+      },
+      "timestamp": "2025-12-07T07:10:04.105528"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "POST",
+      "status_code": 400,
+      "response": {
+        "error": "planId is required and must be a positive number"
+      },
+      "test_description": "Invalid planId (negative) should return 400",
+      "headers": {},
+      "request_body": {
+        "planId": -1
+      },
+      "timestamp": "2025-12-07T07:10:04.119926"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "POST",
+      "status_code": 400,
+      "response": {
+        "error": "planId is required and must be a positive number"
+      },
+      "test_description": "Invalid planId (zero) should return 400",
+      "headers": {},
+      "request_body": {
+        "planId": 0
+      },
+      "timestamp": "2025-12-07T07:10:04.135659"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [
+          {
+            "userId": 54,
+            "ruleId": 12,
+            "amount": 90,
+            "date": "2024-01-15",
+            "planId": 1
+          },
+          {
+            "userId": 54,
+            "ruleId": 13,
+            "amount": 150,
+            "date": "2024-01-15",
+            "planId": 1
+          },
+          {
+            "userId": 54,
+            "ruleId": 14,
+            "amount": 225,
+            "date": "2024-01-15",
+            "planId": 1
+          }
+        ],
+        "inserted": 1,
+        "updated": 2,
+        "count": 3
+      },
+      "test_description": "First commit run with valid planId and date",
+      "headers": {},
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T07:10:04.163864"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [
+          {
+            "userId": 54,
+            "ruleId": 12,
+            "amount": 90,
+            "date": "2024-01-15",
+            "planId": 1
+          },
+          {
+            "userId": 54,
+            "ruleId": 13,
+            "amount": 150,
+            "date": "2024-01-15",
+            "planId": 1
+          },
+          {
+            "userId": 54,
+            "ruleId": 14,
+            "amount": 225,
+            "date": "2024-01-15",
+            "planId": 1
+          }
+        ],
+        "inserted": 0,
+        "updated": 3,
+        "count": 3
+      },
+      "test_description": "Second commit run with same planId and date",
+      "headers": {},
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T07:10:04.226802"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "inserted": 0,
+        "updated": 0,
+        "count": 0
+      },
+      "test_description": "Commit without date should use today's date",
+      "headers": {},
+      "request_body": {
+        "planId": 1
+      },
+      "timestamp": "2025-12-07T07:10:04.246541"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [
+          {
+            "userId": 54,
+            "ruleId": 12,
+            "amount": 90,
+            "date": "2024-01-15",
+            "planId": 1
+          },
+          {
+            "userId": 54,
+            "ruleId": 13,
+            "amount": 150,
+            "date": "2024-01-15",
+            "planId": 1
+          },
+          {
+            "userId": 54,
+            "ruleId": 14,
+            "amount": 225,
+            "date": "2024-01-15",
+            "planId": 1
+          }
+        ],
+        "inserted": 0,
+        "updated": 3,
+        "count": 3
+      },
+      "test_description": "RBAC test - should work for CEO/ADMIN (dev mode auto-auth as CEO)",
+      "headers": {},
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T07:10:04.271410"
+    },
+    {
+      "endpoint": "/api/admin/audit-logs?action=INCENTIVE_COMMIT_RUN&domain=admin",
+      "method": "GET",
+      "status_code": 200,
+      "response": {
+        "items": [
+          {
+            "id": 26,
+            "createdAt": "2025-12-07T07:10:04.270Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMMIT_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 3,
+              "planId": 1,
+              "updated": 3,
+              "inserted": 0
+            }
+          },
+          {
+            "id": 25,
+            "createdAt": "2025-12-07T07:10:04.245Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMMIT_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2025-12-07",
+              "count": 0,
+              "planId": 1,
+              "updated": 0,
+              "inserted": 0
+            }
+          },
+          {
+            "id": 24,
+            "createdAt": "2025-12-07T07:10:04.206Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMMIT_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 3,
+              "planId": 1,
+              "updated": 3,
+              "inserted": 0
+            }
+          },
+          {
+            "id": 23,
+            "createdAt": "2025-12-07T07:10:04.161Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMMIT_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 3,
+              "planId": 1,
+              "updated": 2,
+              "inserted": 1
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 4,
+        "totalPages": 1
+      },
+      "test_description": "Query audit logs for incentive commit actions",
+      "headers": {},
+      "request_body": null,
+      "timestamp": "2025-12-07T07:10:04.455545"
+    },
+    {
+      "endpoint": "/api/incentives/commit",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [
+          {
+            "userId": 54,
+            "ruleId": 12,
+            "amount": 90,
+            "date": "2024-01-15",
+            "planId": 1
+          },
+          {
+            "userId": 54,
+            "ruleId": 13,
+            "amount": 150,
+            "date": "2024-01-15",
+            "planId": 1
+          },
+          {
+            "userId": 54,
+            "ruleId": 14,
+            "amount": 225,
+            "date": "2024-01-15",
+            "planId": 1
+          }
+        ],
+        "inserted": 0,
+        "updated": 3,
+        "count": 3
+      },
+      "test_description": "Get sample incentive data for structure verification",
+      "headers": {},
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T07:10:04.493895"
+    }
+  ]
+}

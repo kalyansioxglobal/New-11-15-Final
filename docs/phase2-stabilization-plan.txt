@@ -1,0 +1,99 @@
+PHASE 2 STABILIZATION PLAN
+===========================
+Date: December 11, 2024
+
+OBJECTIVE
+---------
+Apply createApiHandler and Zod validation to 5 simple API routes,
+then generate an audit report for the top 5 most-used freight/hotel routes.
+
+
+ROUTES TO UPDATE (5 routes)
+---------------------------
+
+1. pages/api/freight/city-suggestions.ts (90 lines)
+   - Simple GET endpoint
+   - Query params: q, type
+   - Currently uses manual getSessionUser auth
+   - Changes: Add createApiHandler wrapper, Zod schema for query params
+
+2. pages/api/freight/kpi/csr.ts (67 lines)
+   - GET endpoint for CSR performance metrics
+   - Query params: from, to, csrId, ventureId
+   - Has `any` type in error handler
+   - Changes: Add createApiHandler wrapper, Zod schema, fix types
+
+3. pages/api/freight/kpi/dispatch.ts (79 lines)
+   - GET endpoint for dispatcher metrics
+   - Similar pattern to CSR KPI
+   - Changes: Add createApiHandler wrapper, Zod schema for consistency
+
+4. pages/api/freight/at-risk-loads.ts (148 lines)
+   - GET endpoint with pagination
+   - Query params: hoursUntilPickup, ventureId, officeId, page, limit
+   - Has `any` type in where clause
+   - Changes: Add createApiHandler wrapper, Zod schema, proper where typing
+
+5. pages/api/notifications/index.ts (88 lines)
+   - User-facing notifications CRUD
+   - Good test of handler patterns for multi-method routes
+   - Changes: Add createApiHandler wrapper, Zod schemas
+
+
+TOP 5 ROUTES FOR AUDIT REPORT
+-----------------------------
+
+1. pages/api/freight/carriers/index.ts (193 lines)
+   - High-traffic carrier listing
+   - Has `any` types in where clause and Prisma calls
+   - Multiple query params without validation
+
+2. pages/api/hotels/snapshot.ts (232 lines)
+   - Dashboard-critical hotel portfolio snapshot
+   - Has `any` type in hotelWhere clause
+   - No Zod validation on query params
+
+3. pages/api/hotels/kpi-comparison.ts (227 lines)
+   - Dashboard-critical KPI comparison
+   - Uses manual getServerSession instead of helper
+   - Query params not validated
+
+4. pages/api/freight/loads/[id].ts (132 lines)
+   - Core entity route for load details
+   - Likely missing body validation for PATCH/PUT
+   - Dynamic route param needs validation
+
+5. pages/api/freight/carrier-search.ts
+   - Frequently used matching engine entry point
+   - Search params need validation
+   - Response structure should be consistent
+
+
+AUDIT REPORT WILL COVER
+-----------------------
+For each of the 5 audited routes:
+- Missing validation (query params, body, path params)
+- Inconsistent response formats (success vs error envelopes)
+- Missing type safety (any usages, untyped Prisma results)
+- TODOs for future improvements
+
+
+CONSTRAINTS
+-----------
+- NO changes to Prisma schema, migrations, or database indexes
+- NO changes to routes not listed above
+- NO changes to business logic (only infrastructure wrapping)
+- TypeScript improvements ONLY in touched routes
+
+
+FILES CREATED/MODIFIED
+----------------------
+Modified:
+  - pages/api/freight/city-suggestions.ts
+  - pages/api/freight/kpi/csr.ts
+  - pages/api/freight/kpi/dispatch.ts
+  - pages/api/freight/at-risk-loads.ts
+  - pages/api/notifications/index.ts
+
+Created:
+  - docs/api-audit-report.md (audit findings for top 5 routes)

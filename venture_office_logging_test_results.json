@@ -1,0 +1,2682 @@
+[
+  {
+    "endpoint": "/api/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "summary": {
+        "totalRevenue": 8029755,
+        "totalCost": 6582406,
+        "totalMargin": 1447349,
+        "marginPct": 18.024821429794557,
+        "loadCount": 1185,
+        "avgMarginPerLoad": 1221.3915611814346,
+        "avgRpm": 56.013074771811766
+      },
+      "byDay": [
+        {
+          "date": "2025-10-08",
+          "revenue": 43618,
+          "cost": 35238,
+          "margin": 8380
+        },
+        {
+          "date": "2025-10-09",
+          "revenue": 71456,
+          "cost": 57999,
+          "margin": 13457
+        },
+        {
+          "date": "2025-10-10",
+          "revenue": 64649,
+          "cost": 52467,
+          "margin": 12182
+        },
+        {
+          "date": "2025-10-11",
+          "revenue": 115642,
+          "cost": 93563,
+          "margin": 22079
+        },
+        {
+          "date": "2025-10-12",
+          "revenue": 70111,
+          "cost": 58426,
+          "margin": 11685
+        },
+        {
+          "date": "2025-10-13",
+          "revenue": 115081,
+          "cost": 93071,
+          "margin": 22010
+        },
+        {
+          "date": "2025-10-14",
+          "revenue": 184622,
+          "cost": 151102,
+          "margin": 33520
+        },
+        {
+          "date": "2025-10-15",
+          "revenue": 138190,
+          "cost": 114193,
+          "margin": 23997
+        },
+        {
+          "date": "2025-10-16",
+          "revenue": 135157,
+          "cost": 111301,
+          "margin": 23856
+        },
+        {
+          "date": "2025-10-17",
+          "revenue": 79946,
+          "cost": 64817,
+          "margin": 15129
+        },
+        {
+          "date": "2025-10-18",
+          "revenue": 128768,
+          "cost": 106667,
+          "margin": 22101
+        },
+        {
+          "date": "2025-10-19",
+          "revenue": 236373,
+          "cost": 194216,
+          "margin": 42157
+        },
+        {
+          "date": "2025-10-20",
+          "revenue": 151577,
+          "cost": 122219,
+          "margin": 29358
+        },
+        {
+          "date": "2025-10-21",
+          "revenue": 118748,
+          "cost": 98582,
+          "margin": 20166
+        },
+        {
+          "date": "2025-10-22",
+          "revenue": 194317,
+          "cost": 161312,
+          "margin": 33005
+        },
+        {
+          "date": "2025-10-23",
+          "revenue": 109691,
+          "cost": 89329,
+          "margin": 20362
+        },
+        {
+          "date": "2025-10-24",
+          "revenue": 105932,
+          "cost": 88543,
+          "margin": 17389
+        },
+        {
+          "date": "2025-10-25",
+          "revenue": 146328,
+          "cost": 120997,
+          "margin": 25331
+        },
+        {
+          "date": "2025-10-26",
+          "revenue": 198011,
+          "cost": 160423,
+          "margin": 37588
+        },
+        {
+          "date": "2025-10-27",
+          "revenue": 106868,
+          "cost": 91127,
+          "margin": 15741
+        },
+        {
+          "date": "2025-10-28",
+          "revenue": 112853,
+          "cost": 93408,
+          "margin": 19445
+        },
+        {
+          "date": "2025-10-29",
+          "revenue": 124609,
+          "cost": 105450,
+          "margin": 19159
+        },
+        {
+          "date": "2025-10-30",
+          "revenue": 162119,
+          "cost": 131674,
+          "margin": 30445
+        },
+        {
+          "date": "2025-10-31",
+          "revenue": 194790,
+          "cost": 159633,
+          "margin": 35157
+        },
+        {
+          "date": "2025-11-01",
+          "revenue": 118836,
+          "cost": 98296,
+          "margin": 20540
+        },
+        {
+          "date": "2025-11-02",
+          "revenue": 128522,
+          "cost": 104601,
+          "margin": 23921
+        },
+        {
+          "date": "2025-11-03",
+          "revenue": 117149,
+          "cost": 95007,
+          "margin": 22142
+        },
+        {
+          "date": "2025-11-04",
+          "revenue": 130633,
+          "cost": 108976,
+          "margin": 21657
+        },
+        {
+          "date": "2025-11-05",
+          "revenue": 151639,
+          "cost": 125978,
+          "margin": 25661
+        },
+        {
+          "date": "2025-11-06",
+          "revenue": 159847,
+          "cost": 128318,
+          "margin": 31529
+        },
+        {
+          "date": "2025-11-07",
+          "revenue": 113339,
+          "cost": 92638,
+          "margin": 20701
+        },
+        {
+          "date": "2025-11-08",
+          "revenue": 171343,
+          "cost": 142777,
+          "margin": 28566
+        },
+        {
+          "date": "2025-11-09",
+          "revenue": 133748,
+          "cost": 112457,
+          "margin": 21291
+        },
+        {
+          "date": "2025-11-10",
+          "revenue": 118965,
+          "cost": 100704,
+          "margin": 18261
+        },
+        {
+          "date": "2025-11-11",
+          "revenue": 166371,
+          "cost": 135541,
+          "margin": 30830
+        },
+        {
+          "date": "2025-11-12",
+          "revenue": 126914,
+          "cost": 103281,
+          "margin": 23633
+        },
+        {
+          "date": "2025-11-13",
+          "revenue": 103393,
+          "cost": 85367,
+          "margin": 18026
+        },
+        {
+          "date": "2025-11-14",
+          "revenue": 166960,
+          "cost": 135945,
+          "margin": 31015
+        },
+        {
+          "date": "2025-11-15",
+          "revenue": 165300,
+          "cost": 138358,
+          "margin": 26942
+        },
+        {
+          "date": "2025-11-16",
+          "revenue": 122263,
+          "cost": 97626,
+          "margin": 24637
+        },
+        {
+          "date": "2025-11-17",
+          "revenue": 128965,
+          "cost": 103696,
+          "margin": 25269
+        },
+        {
+          "date": "2025-11-18",
+          "revenue": 153093,
+          "cost": 123007,
+          "margin": 30086
+        },
+        {
+          "date": "2025-11-19",
+          "revenue": 138307,
+          "cost": 111770,
+          "margin": 26537
+        },
+        {
+          "date": "2025-11-20",
+          "revenue": 73901,
+          "cost": 59380,
+          "margin": 14521
+        },
+        {
+          "date": "2025-11-21",
+          "revenue": 125276,
+          "cost": 103363,
+          "margin": 21913
+        },
+        {
+          "date": "2025-11-22",
+          "revenue": 126125,
+          "cost": 105490,
+          "margin": 20635
+        },
+        {
+          "date": "2025-11-23",
+          "revenue": 84193,
+          "cost": 67475,
+          "margin": 16718
+        },
+        {
+          "date": "2025-11-24",
+          "revenue": 85087,
+          "cost": 68802,
+          "margin": 16285
+        },
+        {
+          "date": "2025-11-25",
+          "revenue": 153707,
+          "cost": 123688,
+          "margin": 30019
+        },
+        {
+          "date": "2025-11-26",
+          "revenue": 118498,
+          "cost": 96472,
+          "margin": 22026
+        },
+        {
+          "date": "2025-11-27",
+          "revenue": 100804,
+          "cost": 83575,
+          "margin": 17229
+        },
+        {
+          "date": "2025-11-28",
+          "revenue": 130174,
+          "cost": 104615,
+          "margin": 25559
+        },
+        {
+          "date": "2025-11-29",
+          "revenue": 113268,
+          "cost": 92979,
+          "margin": 20289
+        },
+        {
+          "date": "2025-11-30",
+          "revenue": 160287,
+          "cost": 131923,
+          "margin": 28364
+        },
+        {
+          "date": "2025-12-01",
+          "revenue": 114340,
+          "cost": 92713,
+          "margin": 21627
+        },
+        {
+          "date": "2025-12-02",
+          "revenue": 126373,
+          "cost": 102718,
+          "margin": 23655
+        },
+        {
+          "date": "2025-12-03",
+          "revenue": 140959,
+          "cost": 117128,
+          "margin": 23831
+        },
+        {
+          "date": "2025-12-04",
+          "revenue": 157971,
+          "cost": 127479,
+          "margin": 30492
+        },
+        {
+          "date": "2025-12-05",
+          "revenue": 128270,
+          "cost": 103699,
+          "margin": 24571
+        },
+        {
+          "date": "2025-12-06",
+          "revenue": 102610,
+          "cost": 83543,
+          "margin": 19067
+        },
+        {
+          "date": "2025-12-07",
+          "revenue": 88832,
+          "cost": 73964,
+          "margin": 14868
+        },
+        {
+          "date": "2025-12-08",
+          "revenue": 53050,
+          "cost": 45475,
+          "margin": 7575
+        },
+        {
+          "date": "2025-12-09",
+          "revenue": 55413,
+          "cost": 44964,
+          "margin": 10449
+        },
+        {
+          "date": "2025-12-10",
+          "revenue": 47953,
+          "cost": 39341,
+          "margin": 8612
+        },
+        {
+          "date": "2025-12-11",
+          "revenue": 14599,
+          "cost": 11147,
+          "margin": 3452
+        },
+        {
+          "date": "2025-12-12",
+          "revenue": 3022,
+          "cost": 2373,
+          "margin": 649
+        }
+      ],
+      "byCustomer": [
+        {
+          "customerId": "25",
+          "customerName": "Pharmaceuticals Customer 23",
+          "revenue": 231894,
+          "margin": 44069,
+          "loadCount": 30
+        },
+        {
+          "customerId": "7",
+          "customerName": "Construction Customer 5",
+          "revenue": 232711,
+          "margin": 43302,
+          "loadCount": 30
+        },
+        {
+          "customerId": "36",
+          "customerName": "Automotive Customer 34",
+          "revenue": 236994,
+          "margin": 41168,
+          "loadCount": 36
+        },
+        {
+          "customerId": "12",
+          "customerName": "Pharmaceuticals Customer 10",
+          "revenue": 227255,
+          "margin": 39905,
+          "loadCount": 29
+        },
+        {
+          "customerId": "16",
+          "customerName": "Manufacturing Customer 14",
+          "revenue": 210516,
+          "margin": 39245,
+          "loadCount": 30
+        },
+        {
+          "customerId": "20",
+          "customerName": "Construction Customer 18",
+          "revenue": 211357,
+          "margin": 37651,
+          "loadCount": 27
+        },
+        {
+          "customerId": "14",
+          "customerName": "Automotive Customer 12",
+          "revenue": 197457,
+          "margin": 35913,
+          "loadCount": 29
+        },
+        {
+          "customerId": "40",
+          "customerName": "Construction Customer 38",
+          "revenue": 202493,
+          "margin": 35745,
+          "loadCount": 29
+        },
+        {
+          "customerId": "35",
+          "customerName": "Food & Beverage Customer 33",
+          "revenue": 211076,
+          "margin": 34553,
+          "loadCount": 27
+        },
+        {
+          "customerId": "37",
+          "customerName": "Retail Customer 35",
+          "revenue": 181823,
+          "margin": 34264,
+          "loadCount": 28
+        },
+        {
+          "customerId": "51",
+          "customerName": "Paper & Packaging Customer 49",
+          "revenue": 202972,
+          "margin": 33824,
+          "loadCount": 28
+        },
+        {
+          "customerId": "46",
+          "customerName": "Construction Customer 44",
+          "revenue": 177892,
+          "margin": 32361,
+          "loadCount": 24
+        },
+        {
+          "customerId": "52",
+          "customerName": "Retail Customer 50",
+          "revenue": 168223,
+          "margin": 31755,
+          "loadCount": 20
+        },
+        {
+          "customerId": "42",
+          "customerName": "Automotive Customer 40",
+          "revenue": 172692,
+          "margin": 31357,
+          "loadCount": 26
+        },
+        {
+          "customerId": "10",
+          "customerName": "Paper & Packaging Customer 8",
+          "revenue": 160651,
+          "margin": 31003,
+          "loadCount": 25
+        },
+        {
+          "customerId": "31",
+          "customerName": "Retail Customer 29",
+          "revenue": 166156,
+          "margin": 30877,
+          "loadCount": 26
+        },
+        {
+          "customerId": "13",
+          "customerName": "Automotive Customer 11",
+          "revenue": 182380,
+          "margin": 30499,
+          "loadCount": 23
+        },
+        {
+          "customerId": "30",
+          "customerName": "Electronics Customer 28",
+          "revenue": 199178,
+          "margin": 30136,
+          "loadCount": 29
+        },
+        {
+          "customerId": "38",
+          "customerName": "Electronics Customer 36",
+          "revenue": 172381,
+          "margin": 29992,
+          "loadCount": 25
+        },
+        {
+          "customerId": "4",
+          "customerName": "Chemical Customer 2",
+          "revenue": 167294,
+          "margin": 29223,
+          "loadCount": 28
+        },
+        {
+          "customerId": "41",
+          "customerName": "Construction Customer 39",
+          "revenue": 153942,
+          "margin": 29132,
+          "loadCount": 21
+        },
+        {
+          "customerId": "29",
+          "customerName": "Construction Customer 27",
+          "revenue": 161091,
+          "margin": 29030,
+          "loadCount": 26
+        },
+        {
+          "customerId": "44",
+          "customerName": "Agriculture Customer 42",
+          "revenue": 154463,
+          "margin": 28983,
+          "loadCount": 21
+        },
+        {
+          "customerId": "48",
+          "customerName": "Construction Customer 46",
+          "revenue": 151581,
+          "margin": 27754,
+          "loadCount": 19
+        },
+        {
+          "customerId": "11",
+          "customerName": "Chemical Customer 9",
+          "revenue": 125820,
+          "margin": 27621,
+          "loadCount": 18
+        },
+        {
+          "customerId": "50",
+          "customerName": "Chemical Customer 48",
+          "revenue": 145459,
+          "margin": 27399,
+          "loadCount": 25
+        },
+        {
+          "customerId": "27",
+          "customerName": "Electronics Customer 25",
+          "revenue": 165041,
+          "margin": 27268,
+          "loadCount": 24
+        },
+        {
+          "customerId": "8",
+          "customerName": "Electronics Customer 6",
+          "revenue": 159740,
+          "margin": 27256,
+          "loadCount": 24
+        },
+        {
+          "customerId": "39",
+          "customerName": "Automotive Customer 37",
+          "revenue": 145683,
+          "margin": 27133,
+          "loadCount": 19
+        },
+        {
+          "customerId": "19",
+          "customerName": "Retail Customer 17",
+          "revenue": 152196,
+          "margin": 26786,
+          "loadCount": 24
+        },
+        {
+          "customerId": "3",
+          "customerName": "Construction Customer 1",
+          "revenue": 146114,
+          "margin": 26773,
+          "loadCount": 20
+        },
+        {
+          "customerId": "32",
+          "customerName": "Construction Customer 30",
+          "revenue": 152022,
+          "margin": 26010,
+          "loadCount": 23
+        },
+        {
+          "customerId": "9",
+          "customerName": "Electronics Customer 7",
+          "revenue": 135126,
+          "margin": 25919,
+          "loadCount": 24
+        },
+        {
+          "customerId": "21",
+          "customerName": "Chemical Customer 19",
+          "revenue": 144858,
+          "margin": 25551,
+          "loadCount": 20
+        },
+        {
+          "customerId": "22",
+          "customerName": "Construction Customer 20",
+          "revenue": 136889,
+          "margin": 25453,
+          "loadCount": 24
+        },
+        {
+          "customerId": "17",
+          "customerName": "Manufacturing Customer 15",
+          "revenue": 142061,
+          "margin": 25383,
+          "loadCount": 23
+        },
+        {
+          "customerId": "24",
+          "customerName": "Paper & Packaging Customer 22",
+          "revenue": 146675,
+          "margin": 25230,
+          "loadCount": 24
+        },
+        {
+          "customerId": "15",
+          "customerName": "Manufacturing Customer 13",
+          "revenue": 148550,
+          "margin": 25028,
+          "loadCount": 24
+        },
+        {
+          "customerId": "6",
+          "customerName": "Agriculture Customer 4",
+          "revenue": 136145,
+          "margin": 23812,
+          "loadCount": 20
+        },
+        {
+          "customerId": "28",
+          "customerName": "Retail Customer 26",
+          "revenue": 127860,
+          "margin": 23313,
+          "loadCount": 17
+        },
+        {
+          "customerId": "43",
+          "customerName": "Construction Customer 41",
+          "revenue": 121798,
+          "margin": 23126,
+          "loadCount": 20
+        },
+        {
+          "customerId": "47",
+          "customerName": "Food & Beverage Customer 45",
+          "revenue": 133248,
+          "margin": 22952,
+          "loadCount": 18
+        },
+        {
+          "customerId": "34",
+          "customerName": "Chemical Customer 32",
+          "revenue": 108902,
+          "margin": 22537,
+          "loadCount": 16
+        },
+        {
+          "customerId": "26",
+          "customerName": "Food & Beverage Customer 24",
+          "revenue": 129925,
+          "margin": 22111,
+          "loadCount": 17
+        },
+        {
+          "customerId": "33",
+          "customerName": "Manufacturing Customer 31",
+          "revenue": 105258,
+          "margin": 20079,
+          "loadCount": 15
+        },
+        {
+          "customerId": "49",
+          "customerName": "Construction Customer 47",
+          "revenue": 109185,
+          "margin": 19461,
+          "loadCount": 16
+        },
+        {
+          "customerId": "18",
+          "customerName": "Automotive Customer 16",
+          "revenue": 99388,
+          "margin": 19090,
+          "loadCount": 17
+        },
+        {
+          "customerId": "45",
+          "customerName": "Construction Customer 43",
+          "revenue": 95661,
+          "margin": 18366,
+          "loadCount": 15
+        },
+        {
+          "customerId": "23",
+          "customerName": "Retail Customer 21",
+          "revenue": 101758,
+          "margin": 17180,
+          "loadCount": 18
+        },
+        {
+          "customerId": "5",
+          "customerName": "Manufacturing Customer 3",
+          "revenue": 89207,
+          "margin": 16907,
+          "loadCount": 14
+        },
+        {
+          "customerId": "1",
+          "customerName": "Amazon Fulfillment",
+          "revenue": 46845,
+          "margin": 9937,
+          "loadCount": 17
+        },
+        {
+          "customerId": "2",
+          "customerName": "Costco Distribution",
+          "revenue": 43869,
+          "margin": 7927,
+          "loadCount": 13
+        }
+      ],
+      "byOffice": [
+        {
+          "officeId": "3",
+          "officeName": "Chicago Office",
+          "revenue": 2048142,
+          "margin": 369308,
+          "loadCount": 290
+        },
+        {
+          "officeId": "7",
+          "officeName": "Los Angeles Office",
+          "revenue": 2055957,
+          "margin": 367576,
+          "loadCount": 299
+        },
+        {
+          "officeId": "2",
+          "officeName": "Atlanta HQ",
+          "revenue": 1989140,
+          "margin": 358102,
+          "loadCount": 295
+        },
+        {
+          "officeId": "1",
+          "officeName": "Dallas Branch",
+          "revenue": 1845802,
+          "margin": 334499,
+          "loadCount": 271
+        },
+        {
+          "officeId": null,
+          "officeName": "No Office",
+          "revenue": 90714,
+          "margin": 17864,
+          "loadCount": 30
+        }
+      ]
+    },
+    "test_description": "Basic P&L request - should log api_request with ventureId/officeId context",
+    "expected_logs": [
+      "api_request with ventureId",
+      "api_request with officeId or user's primary office"
+    ],
+    "timestamp": "2025-12-07T03:35:49.548804"
+  },
+  {
+    "endpoint": "/api/logistics/freight-pnl?officeId=1",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "summary": {
+        "totalRevenue": 1845802,
+        "totalCost": 1511303,
+        "totalMargin": 334499,
+        "marginPct": 18.122149613013747,
+        "loadCount": 271,
+        "avgMarginPerLoad": 1234.3136531365315,
+        "avgRpm": 49.93104488812173
+      },
+      "byDay": [
+        {
+          "date": "2025-10-08",
+          "revenue": 18748,
+          "cost": 15799,
+          "margin": 2949
+        },
+        {
+          "date": "2025-10-10",
+          "revenue": 15090,
+          "cost": 11962,
+          "margin": 3128
+        },
+        {
+          "date": "2025-10-11",
+          "revenue": 4523,
+          "cost": 4001,
+          "margin": 522
+        },
+        {
+          "date": "2025-10-12",
+          "revenue": 17226,
+          "cost": 14556,
+          "margin": 2670
+        },
+        {
+          "date": "2025-10-13",
+          "revenue": 16652,
+          "cost": 13051,
+          "margin": 3601
+        },
+        {
+          "date": "2025-10-14",
+          "revenue": 35996,
+          "cost": 28574,
+          "margin": 7422
+        },
+        {
+          "date": "2025-10-15",
+          "revenue": 31171,
+          "cost": 25057,
+          "margin": 6114
+        },
+        {
+          "date": "2025-10-16",
+          "revenue": 22076,
+          "cost": 17599,
+          "margin": 4477
+        },
+        {
+          "date": "2025-10-17",
+          "revenue": 35616,
+          "cost": 29291,
+          "margin": 6325
+        },
+        {
+          "date": "2025-10-18",
+          "revenue": 33487,
+          "cost": 28377,
+          "margin": 5110
+        },
+        {
+          "date": "2025-10-19",
+          "revenue": 38704,
+          "cost": 29602,
+          "margin": 9102
+        },
+        {
+          "date": "2025-10-20",
+          "revenue": 18584,
+          "cost": 14989,
+          "margin": 3595
+        },
+        {
+          "date": "2025-10-21",
+          "revenue": 38221,
+          "cost": 33176,
+          "margin": 5045
+        },
+        {
+          "date": "2025-10-22",
+          "revenue": 50684,
+          "cost": 42887,
+          "margin": 7797
+        },
+        {
+          "date": "2025-10-23",
+          "revenue": 14747,
+          "cost": 12229,
+          "margin": 2518
+        },
+        {
+          "date": "2025-10-24",
+          "revenue": 53932,
+          "cost": 46028,
+          "margin": 7904
+        },
+        {
+          "date": "2025-10-25",
+          "revenue": 45406,
+          "cost": 37244,
+          "margin": 8162
+        },
+        {
+          "date": "2025-10-26",
+          "revenue": 49648,
+          "cost": 39950,
+          "margin": 9698
+        },
+        {
+          "date": "2025-10-27",
+          "revenue": 15782,
+          "cost": 13576,
+          "margin": 2206
+        },
+        {
+          "date": "2025-10-28",
+          "revenue": 38187,
+          "cost": 31206,
+          "margin": 6981
+        },
+        {
+          "date": "2025-10-29",
+          "revenue": 17251,
+          "cost": 14269,
+          "margin": 2982
+        },
+        {
+          "date": "2025-10-30",
+          "revenue": 21459,
+          "cost": 17887,
+          "margin": 3572
+        },
+        {
+          "date": "2025-10-31",
+          "revenue": 72703,
+          "cost": 60054,
+          "margin": 12649
+        },
+        {
+          "date": "2025-11-01",
+          "revenue": 9018,
+          "cost": 7034,
+          "margin": 1984
+        },
+        {
+          "date": "2025-11-02",
+          "revenue": 42200,
+          "cost": 34188,
+          "margin": 8012
+        },
+        {
+          "date": "2025-11-03",
+          "revenue": 32036,
+          "cost": 25499,
+          "margin": 6537
+        },
+        {
+          "date": "2025-11-04",
+          "revenue": 4931,
+          "cost": 4108,
+          "margin": 823
+        },
+        {
+          "date": "2025-11-05",
+          "revenue": 32034,
+          "cost": 26545,
+          "margin": 5489
+        },
+        {
+          "date": "2025-11-06",
+          "revenue": 35485,
+          "cost": 27362,
+          "margin": 8123
+        },
+        {
+          "date": "2025-11-07",
+          "revenue": 75379,
+          "cost": 61296,
+          "margin": 14083
+        },
+        {
+          "date": "2025-11-08",
+          "revenue": 67819,
+          "cost": 58326,
+          "margin": 9493
+        },
+        {
+          "date": "2025-11-09",
+          "revenue": 36882,
+          "cost": 31862,
+          "margin": 5020
+        },
+        {
+          "date": "2025-11-10",
+          "revenue": 24045,
+          "cost": 21411,
+          "margin": 2634
+        },
+        {
+          "date": "2025-11-11",
+          "revenue": 18538,
+          "cost": 13585,
+          "margin": 4953
+        },
+        {
+          "date": "2025-11-12",
+          "revenue": 2338,
+          "cost": 1927,
+          "margin": 411
+        },
+        {
+          "date": "2025-11-13",
+          "revenue": 27988,
+          "cost": 23921,
+          "margin": 4067
+        },
+        {
+          "date": "2025-11-14",
+          "revenue": 51607,
+          "cost": 41191,
+          "margin": 10416
+        },
+        {
+          "date": "2025-11-15",
+          "revenue": 12453,
+          "cost": 10902,
+          "margin": 1551
+        },
+        {
+          "date": "2025-11-16",
+          "revenue": 50489,
+          "cost": 39778,
+          "margin": 10711
+        },
+        {
+          "date": "2025-11-17",
+          "revenue": 14924,
+          "cost": 12240,
+          "margin": 2684
+        },
+        {
+          "date": "2025-11-18",
+          "revenue": 56898,
+          "cost": 45188,
+          "margin": 11710
+        },
+        {
+          "date": "2025-11-19",
+          "revenue": 57036,
+          "cost": 46761,
+          "margin": 10275
+        },
+        {
+          "date": "2025-11-20",
+          "revenue": 21342,
+          "cost": 16777,
+          "margin": 4565
+        },
+        {
+          "date": "2025-11-21",
+          "revenue": 31429,
+          "cost": 26993,
+          "margin": 4436
+        },
+        {
+          "date": "2025-11-22",
+          "revenue": 12052,
+          "cost": 9039,
+          "margin": 3013
+        },
+        {
+          "date": "2025-11-23",
+          "revenue": 16828,
+          "cost": 13621,
+          "margin": 3207
+        },
+        {
+          "date": "2025-11-24",
+          "revenue": 15079,
+          "cost": 11676,
+          "margin": 3403
+        },
+        {
+          "date": "2025-11-25",
+          "revenue": 34940,
+          "cost": 28134,
+          "margin": 6806
+        },
+        {
+          "date": "2025-11-26",
+          "revenue": 28456,
+          "cost": 23774,
+          "margin": 4682
+        },
+        {
+          "date": "2025-11-27",
+          "revenue": 7336,
+          "cost": 6082,
+          "margin": 1254
+        },
+        {
+          "date": "2025-11-28",
+          "revenue": 31341,
+          "cost": 24101,
+          "margin": 7240
+        },
+        {
+          "date": "2025-11-29",
+          "revenue": 11695,
+          "cost": 9091,
+          "margin": 2604
+        },
+        {
+          "date": "2025-11-30",
+          "revenue": 11133,
+          "cost": 9214,
+          "margin": 1919
+        },
+        {
+          "date": "2025-12-01",
+          "revenue": 34211,
+          "cost": 27391,
+          "margin": 6820
+        },
+        {
+          "date": "2025-12-02",
+          "revenue": 43135,
+          "cost": 34358,
+          "margin": 8777
+        },
+        {
+          "date": "2025-12-03",
+          "revenue": 66685,
+          "cost": 57832,
+          "margin": 8853
+        },
+        {
+          "date": "2025-12-04",
+          "revenue": 23038,
+          "cost": 17520,
+          "margin": 5518
+        },
+        {
+          "date": "2025-12-05",
+          "revenue": 50829,
+          "cost": 41668,
+          "margin": 9161
+        },
+        {
+          "date": "2025-12-06",
+          "revenue": 13151,
+          "cost": 9875,
+          "margin": 3276
+        },
+        {
+          "date": "2025-12-07",
+          "revenue": 2223,
+          "cost": 1745,
+          "margin": 478
+        },
+        {
+          "date": "2025-12-08",
+          "revenue": 18654,
+          "cost": 16929,
+          "margin": 1725
+        },
+        {
+          "date": "2025-12-10",
+          "revenue": 14252,
+          "cost": 10995,
+          "margin": 3257
+        }
+      ],
+      "byCustomer": [
+        {
+          "customerId": "16",
+          "customerName": "Manufacturing Customer 14",
+          "revenue": 81555,
+          "margin": 14461,
+          "loadCount": 12
+        },
+        {
+          "customerId": "52",
+          "customerName": "Retail Customer 50",
+          "revenue": 65096,
+          "margin": 10675,
+          "loadCount": 7
+        },
+        {
+          "customerId": "4",
+          "customerName": "Chemical Customer 2",
+          "revenue": 51702,
+          "margin": 10552,
+          "loadCount": 9
+        },
+        {
+          "customerId": "19",
+          "customerName": "Retail Customer 17",
+          "revenue": 55962,
+          "margin": 10500,
+          "loadCount": 6
+        },
+        {
+          "customerId": "41",
+          "customerName": "Construction Customer 39",
+          "revenue": 45321,
+          "margin": 10313,
+          "loadCount": 5
+        },
+        {
+          "customerId": "24",
+          "customerName": "Paper & Packaging Customer 22",
+          "revenue": 56666,
+          "margin": 10279,
+          "loadCount": 8
+        },
+        {
+          "customerId": "7",
+          "customerName": "Construction Customer 5",
+          "revenue": 61980,
+          "margin": 9867,
+          "loadCount": 8
+        },
+        {
+          "customerId": "17",
+          "customerName": "Manufacturing Customer 15",
+          "revenue": 50170,
+          "margin": 9662,
+          "loadCount": 7
+        },
+        {
+          "customerId": "15",
+          "customerName": "Manufacturing Customer 13",
+          "revenue": 54247,
+          "margin": 9527,
+          "loadCount": 8
+        },
+        {
+          "customerId": "12",
+          "customerName": "Pharmaceuticals Customer 10",
+          "revenue": 60105,
+          "margin": 9383,
+          "loadCount": 8
+        },
+        {
+          "customerId": "13",
+          "customerName": "Automotive Customer 11",
+          "revenue": 46431,
+          "margin": 9118,
+          "loadCount": 5
+        },
+        {
+          "customerId": "31",
+          "customerName": "Retail Customer 29",
+          "revenue": 49677,
+          "margin": 9021,
+          "loadCount": 9
+        },
+        {
+          "customerId": "29",
+          "customerName": "Construction Customer 27",
+          "revenue": 45964,
+          "margin": 8820,
+          "loadCount": 7
+        },
+        {
+          "customerId": "36",
+          "customerName": "Automotive Customer 34",
+          "revenue": 51299,
+          "margin": 8816,
+          "loadCount": 8
+        },
+        {
+          "customerId": "35",
+          "customerName": "Food & Beverage Customer 33",
+          "revenue": 62019,
+          "margin": 8647,
+          "loadCount": 7
+        },
+        {
+          "customerId": "50",
+          "customerName": "Chemical Customer 48",
+          "revenue": 43784,
+          "margin": 8156,
+          "loadCount": 7
+        },
+        {
+          "customerId": "38",
+          "customerName": "Electronics Customer 36",
+          "revenue": 42570,
+          "margin": 8047,
+          "loadCount": 7
+        },
+        {
+          "customerId": "25",
+          "customerName": "Pharmaceuticals Customer 23",
+          "revenue": 32573,
+          "margin": 7499,
+          "loadCount": 6
+        },
+        {
+          "customerId": "27",
+          "customerName": "Electronics Customer 25",
+          "revenue": 48046,
+          "margin": 7459,
+          "loadCount": 7
+        },
+        {
+          "customerId": "11",
+          "customerName": "Chemical Customer 9",
+          "revenue": 29793,
+          "margin": 7310,
+          "loadCount": 5
+        },
+        {
+          "customerId": "44",
+          "customerName": "Agriculture Customer 42",
+          "revenue": 32138,
+          "margin": 7278,
+          "loadCount": 4
+        },
+        {
+          "customerId": "49",
+          "customerName": "Construction Customer 47",
+          "revenue": 42164,
+          "margin": 7036,
+          "loadCount": 6
+        },
+        {
+          "customerId": "30",
+          "customerName": "Electronics Customer 28",
+          "revenue": 42908,
+          "margin": 7000,
+          "loadCount": 8
+        },
+        {
+          "customerId": "9",
+          "customerName": "Electronics Customer 7",
+          "revenue": 37946,
+          "margin": 6887,
+          "loadCount": 8
+        },
+        {
+          "customerId": "20",
+          "customerName": "Construction Customer 18",
+          "revenue": 39476,
+          "margin": 6856,
+          "loadCount": 5
+        },
+        {
+          "customerId": "21",
+          "customerName": "Chemical Customer 19",
+          "revenue": 34986,
+          "margin": 6792,
+          "loadCount": 5
+        },
+        {
+          "customerId": "32",
+          "customerName": "Construction Customer 30",
+          "revenue": 29350,
+          "margin": 6599,
+          "loadCount": 6
+        },
+        {
+          "customerId": "23",
+          "customerName": "Retail Customer 21",
+          "revenue": 38791,
+          "margin": 6503,
+          "loadCount": 6
+        },
+        {
+          "customerId": "37",
+          "customerName": "Retail Customer 35",
+          "revenue": 37401,
+          "margin": 6449,
+          "loadCount": 5
+        },
+        {
+          "customerId": "46",
+          "customerName": "Construction Customer 44",
+          "revenue": 33039,
+          "margin": 6331,
+          "loadCount": 4
+        },
+        {
+          "customerId": "28",
+          "customerName": "Retail Customer 26",
+          "revenue": 32083,
+          "margin": 6225,
+          "loadCount": 4
+        },
+        {
+          "customerId": "48",
+          "customerName": "Construction Customer 46",
+          "revenue": 34080,
+          "margin": 6161,
+          "loadCount": 4
+        },
+        {
+          "customerId": "51",
+          "customerName": "Paper & Packaging Customer 49",
+          "revenue": 40205,
+          "margin": 6156,
+          "loadCount": 8
+        },
+        {
+          "customerId": "8",
+          "customerName": "Electronics Customer 6",
+          "revenue": 31638,
+          "margin": 5748,
+          "loadCount": 4
+        },
+        {
+          "customerId": "14",
+          "customerName": "Automotive Customer 12",
+          "revenue": 33695,
+          "margin": 5691,
+          "loadCount": 5
+        },
+        {
+          "customerId": "47",
+          "customerName": "Food & Beverage Customer 45",
+          "revenue": 33188,
+          "margin": 5508,
+          "loadCount": 5
+        },
+        {
+          "customerId": "26",
+          "customerName": "Food & Beverage Customer 24",
+          "revenue": 36469,
+          "margin": 5469,
+          "loadCount": 4
+        },
+        {
+          "customerId": "10",
+          "customerName": "Paper & Packaging Customer 8",
+          "revenue": 21277,
+          "margin": 4374,
+          "loadCount": 3
+        },
+        {
+          "customerId": "39",
+          "customerName": "Automotive Customer 37",
+          "revenue": 25818,
+          "margin": 4249,
+          "loadCount": 3
+        },
+        {
+          "customerId": "6",
+          "customerName": "Agriculture Customer 4",
+          "revenue": 15537,
+          "margin": 3736,
+          "loadCount": 2
+        },
+        {
+          "customerId": "43",
+          "customerName": "Construction Customer 41",
+          "revenue": 16534,
+          "margin": 3662,
+          "loadCount": 4
+        },
+        {
+          "customerId": "33",
+          "customerName": "Manufacturing Customer 31",
+          "revenue": 16052,
+          "margin": 3290,
+          "loadCount": 2
+        },
+        {
+          "customerId": "22",
+          "customerName": "Construction Customer 20",
+          "revenue": 27037,
+          "margin": 3260,
+          "loadCount": 5
+        },
+        {
+          "customerId": "42",
+          "customerName": "Automotive Customer 40",
+          "revenue": 17675,
+          "margin": 3147,
+          "loadCount": 3
+        },
+        {
+          "customerId": "18",
+          "customerName": "Automotive Customer 16",
+          "revenue": 15543,
+          "margin": 2748,
+          "loadCount": 3
+        },
+        {
+          "customerId": "45",
+          "customerName": "Construction Customer 43",
+          "revenue": 10643,
+          "margin": 2344,
+          "loadCount": 1
+        },
+        {
+          "customerId": "34",
+          "customerName": "Chemical Customer 32",
+          "revenue": 11272,
+          "margin": 2119,
+          "loadCount": 2
+        },
+        {
+          "customerId": "5",
+          "customerName": "Manufacturing Customer 3",
+          "revenue": 7920,
+          "margin": 1862,
+          "loadCount": 3
+        },
+        {
+          "customerId": "40",
+          "customerName": "Construction Customer 38",
+          "revenue": 6225,
+          "margin": 1627,
+          "loadCount": 1
+        },
+        {
+          "customerId": "3",
+          "customerName": "Construction Customer 1",
+          "revenue": 9752,
+          "margin": 1280,
+          "loadCount": 2
+        }
+      ],
+      "byOffice": [
+        {
+          "officeId": "1",
+          "officeName": "Dallas Branch",
+          "revenue": 1845802,
+          "margin": 334499,
+          "loadCount": 271
+        }
+      ]
+    },
+    "test_description": "P&L with officeId param - should log requested officeId in api_request",
+    "expected_logs": [
+      "api_request with officeId=1"
+    ],
+    "timestamp": "2025-12-07T03:35:49.576342"
+  },
+  {
+    "endpoint": "/api/logistics/freight-pnl?from=2025-11-30&to=2025-12-07",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "summary": {
+        "totalRevenue": 648712,
+        "totalCost": 527071,
+        "totalMargin": 121641,
+        "marginPct": 18.751156137083942,
+        "loadCount": 90,
+        "avgMarginPerLoad": 1351.5666666666666,
+        "avgRpm": 50.153131176861606
+      },
+      "byDay": [
+        {
+          "date": "2025-11-30",
+          "revenue": 120425,
+          "cost": 98443,
+          "margin": 21982
+        },
+        {
+          "date": "2025-12-01",
+          "revenue": 80561,
+          "cost": 64367,
+          "margin": 16194
+        },
+        {
+          "date": "2025-12-02",
+          "revenue": 70769,
+          "cost": 57834,
+          "margin": 12935
+        },
+        {
+          "date": "2025-12-03",
+          "revenue": 91783,
+          "cost": 75072,
+          "margin": 16711
+        },
+        {
+          "date": "2025-12-04",
+          "revenue": 136404,
+          "cost": 111030,
+          "margin": 25374
+        },
+        {
+          "date": "2025-12-05",
+          "revenue": 72398,
+          "cost": 58445,
+          "margin": 13953
+        },
+        {
+          "date": "2025-12-06",
+          "revenue": 76372,
+          "cost": 61880,
+          "margin": 14492
+        }
+      ],
+      "byCustomer": [
+        {
+          "customerId": "31",
+          "customerName": "Retail Customer 29",
+          "revenue": 39157,
+          "margin": 7589,
+          "loadCount": 5
+        },
+        {
+          "customerId": "51",
+          "customerName": "Paper & Packaging Customer 49",
+          "revenue": 35220,
+          "margin": 5745,
+          "loadCount": 4
+        },
+        {
+          "customerId": "27",
+          "customerName": "Electronics Customer 25",
+          "revenue": 31150,
+          "margin": 5603,
+          "loadCount": 3
+        },
+        {
+          "customerId": "18",
+          "customerName": "Automotive Customer 16",
+          "revenue": 22932,
+          "margin": 5349,
+          "loadCount": 4
+        },
+        {
+          "customerId": "9",
+          "customerName": "Electronics Customer 7",
+          "revenue": 22404,
+          "margin": 5034,
+          "loadCount": 3
+        },
+        {
+          "customerId": "16",
+          "customerName": "Manufacturing Customer 14",
+          "revenue": 24728,
+          "margin": 4825,
+          "loadCount": 3
+        },
+        {
+          "customerId": "30",
+          "customerName": "Electronics Customer 28",
+          "revenue": 22115,
+          "margin": 4348,
+          "loadCount": 3
+        },
+        {
+          "customerId": "15",
+          "customerName": "Manufacturing Customer 13",
+          "revenue": 18448,
+          "margin": 4286,
+          "loadCount": 3
+        },
+        {
+          "customerId": "7",
+          "customerName": "Construction Customer 5",
+          "revenue": 24787,
+          "margin": 4280,
+          "loadCount": 3
+        },
+        {
+          "customerId": "3",
+          "customerName": "Construction Customer 1",
+          "revenue": 15944,
+          "margin": 3979,
+          "loadCount": 2
+        },
+        {
+          "customerId": "29",
+          "customerName": "Construction Customer 27",
+          "revenue": 15733,
+          "margin": 3735,
+          "loadCount": 2
+        },
+        {
+          "customerId": "25",
+          "customerName": "Pharmaceuticals Customer 23",
+          "revenue": 18900,
+          "margin": 3637,
+          "loadCount": 2
+        },
+        {
+          "customerId": "40",
+          "customerName": "Construction Customer 38",
+          "revenue": 20795,
+          "margin": 3461,
+          "loadCount": 2
+        },
+        {
+          "customerId": "37",
+          "customerName": "Retail Customer 35",
+          "revenue": 12347,
+          "margin": 3390,
+          "loadCount": 2
+        },
+        {
+          "customerId": "49",
+          "customerName": "Construction Customer 47",
+          "revenue": 19252,
+          "margin": 3244,
+          "loadCount": 3
+        },
+        {
+          "customerId": "14",
+          "customerName": "Automotive Customer 12",
+          "revenue": 15203,
+          "margin": 3132,
+          "loadCount": 2
+        },
+        {
+          "customerId": "20",
+          "customerName": "Construction Customer 18",
+          "revenue": 15056,
+          "margin": 3111,
+          "loadCount": 3
+        },
+        {
+          "customerId": "33",
+          "customerName": "Manufacturing Customer 31",
+          "revenue": 11246,
+          "margin": 2957,
+          "loadCount": 1
+        },
+        {
+          "customerId": "52",
+          "customerName": "Retail Customer 50",
+          "revenue": 11491,
+          "margin": 2845,
+          "loadCount": 1
+        },
+        {
+          "customerId": "17",
+          "customerName": "Manufacturing Customer 15",
+          "revenue": 13787,
+          "margin": 2771,
+          "loadCount": 3
+        },
+        {
+          "customerId": "12",
+          "customerName": "Pharmaceuticals Customer 10",
+          "revenue": 14188,
+          "margin": 2718,
+          "loadCount": 2
+        },
+        {
+          "customerId": "42",
+          "customerName": "Automotive Customer 40",
+          "revenue": 20305,
+          "margin": 2701,
+          "loadCount": 2
+        },
+        {
+          "customerId": "22",
+          "customerName": "Construction Customer 20",
+          "revenue": 18631,
+          "margin": 2683,
+          "loadCount": 3
+        },
+        {
+          "customerId": "23",
+          "customerName": "Retail Customer 21",
+          "revenue": 16909,
+          "margin": 2417,
+          "loadCount": 2
+        },
+        {
+          "customerId": "46",
+          "customerName": "Construction Customer 44",
+          "revenue": 11505,
+          "margin": 2225,
+          "loadCount": 1
+        },
+        {
+          "customerId": "34",
+          "customerName": "Chemical Customer 32",
+          "revenue": 11272,
+          "margin": 2119,
+          "loadCount": 2
+        },
+        {
+          "customerId": "45",
+          "customerName": "Construction Customer 43",
+          "revenue": 13755,
+          "margin": 2108,
+          "loadCount": 2
+        },
+        {
+          "customerId": "13",
+          "customerName": "Automotive Customer 11",
+          "revenue": 10941,
+          "margin": 1956,
+          "loadCount": 1
+        },
+        {
+          "customerId": "8",
+          "customerName": "Electronics Customer 6",
+          "revenue": 11037,
+          "margin": 1918,
+          "loadCount": 2
+        },
+        {
+          "customerId": "47",
+          "customerName": "Food & Beverage Customer 45",
+          "revenue": 11829,
+          "margin": 1790,
+          "loadCount": 2
+        },
+        {
+          "customerId": "6",
+          "customerName": "Agriculture Customer 4",
+          "revenue": 5978,
+          "margin": 1630,
+          "loadCount": 1
+        },
+        {
+          "customerId": "28",
+          "customerName": "Retail Customer 26",
+          "revenue": 9697,
+          "margin": 1495,
+          "loadCount": 1
+        },
+        {
+          "customerId": "44",
+          "customerName": "Agriculture Customer 42",
+          "revenue": 6529,
+          "margin": 1475,
+          "loadCount": 1
+        },
+        {
+          "customerId": "35",
+          "customerName": "Food & Beverage Customer 33",
+          "revenue": 10334,
+          "margin": 1444,
+          "loadCount": 1
+        },
+        {
+          "customerId": "36",
+          "customerName": "Automotive Customer 34",
+          "revenue": 7337,
+          "margin": 1432,
+          "loadCount": 1
+        },
+        {
+          "customerId": "38",
+          "customerName": "Electronics Customer 36",
+          "revenue": 11453,
+          "margin": 1311,
+          "loadCount": 1
+        },
+        {
+          "customerId": "41",
+          "customerName": "Construction Customer 39",
+          "revenue": 8166,
+          "margin": 1159,
+          "loadCount": 1
+        },
+        {
+          "customerId": "32",
+          "customerName": "Construction Customer 30",
+          "revenue": 5531,
+          "margin": 1008,
+          "loadCount": 2
+        },
+        {
+          "customerId": "26",
+          "customerName": "Food & Beverage Customer 24",
+          "revenue": 5151,
+          "margin": 875,
+          "loadCount": 1
+        },
+        {
+          "customerId": "21",
+          "customerName": "Chemical Customer 19",
+          "revenue": 7950,
+          "margin": 837,
+          "loadCount": 1
+        },
+        {
+          "customerId": "24",
+          "customerName": "Paper & Packaging Customer 22",
+          "revenue": 6794,
+          "margin": 824,
+          "loadCount": 2
+        },
+        {
+          "customerId": "50",
+          "customerName": "Chemical Customer 48",
+          "revenue": 4266,
+          "margin": 810,
+          "loadCount": 1
+        },
+        {
+          "customerId": "19",
+          "customerName": "Retail Customer 17",
+          "revenue": 4786,
+          "margin": 711,
+          "loadCount": 1
+        },
+        {
+          "customerId": "10",
+          "customerName": "Paper & Packaging Customer 8",
+          "revenue": 1822,
+          "margin": 382,
+          "loadCount": 1
+        },
+        {
+          "customerId": "5",
+          "customerName": "Manufacturing Customer 3",
+          "revenue": 1851,
+          "margin": 292,
+          "loadCount": 1
+        }
+      ],
+      "byOffice": [
+        {
+          "officeId": "3",
+          "officeName": "Chicago Office",
+          "revenue": 188923,
+          "margin": 33982,
+          "loadCount": 27
+        },
+        {
+          "officeId": "7",
+          "officeName": "Los Angeles Office",
+          "revenue": 167028,
+          "margin": 33956,
+          "loadCount": 21
+        },
+        {
+          "officeId": "1",
+          "officeName": "Dallas Branch",
+          "revenue": 152128,
+          "margin": 28641,
+          "loadCount": 22
+        },
+        {
+          "officeId": "2",
+          "officeName": "Atlanta HQ",
+          "revenue": 140633,
+          "margin": 25062,
+          "loadCount": 20
+        }
+      ]
+    },
+    "test_description": "P&L with date range - should log dateFrom/dateTo in api_request",
+    "expected_logs": [
+      "api_request with dateFrom",
+      "api_request with dateTo"
+    ],
+    "timestamp": "2025-12-07T03:35:49.596626"
+  },
+  {
+    "endpoint": "/api/freight/loads/update",
+    "method": "GET",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Wrong method - should return 405",
+    "expected_logs": [],
+    "timestamp": "2025-12-07T03:35:49.726885"
+  },
+  {
+    "endpoint": "/api/freight/loads/update",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "Invalid load id"
+    },
+    "test_description": "Invalid load ID - should return 400",
+    "expected_logs": [],
+    "timestamp": "2025-12-07T03:35:49.746300"
+  },
+  {
+    "endpoint": "/api/freight/loads/update",
+    "method": "POST",
+    "status_code": 404,
+    "response": {
+      "error": "Load not found"
+    },
+    "test_description": "Non-existent load - should return 404",
+    "expected_logs": [],
+    "timestamp": "2025-12-07T03:35:49.760652"
+  },
+  {
+    "endpoint": "/api/freight/loads/update",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "load": {
+        "id": 1,
+        "ventureId": 1,
+        "officeId": null,
+        "tmsLoadId": null,
+        "reference": "SX-NEW-PHI-10000",
+        "shipperName": null,
+        "shipperRef": null,
+        "customerName": null,
+        "customerId": 1,
+        "pickupCity": "New York",
+        "pickupState": "NY",
+        "pickupZip": null,
+        "pickupDate": "2025-11-24T02:00:23.177Z",
+        "dropCity": "Philadelphia",
+        "dropState": "PA",
+        "dropZip": null,
+        "dropDate": "2025-11-25T02:00:23.177Z",
+        "scheduledPickupAt": null,
+        "scheduledDeliveryAt": null,
+        "actualPickupAt": null,
+        "actualDeliveryAt": null,
+        "equipmentType": "Dry Van",
+        "weightLbs": 12732,
+        "rate": null,
+        "currency": "USD",
+        "loadStatus": "FELL_OFF",
+        "atRiskFlag": true,
+        "lostAt": null,
+        "fellOffAt": "2025-11-24T02:00:23.177Z",
+        "lostReasonId": null,
+        "status": null,
+        "lostReason": null,
+        "dormantReason": null,
+        "notes": "Updated notes for logging test",
+        "carrierId": 1,
+        "createdById": null,
+        "isTest": true,
+        "createdAt": "2025-11-22T02:00:23.177Z",
+        "updatedAt": "2025-12-07T03:35:49.773Z",
+        "buyRate": null,
+        "sellRate": null,
+        "shipperId": 1,
+        "lostReasonCategory": null,
+        "billAmount": 3339,
+        "costAmount": 2554,
+        "marginAmount": 785,
+        "marginPercentage": 24,
+        "arInvoiceDate": null,
+        "apInvoiceDate": null,
+        "dispatchDate": null,
+        "arPaymentStatus": null,
+        "arDatePaid": null,
+        "arBalanceDue": null,
+        "billingDate": null,
+        "miles": null,
+        "rpm": null,
+        "lineHaulRevenue": null,
+        "fuelRevenue": null,
+        "accessorialRevenue": null,
+        "otherRevenue": null,
+        "lineHaulCost": null,
+        "fuelCost": null,
+        "lumperCost": null,
+        "tollsCost": null,
+        "detentionCost": null,
+        "otherCost": null,
+        "createdByTmsName": null,
+        "salesAgentAliasId": null,
+        "csrAliasId": null,
+        "dispatcherAliasId": null,
+        "venture": {
+          "id": 1,
+          "name": "Siox Logistics"
+        },
+        "office": null,
+        "shipper": {
+          "id": 1,
+          "name": "Walmart DC"
+        },
+        "carrier": {
+          "id": 1,
+          "name": "Swift Transportation"
+        },
+        "customer": {
+          "id": 1,
+          "name": "Amazon Fulfillment"
+        }
+      }
+    },
+    "test_description": "Valid load update - should log audit_event with metadata.ventureId",
+    "expected_logs": [
+      "audit_event with domain=freight",
+      "audit_event with metadata.ventureId"
+    ],
+    "timestamp": "2025-12-07T03:35:49.781503"
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "summary": {
+        "totalTalkTimeMin": 0,
+        "totalHandledCalls": 0,
+        "totalOutboundCalls": 0,
+        "totalLeadsCreated": 0,
+        "totalDemosBooked": 0,
+        "totalSalesClosed": 0,
+        "totalRevenue": 0,
+        "totalCost": 0,
+        "connectRate": 0,
+        "conversionRate": 0,
+        "avgQaScore": 0,
+        "roi": 0
+      },
+      "rows": []
+    },
+    "test_description": "BPO KPI query - should log api_request with ventureId in user context",
+    "expected_logs": [
+      "api_request with ventureId in user context"
+    ],
+    "timestamp": "2025-12-07T03:35:49.967638"
+  },
+  {
+    "endpoint": "/api/bpo/kpi?ventureId=1",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "summary": {
+        "totalTalkTimeMin": 0,
+        "totalHandledCalls": 0,
+        "totalOutboundCalls": 0,
+        "totalLeadsCreated": 0,
+        "totalDemosBooked": 0,
+        "totalSalesClosed": 0,
+        "totalRevenue": 0,
+        "totalCost": 0,
+        "connectRate": 0,
+        "conversionRate": 0,
+        "avgQaScore": 0,
+        "roi": 0
+      },
+      "rows": []
+    },
+    "test_description": "BPO KPI with ventureId param - should log venture context",
+    "expected_logs": [
+      "api_request with ventureId context"
+    ],
+    "timestamp": "2025-12-07T03:35:49.983027"
+  },
+  {
+    "endpoint": "/api/bpo/kpi/upsert",
+    "method": "GET",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Wrong method for upsert - should return 405",
+    "expected_logs": [],
+    "timestamp": "2025-12-07T03:35:50.047084"
+  },
+  {
+    "endpoint": "/api/bpo/kpi/upsert",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "campaignId and date are required"
+    },
+    "test_description": "Missing required data - should return 400",
+    "expected_logs": [],
+    "timestamp": "2025-12-07T03:35:50.063848"
+  },
+  {
+    "endpoint": "/api/bpo/kpi/upsert",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "kpi": {
+        "id": 903,
+        "campaignId": 1,
+        "date": "2025-12-07T00:00:00.000Z",
+        "talkTimeMin": 0,
+        "handledCalls": 50,
+        "outboundCalls": 0,
+        "leadsCreated": 10,
+        "demosBooked": 0,
+        "salesClosed": 0,
+        "fteCount": null,
+        "avgQaScore": null,
+        "revenue": 0,
+        "cost": 0,
+        "isTest": false,
+        "createdAt": "2025-12-07T03:35:50.075Z"
+      }
+    },
+    "test_description": "Valid BPO KPI upsert - should log audit_event with venture context",
+    "expected_logs": [
+      "audit_event with domain=bpo",
+      "audit_event with campaignId context"
+    ],
+    "timestamp": "2025-12-07T03:35:50.077764"
+  },
+  {
+    "endpoint": "/api/hotels/disputes",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "disputes": [
+        {
+          "id": 3,
+          "propertyId": 1,
+          "reservationId": null,
+          "folioNumber": null,
+          "type": "CHARGEBACK",
+          "channel": "OTA",
+          "sourceRef": null,
+          "guestName": "Permission Test Guest",
+          "guestEmail": null,
+          "guestPhone": null,
+          "postedDate": null,
+          "stayFrom": null,
+          "stayTo": null,
+          "currency": "USD",
+          "disputedAmount": 50,
+          "originalAmount": null,
+          "status": "OPEN",
+          "reason": "Testing permission logic",
+          "internalNotes": null,
+          "evidenceDueDate": null,
+          "submittedDate": null,
+          "decisionDate": null,
+          "outcomeNotes": null,
+          "ownerId": null,
+          "createdById": 1,
+          "createdAt": "2025-12-07T02:27:09.216Z",
+          "updatedAt": "2025-12-07T02:27:09.216Z",
+          "property": {
+            "id": 1,
+            "name": "Best Western Inn Miami",
+            "code": "MIA1",
+            "ventureId": 17,
+            "brand": null,
+            "rooms": 144,
+            "city": "Miami",
+            "state": "FL",
+            "country": null,
+            "status": "ACTIVE",
+            "isTest": false,
+            "createdAt": "2025-12-07T02:26:39.164Z",
+            "updatedAt": "2025-12-07T02:26:39.164Z"
+          },
+          "owner": null
+        },
+        {
+          "id": 2,
+          "propertyId": 1,
+          "reservationId": null,
+          "folioNumber": null,
+          "type": "CHARGEBACK",
+          "channel": "OTA",
+          "sourceRef": null,
+          "guestName": "Test Guest",
+          "guestEmail": null,
+          "guestPhone": null,
+          "postedDate": null,
+          "stayFrom": null,
+          "stayTo": null,
+          "currency": "USD",
+          "disputedAmount": 100,
+          "originalAmount": 120,
+          "status": "OPEN",
+          "reason": "Test dispute for P2.5 normalization testing",
+          "internalNotes": null,
+          "evidenceDueDate": null,
+          "submittedDate": null,
+          "decisionDate": null,
+          "outcomeNotes": null,
+          "ownerId": null,
+          "createdById": 1,
+          "createdAt": "2025-12-07T02:26:54.748Z",
+          "updatedAt": "2025-12-07T02:26:54.748Z",
+          "property": {
+            "id": 1,
+            "name": "Best Western Inn Miami",
+            "code": "MIA1",
+            "ventureId": 17,
+            "brand": null,
+            "rooms": 144,
+            "city": "Miami",
+            "state": "FL",
+            "country": null,
+            "status": "ACTIVE",
+            "isTest": false,
+            "createdAt": "2025-12-07T02:26:39.164Z",
+            "updatedAt": "2025-12-07T02:26:39.164Z"
+          },
+          "owner": null
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 2,
+      "totalPages": 1
+    },
+    "test_description": "Hotels disputes list - should log audit_event with proper domain/action",
+    "expected_logs": [
+      "audit_event with domain context"
+    ],
+    "timestamp": "2025-12-07T03:35:50.196821"
+  },
+  {
+    "endpoint": "/api/hotels/disputes?status=OPEN&includeTest=false",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "disputes": [
+        {
+          "id": 3,
+          "propertyId": 1,
+          "reservationId": null,
+          "folioNumber": null,
+          "type": "CHARGEBACK",
+          "channel": "OTA",
+          "sourceRef": null,
+          "guestName": "Permission Test Guest",
+          "guestEmail": null,
+          "guestPhone": null,
+          "postedDate": null,
+          "stayFrom": null,
+          "stayTo": null,
+          "currency": "USD",
+          "disputedAmount": 50,
+          "originalAmount": null,
+          "status": "OPEN",
+          "reason": "Testing permission logic",
+          "internalNotes": null,
+          "evidenceDueDate": null,
+          "submittedDate": null,
+          "decisionDate": null,
+          "outcomeNotes": null,
+          "ownerId": null,
+          "createdById": 1,
+          "createdAt": "2025-12-07T02:27:09.216Z",
+          "updatedAt": "2025-12-07T02:27:09.216Z",
+          "property": {
+            "id": 1,
+            "name": "Best Western Inn Miami",
+            "code": "MIA1",
+            "ventureId": 17,
+            "brand": null,
+            "rooms": 144,
+            "city": "Miami",
+            "state": "FL",
+            "country": null,
+            "status": "ACTIVE",
+            "isTest": false,
+            "createdAt": "2025-12-07T02:26:39.164Z",
+            "updatedAt": "2025-12-07T02:26:39.164Z"
+          },
+          "owner": null
+        },
+        {
+          "id": 2,
+          "propertyId": 1,
+          "reservationId": null,
+          "folioNumber": null,
+          "type": "CHARGEBACK",
+          "channel": "OTA",
+          "sourceRef": null,
+          "guestName": "Test Guest",
+          "guestEmail": null,
+          "guestPhone": null,
+          "postedDate": null,
+          "stayFrom": null,
+          "stayTo": null,
+          "currency": "USD",
+          "disputedAmount": 100,
+          "originalAmount": 120,
+          "status": "OPEN",
+          "reason": "Test dispute for P2.5 normalization testing",
+          "internalNotes": null,
+          "evidenceDueDate": null,
+          "submittedDate": null,
+          "decisionDate": null,
+          "outcomeNotes": null,
+          "ownerId": null,
+          "createdById": 1,
+          "createdAt": "2025-12-07T02:26:54.748Z",
+          "updatedAt": "2025-12-07T02:26:54.748Z",
+          "property": {
+            "id": 1,
+            "name": "Best Western Inn Miami",
+            "code": "MIA1",
+            "ventureId": 17,
+            "brand": null,
+            "rooms": 144,
+            "city": "Miami",
+            "state": "FL",
+            "country": null,
+            "status": "ACTIVE",
+            "isTest": false,
+            "createdAt": "2025-12-07T02:26:39.164Z",
+            "updatedAt": "2025-12-07T02:26:39.164Z"
+          },
+          "owner": null
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 2,
+      "totalPages": 1
+    },
+    "test_description": "Disputes with filters - should log venture/office context from user",
+    "expected_logs": [
+      "venture/office context from user ventures/offices"
+    ],
+    "timestamp": "2025-12-07T03:35:50.221993"
+  },
+  {
+    "endpoint": "/api/hotels/disputes/1",
+    "method": "POST",
+    "status_code": 405,
+    "response": {
+      "raw_response": ""
+    },
+    "test_description": "Wrong method for dispute detail - should return 405",
+    "expected_logs": [],
+    "timestamp": "2025-12-07T03:35:50.284522"
+  },
+  {
+    "endpoint": "/api/hotels/disputes/invalid",
+    "method": "GET",
+    "status_code": 400,
+    "response": {
+      "error": "Invalid ID",
+      "detail": "id must be a positive integer"
+    },
+    "test_description": "Invalid dispute ID - should return 400",
+    "expected_logs": [],
+    "timestamp": "2025-12-07T03:35:50.304074"
+  },
+  {
+    "endpoint": "/api/hotels/disputes/1",
+    "method": "PUT",
+    "status_code": 500,
+    "response": {
+      "error": "Failed to update dispute",
+      "detail": "\nInvalid `prisma.hotelDispute.update()` invocation:\n\n\nAn operation failed because it depends on one or more records that were required but not found. No record was found for an update."
+    },
+    "test_description": "Valid dispute update - should log audit_event with correct domain/action",
+    "expected_logs": [
+      "audit_event with domain=hotels",
+      "audit_event with action=DISPUTE_UPDATE"
+    ],
+    "timestamp": "2025-12-07T03:35:50.443454"
+  },
+  {
+    "endpoint": "/api/ventures",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 6,
+        "name": "Chokshi Hotels",
+        "type": "HOSPITALITY",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 2,
+        "name": "MB Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 4,
+        "name": "Rank Me Now",
+        "type": "SAAS",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 5,
+        "name": "RevenelX",
+        "type": "BPO",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 1,
+        "name": "Siox Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 3,
+        "name": "Siox Transports",
+        "type": "LOGISTICS",
+        "logisticsRole": "CARRIER",
+        "offices": [],
+        "hotels": []
+      }
+    ],
+    "test_description": "Basic ventures list - should log api_request with endpoint='/ventures' and pageSize",
+    "expected_logs": [
+      "api_request with endpoint=/ventures",
+      "api_request with pageSize"
+    ],
+    "timestamp": "2025-12-07T03:35:50.458920"
+  },
+  {
+    "endpoint": "/api/ventures?limit=25",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 6,
+        "name": "Chokshi Hotels",
+        "type": "HOSPITALITY",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 2,
+        "name": "MB Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 4,
+        "name": "Rank Me Now",
+        "type": "SAAS",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 5,
+        "name": "RevenelX",
+        "type": "BPO",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 1,
+        "name": "Siox Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 3,
+        "name": "Siox Transports",
+        "type": "LOGISTICS",
+        "logisticsRole": "CARRIER",
+        "offices": [],
+        "hotels": []
+      }
+    ],
+    "test_description": "Ventures with limit - should log pageSize=25",
+    "expected_logs": [
+      "api_request with pageSize=25"
+    ],
+    "timestamp": "2025-12-07T03:35:50.472435"
+  },
+  {
+    "endpoint": "/api/ventures?limit=500",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 6,
+        "name": "Chokshi Hotels",
+        "type": "HOSPITALITY",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 2,
+        "name": "MB Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 4,
+        "name": "Rank Me Now",
+        "type": "SAAS",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 5,
+        "name": "RevenelX",
+        "type": "BPO",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 1,
+        "name": "Siox Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 3,
+        "name": "Siox Transports",
+        "type": "LOGISTICS",
+        "logisticsRole": "CARRIER",
+        "offices": [],
+        "hotels": []
+      }
+    ],
+    "test_description": "Ventures with high limit - should cap at 200 and log pageSize=200",
+    "expected_logs": [
+      "api_request with pageSize=200"
+    ],
+    "timestamp": "2025-12-07T03:35:50.483049"
+  },
+  {
+    "endpoint": "/api/ventures",
+    "method": "POST",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Wrong method - should return 405",
+    "expected_logs": [],
+    "timestamp": "2025-12-07T03:35:50.490926"
+  }
+]

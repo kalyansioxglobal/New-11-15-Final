@@ -1,0 +1,2052 @@
+{
+  "summary": {
+    "total_categories": 10,
+    "passed_categories": 10,
+    "total_tests": 30,
+    "passed_tests": 30,
+    "overall_success": true
+  },
+  "category_results": [
+    {
+      "category": "RBAC Access Control",
+      "success": true
+    },
+    {
+      "category": "Method Validation",
+      "success": true
+    },
+    {
+      "category": "Default Date Behavior",
+      "success": true
+    },
+    {
+      "category": "Date Range Validation",
+      "success": true
+    },
+    {
+      "category": "Pagination Behavior",
+      "success": true
+    },
+    {
+      "category": "Filtering Parameters",
+      "success": true
+    },
+    {
+      "category": "Search Functionality",
+      "success": true
+    },
+    {
+      "category": "Response Structure",
+      "success": true
+    },
+    {
+      "category": "Combined Filters",
+      "success": true
+    },
+    {
+      "category": "Edge Cases",
+      "success": true
+    }
+  ],
+  "detailed_results": [
+    {
+      "test_name": "RBAC_CEO_ACCESS",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "CEO access in dev mode - should work (auto-auth as CEO)",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "METHOD_VALIDATION_POST",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "POST",
+      "status_code": 405,
+      "expected_status": 405,
+      "response": {
+        "error": "Method not allowed"
+      },
+      "test_description": "Wrong method (POST) - should return 405",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "METHOD_VALIDATION_PUT",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "PUT",
+      "status_code": 405,
+      "expected_status": 405,
+      "response": {
+        "error": "Method not allowed"
+      },
+      "test_description": "Wrong method (PUT) - should return 405",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "METHOD_VALIDATION_DELETE",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "DELETE",
+      "status_code": 405,
+      "expected_status": 405,
+      "response": {
+        "error": "Method not allowed"
+      },
+      "test_description": "Wrong method (DELETE) - should return 405",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "DEFAULT_DATE_WINDOW",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "No date params - should default to last 7 days",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "INVALID_FROM_DATE",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 400,
+      "expected_status": 400,
+      "response": {
+        "error": "Invalid from date",
+        "detail": "from must be a valid date string"
+      },
+      "test_description": "Invalid from date - should return 400",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "INVALID_TO_DATE",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 400,
+      "expected_status": 400,
+      "response": {
+        "error": "Invalid to date",
+        "detail": "to must be a valid date string"
+      },
+      "test_description": "Invalid to date - should return 400",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "RANGE_TOO_LARGE",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 400,
+      "expected_status": 400,
+      "response": {
+        "error": "Date range too large",
+        "detail": "Maximum allowed range is 90 days"
+      },
+      "test_description": "Date range > 90 days - should return 400",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "VALID_DATE_RANGE",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 1,
+        "pageSize": 50,
+        "total": 0,
+        "totalPages": 0
+      },
+      "test_description": "Valid 30-day range - should return 200",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "DEFAULT_PAGINATION",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "Default pagination - should return page=1, pageSize=50",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "CUSTOM_PAGINATION",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 2,
+        "pageSize": 25,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "Custom pagination - page=2, pageSize=25",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "PAGESIZE_LIMIT",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 200,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "PageSize > 200 - should cap at 200",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "DOMAIN_FILTER",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "Domain filter - admin domain only",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "ACTION_FILTER",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 1,
+        "pageSize": 50,
+        "total": 0,
+        "totalPages": 0
+      },
+      "test_description": "Action filter - LOAD_UPDATE actions only",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "USERID_FILTER",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "UserId filter - user ID 1 only",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "VENTUREID_FILTER",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 1,
+        "pageSize": 50,
+        "total": 0,
+        "totalPages": 0
+      },
+      "test_description": "VentureId filter - venture ID 1 only",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "OFFICEID_FILTER",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 1,
+        "pageSize": 50,
+        "total": 0,
+        "totalPages": 0
+      },
+      "test_description": "OfficeId filter - office ID 1 only",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "SEARCH_BY_ACTION",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 1,
+        "totalPages": 1
+      },
+      "test_description": "Search for 'UPDATE' in all fields",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "SEARCH_BY_ENTITY",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 1,
+        "pageSize": 50,
+        "total": 0,
+        "totalPages": 0
+      },
+      "test_description": "Search for 'load' in all fields",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "SEARCH_BY_ROLE",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "Search for 'CEO' in all fields",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "SEARCH_IN_METADATA",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 1,
+        "pageSize": 50,
+        "total": 0,
+        "totalPages": 0
+      },
+      "test_description": "Search for 'changedFields' in metadata JSON",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "EMPTY_SEARCH",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "Empty search - should return all results",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "RESPONSE_STRUCTURE",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "Verify response has correct structure: items, page, pageSize, total, totalPages",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "COMBINED_DOMAIN_ACTION",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 1,
+        "pageSize": 50,
+        "total": 0,
+        "totalPages": 0
+      },
+      "test_description": "Combined domain=freight and action=LOAD_UPDATE",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "COMBINED_SEARCH_PAGINATION",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 10,
+        "total": 1,
+        "totalPages": 1
+      },
+      "test_description": "Combined search + pagination",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "COMBINED_DATE_FILTERS",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 1,
+        "pageSize": 50,
+        "total": 0,
+        "totalPages": 0
+      },
+      "test_description": "Combined date range + domain + userId filters",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "NEGATIVE_PAGE",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "Negative page number - should default to 1",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "ZERO_PAGESIZE",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "Zero pageSize - should default to minimum",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "NON_NUMERIC_USERID",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [
+          {
+            "id": 3,
+            "createdAt": "2025-12-07T05:44:43.732Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_DELETE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:43.730Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 2,
+            "createdAt": "2025-12-07T05:44:24.595Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_UPDATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "after": {
+                "id": 4,
+                "rate": 7.5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "EUR",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": false,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.593Z",
+                "qualificationId": null
+              },
+              "before": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          },
+          {
+            "id": 1,
+            "createdAt": "2025-12-07T05:44:24.522Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_RULE_CREATE",
+            "entityType": "incentiveRule",
+            "entityId": "4",
+            "metadata": {
+              "rule": {
+                "id": 4,
+                "rate": 5,
+                "config": null,
+                "planId": 1,
+                "roleKey": "SALES",
+                "calcType": "FLAT_PER_UNIT",
+                "currency": "USD",
+                "createdAt": "2025-12-07T05:44:24.518Z",
+                "isEnabled": true,
+                "metricKey": "test_metric_created",
+                "updatedAt": "2025-12-07T05:44:24.518Z",
+                "qualificationId": null
+              }
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 3,
+        "totalPages": 1
+      },
+      "test_description": "Non-numeric userId - should be ignored",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    },
+    {
+      "test_name": "LONG_SEARCH_TERM",
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "expected_status": 200,
+      "response": {
+        "items": [],
+        "page": 1,
+        "pageSize": 50,
+        "total": 0,
+        "totalPages": 0
+      },
+      "test_description": "Very long search term - should handle gracefully",
+      "headers": {},
+      "request_body": null,
+      "success": true
+    }
+  ]
+}

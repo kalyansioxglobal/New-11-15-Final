@@ -1,0 +1,121 @@
+{
+  "summary": {
+    "total_tests": 22,
+    "passed_tests": 22,
+    "failed_tests": 0,
+    "success_rate": "100.0%"
+  },
+  "results": [
+    {
+      "test": "Method Validation - POST returns 405",
+      "status": "\u2705 PASS",
+      "details": "Status: 405, Allow header: GET, JSON error: True"
+    },
+    {
+      "test": "Method Validation - PUT returns 405",
+      "status": "\u2705 PASS",
+      "details": "Status: 405, Allow header: GET"
+    },
+    {
+      "test": "Method Validation - DELETE returns 405",
+      "status": "\u2705 PASS",
+      "details": "Status: 405, Allow header: GET"
+    },
+    {
+      "test": "Authentication - Development mode auto-auth",
+      "status": "\u2705 PASS",
+      "details": "Status: 400 (Expected 400 for missing params in dev mode, not 401)"
+    },
+    {
+      "test": "Input Validation - Missing userId returns 400",
+      "status": "\u2705 PASS",
+      "details": "Status: 400, Error: Missing or invalid userId"
+    },
+    {
+      "test": "Input Validation - Missing ventureId returns 400",
+      "status": "\u2705 PASS",
+      "details": "Status: 400, Error: Missing or invalid ventureId"
+    },
+    {
+      "test": "Input Validation - Missing date returns 400",
+      "status": "\u2705 PASS",
+      "details": "Status: 400, Error: Missing or invalid date"
+    },
+    {
+      "test": "Input Validation - Invalid userId returns 400",
+      "status": "\u2705 PASS",
+      "details": "Status: 400, Error: Missing or invalid userId"
+    },
+    {
+      "test": "Input Validation - Invalid ventureId returns 400",
+      "status": "\u2705 PASS",
+      "details": "Status: 400, Error: Missing or invalid ventureId"
+    },
+    {
+      "test": "Input Validation - Invalid date returns 400",
+      "status": "\u2705 PASS",
+      "details": "Status: 400, Error: Missing or invalid date"
+    },
+    {
+      "test": "Data Retrieval - Non-existent record returns 404",
+      "status": "\u2705 PASS",
+      "details": "Status: 404, Error: No incentive record for this date"
+    },
+    {
+      "test": "Data Retrieval - No existing data (expected)",
+      "status": "\u2705 PASS",
+      "details": "Status: 404 - No IncentiveDaily records found for testing"
+    },
+    {
+      "test": "Method Validation - POST returns 405",
+      "status": "\u2705 PASS",
+      "details": "Status: 405, Allow header: GET, JSON error: True"
+    },
+    {
+      "test": "Method Validation - PUT returns 405",
+      "status": "\u2705 PASS",
+      "details": "Status: 405, Allow header: GET"
+    },
+    {
+      "test": "Authentication - Development mode auto-auth",
+      "status": "\u2705 PASS",
+      "details": "Status: 200 (Expected 200 or 400, not 401 in dev mode)"
+    },
+    {
+      "test": "Default Behavior - Last 30 days with proper structure",
+      "status": "\u2705 PASS",
+      "details": "All required fields present: True"
+    },
+    {
+      "test": "Date Range - Valid from/to parameters",
+      "status": "\u2705 PASS",
+      "details": "Requested: 2025-11-30 to 2025-12-07, Got: 2025-11-30 to 2025-12-07"
+    },
+    {
+      "test": "Date Range Validation - Range > 90 days returns 400",
+      "status": "\u2705 PASS",
+      "details": "Status: 400, Error: Date range too large, Detail: Maximum allowed range is 90 days for gamification window"
+    },
+    {
+      "test": "Data Semantics - Streaks consistency",
+      "status": "\u2705 PASS",
+      "details": "Current: 10, Longest: 10, Valid: True"
+    },
+    {
+      "test": "Data Semantics - Totals validity",
+      "status": "\u2705 PASS",
+      "details": "Amount: 3657.67, Days: 10, Valid: True"
+    },
+    {
+      "test": "Data Semantics - Rank consistency",
+      "status": "\u2705 PASS",
+      "details": "Rank: 1/1, Percentile: 100%, Valid: True"
+    },
+    {
+      "test": "Data Semantics - Badges structure",
+      "status": "\u2705 PASS",
+      "details": "Badges: ['Daily Starter', 'Consistent Performer', 'Top Earner'], Valid: True"
+    }
+  ],
+  "timestamp": "2025-12-07T17:39:44.147570"
+}

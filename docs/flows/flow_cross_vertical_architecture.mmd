@@ -1,0 +1,97 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e1f5fe', 'primaryBorderColor': '#0277bd'}}}%%
+flowchart TB
+    subgraph VERTICALS["Business Verticals"]
+        V1["Freight<br/>Load, Carrier, Customer"]
+        V2["Hospitality<br/>Hotel, Review, Dispute"]
+        V3["BPO<br/>Campaign, Agent, CallLog"]
+        V4["SaaS<br/>Customer, Subscription"]
+        V5["Holdings<br/>Asset, BankAccount"]
+    end
+
+    subgraph REACTIVE["Reactive Layers"]
+        R1["Gamification<br/>Points & Leaderboards"]
+        R2["Incentives<br/>Rule-based Calculations"]
+        R3["BI/Reporting<br/>KPIs & Analytics"]
+        R4["Briefing<br/>Daily Executive Summary"]
+        R5["Tasks<br/>Automated Task Generation"]
+    end
+
+    subgraph SCHEDULED["Scheduled Jobs"]
+        S1["2:00 AM: Churn Recalc"]
+        S2["6:00 AM: Quote Timeout"]
+        S3["6:30 AM: Task Generation"]
+        S4["7:00 AM: Incentive Commit"]
+    end
+
+    subgraph INTEGRATIONS["External Integrations"]
+        I1["FMCSA<br/>Carrier Safety"]
+        I2["SendGrid<br/>Email"]
+        I3["Twilio<br/>SMS"]
+        I4["RingCentral<br/>Call Center"]
+        I5["3PL/TMS<br/>Load Tracking"]
+    end
+
+    V1 -->|"Event: Load DELIVERED"| R1
+    V1 -->|"Event: Load DELIVERED"| R2
+    V1 -->|"Event: Load DELIVERED"| R3
+    V1 -->|"Event: Load DELIVERED"| R4
+    V1 -->|"Event: Customer dormant"| R5
+
+    V2 -->|"Event: Review response"| R2
+    V2 -.->|"MISSING: Review response"| R1
+    V2 -->|"Event: KPI upload"| R2
+    V2 -.->|"MISSING: KPI upload"| R3
+
+    V3 -->|"Event: Call log"| R2
+    V3 -.->|"MISSING: Call log"| R1
+    V3 -.->|"MISSING: Call log"| R5
+
+    V1 -->|"Data source"| S1
+    V1 -->|"Data source"| S2
+    V1 -->|"Data source"| S3
+    V1 -->|"Data source"| S4
+    V2 -->|"Data source"| S4
+    V3 -->|"Data source"| S4
+
+    S1 -->|"Updates"| V1
+    S2 -->|"Updates"| V1
+    S3 -->|"Creates"| R5
+    S4 -->|"Creates"| R2
+
+    V1 -->|"Uses"| I1
+    V1 -->|"Uses"| I2
+    V1 -->|"Uses"| I3
+    V1 -->|"Uses"| I5
+    V3 -.->|"MISSING: Live API"| I4
+
+    R1 -.->|"Should react to"| V2
+    R1 -.->|"Should react to"| V3
+    R3 -.->|"Should react to"| V2
+    R3 -.->|"Should react to"| V3
+    R4 -.->|"Should react to"| V1
+    R4 -.->|"Should react to"| V2
+    R4 -.->|"Should react to"| V3
+    R5 -.->|"Should react to"| V2
+    R5 -.->|"Should react to"| V3
+
+    style V1 fill:#c8e6c9
+    style V2 fill:#fff9c4
+    style V3 fill:#fff9c4
+    style R1 fill:#e3f2fd
+    style R2 fill:#e3f2fd
+    style R3 fill:#ffccbc
+    style R4 fill:#ffccbc
+    style R5 fill:#fff9c4
+    style S4 fill:#c8e6c9
+
+    classDef vertical fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    classDef reactive fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef missing fill:#ffccbc,stroke:#d84315,stroke-width:2px,stroke-dasharray: 5 5
+    classDef scheduled fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+
+    class V1,V2,V3,V4,V5 vertical
+    class R1,R2 reactive
+    class R3,R4 missing
+    class R5,S1,S2,S3,S4 scheduled
+
+

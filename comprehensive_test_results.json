@@ -1,0 +1,2324 @@
+[
+  {
+    "endpoint": "/api/logistics/missing-mappings",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 401,
+    "response": {
+      "usersWithoutMapping": [
+        {
+          "id": 1,
+          "fullName": "Herry Chokshi",
+          "email": "ceo@sioxglobal.com",
+          "phone": "9999999999",
+          "role": "CEO"
+        },
+        {
+          "id": 2,
+          "fullName": "Admin User",
+          "email": "admin@sioxglobal.com",
+          "phone": "1111111111",
+          "role": "ADMIN"
+        },
+        {
+          "id": 3,
+          "fullName": "Siox Logistics Manager",
+          "email": "manager.siox@sioxglobal.com",
+          "phone": "2222222222",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 6,
+          "fullName": "Carrier Rep A",
+          "email": "carrierrep@sioxglobal.com",
+          "phone": "5555555555",
+          "role": "EMPLOYEE"
+        },
+        {
+          "id": 7,
+          "fullName": "MB Logistics Manager",
+          "email": "manager.mb@sioxglobal.com",
+          "phone": "6666666666",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 8,
+          "fullName": "Rank Me Now Manager",
+          "email": "manager.rmn@sioxglobal.com",
+          "phone": "7777777777",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 9,
+          "fullName": "Hotel Manager",
+          "email": "manager.hotel@sioxglobal.com",
+          "phone": "8888888888",
+          "role": "VENTURE_HEAD"
+        }
+      ],
+      "shippersMissingCodes": [
+        {
+          "id": 1,
+          "name": "Walmart DC",
+          "tmsShipperCode": "WM123",
+          "internalCode": "INT-WM-001",
+          "customerId": null,
+          "customer": null
+        },
+        {
+          "id": 2,
+          "name": "Target Warehouse",
+          "tmsShipperCode": "TG445",
+          "internalCode": "INT-TG-002",
+          "customerId": null,
+          "customer": null
+        }
+      ],
+      "carriersMissingCodes": [],
+      "orphanLoads": [
+        {
+          "id": "1",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-04T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3183.00",
+          "totalCost": "2526.00",
+          "marginAmount": "657.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "2",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-09T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3377.00",
+          "totalCost": "2542.00",
+          "marginAmount": "835.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "3",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-30T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2577.00",
+          "totalCost": "2259.00",
+          "marginAmount": "318.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "4",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-07T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4638.00",
+          "totalCost": "3296.00",
+          "marginAmount": "1342.00",
+          "customerId": "2",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "5",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-26T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2659.00",
+          "totalCost": "2398.00",
+          "marginAmount": "261.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "6",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-29T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "1733.00",
+          "totalCost": "1354.00",
+          "marginAmount": "379.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "7",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-29T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4879.00",
+          "totalCost": "3756.00",
+          "marginAmount": "1123.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "8",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-01T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "1589.00",
+          "totalCost": "1321.00",
+          "marginAmount": "268.00",
+          "customerId": "2",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "9",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-27T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4129.00",
+          "totalCost": "2970.00",
+          "marginAmount": "1159.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "10",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-17T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3252.00",
+          "totalCost": "2898.00",
+          "marginAmount": "354.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "11",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-04T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2182.00",
+          "totalCost": "1769.00",
+          "marginAmount": "413.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "12",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-10T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3964.00",
+          "totalCost": "3505.00",
+          "marginAmount": "459.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "13",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-27T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4261.00",
+          "totalCost": "3619.00",
+          "marginAmount": "642.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "14",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-22T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3053.00",
+          "totalCost": "2202.00",
+          "marginAmount": "851.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "15",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-16T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3560.00",
+          "totalCost": "2848.00",
+          "marginAmount": "712.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "16",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-09T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4761.00",
+          "totalCost": "4315.00",
+          "marginAmount": "446.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "17",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-02T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3461.00",
+          "totalCost": "3092.00",
+          "marginAmount": "369.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "18",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-10T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4344.00",
+          "totalCost": "3166.00",
+          "marginAmount": "1178.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "19",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-16T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2032.00",
+          "totalCost": "1660.00",
+          "marginAmount": "372.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "20",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-06T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4511.00",
+          "totalCost": "3547.00",
+          "marginAmount": "964.00",
+          "customerId": "2",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "21",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-18T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3031.00",
+          "totalCost": "2403.00",
+          "marginAmount": "628.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "22",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-16T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4829.00",
+          "totalCost": "3478.00",
+          "marginAmount": "1351.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "23",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-06T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2815.00",
+          "totalCost": "1993.00",
+          "marginAmount": "822.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "24",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-20T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4545.00",
+          "totalCost": "3890.00",
+          "marginAmount": "655.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "25",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-24T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3552.00",
+          "totalCost": "3252.00",
+          "marginAmount": "300.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        }
+      ]
+    },
+    "test_description": "Unauthenticated request - should return 401",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/logistics/missing-mappings",
+    "method": "POST",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Wrong method (POST) - should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/missing-mappings",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 401,
+    "response": {
+      "usersWithoutMapping": [
+        {
+          "id": 1,
+          "fullName": "Herry Chokshi",
+          "email": "ceo@sioxglobal.com",
+          "phone": "9999999999",
+          "role": "CEO"
+        },
+        {
+          "id": 2,
+          "fullName": "Admin User",
+          "email": "admin@sioxglobal.com",
+          "phone": "1111111111",
+          "role": "ADMIN"
+        },
+        {
+          "id": 3,
+          "fullName": "Siox Logistics Manager",
+          "email": "manager.siox@sioxglobal.com",
+          "phone": "2222222222",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 6,
+          "fullName": "Carrier Rep A",
+          "email": "carrierrep@sioxglobal.com",
+          "phone": "5555555555",
+          "role": "EMPLOYEE"
+        },
+        {
+          "id": 7,
+          "fullName": "MB Logistics Manager",
+          "email": "manager.mb@sioxglobal.com",
+          "phone": "6666666666",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 8,
+          "fullName": "Rank Me Now Manager",
+          "email": "manager.rmn@sioxglobal.com",
+          "phone": "7777777777",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 9,
+          "fullName": "Hotel Manager",
+          "email": "manager.hotel@sioxglobal.com",
+          "phone": "8888888888",
+          "role": "VENTURE_HEAD"
+        }
+      ],
+      "shippersMissingCodes": [
+        {
+          "id": 1,
+          "name": "Walmart DC",
+          "tmsShipperCode": "WM123",
+          "internalCode": "INT-WM-001",
+          "customerId": null,
+          "customer": null
+        },
+        {
+          "id": 2,
+          "name": "Target Warehouse",
+          "tmsShipperCode": "TG445",
+          "internalCode": "INT-TG-002",
+          "customerId": null,
+          "customer": null
+        }
+      ],
+      "carriersMissingCodes": [],
+      "orphanLoads": [
+        {
+          "id": "1",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-04T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3183.00",
+          "totalCost": "2526.00",
+          "marginAmount": "657.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "2",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-09T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3377.00",
+          "totalCost": "2542.00",
+          "marginAmount": "835.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "3",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-30T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2577.00",
+          "totalCost": "2259.00",
+          "marginAmount": "318.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "4",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-07T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4638.00",
+          "totalCost": "3296.00",
+          "marginAmount": "1342.00",
+          "customerId": "2",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "5",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-26T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2659.00",
+          "totalCost": "2398.00",
+          "marginAmount": "261.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "6",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-29T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "1733.00",
+          "totalCost": "1354.00",
+          "marginAmount": "379.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "7",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-29T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4879.00",
+          "totalCost": "3756.00",
+          "marginAmount": "1123.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "8",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-01T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "1589.00",
+          "totalCost": "1321.00",
+          "marginAmount": "268.00",
+          "customerId": "2",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "9",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-27T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4129.00",
+          "totalCost": "2970.00",
+          "marginAmount": "1159.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "10",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-17T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3252.00",
+          "totalCost": "2898.00",
+          "marginAmount": "354.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "11",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-04T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2182.00",
+          "totalCost": "1769.00",
+          "marginAmount": "413.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "12",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-10T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3964.00",
+          "totalCost": "3505.00",
+          "marginAmount": "459.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "13",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-27T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4261.00",
+          "totalCost": "3619.00",
+          "marginAmount": "642.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "14",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-22T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3053.00",
+          "totalCost": "2202.00",
+          "marginAmount": "851.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "15",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-16T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3560.00",
+          "totalCost": "2848.00",
+          "marginAmount": "712.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "16",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-09T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4761.00",
+          "totalCost": "4315.00",
+          "marginAmount": "446.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "17",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-02T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3461.00",
+          "totalCost": "3092.00",
+          "marginAmount": "369.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "18",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-10T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4344.00",
+          "totalCost": "3166.00",
+          "marginAmount": "1178.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "19",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-16T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2032.00",
+          "totalCost": "1660.00",
+          "marginAmount": "372.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "20",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-06T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4511.00",
+          "totalCost": "3547.00",
+          "marginAmount": "964.00",
+          "customerId": "2",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "21",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-18T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3031.00",
+          "totalCost": "2403.00",
+          "marginAmount": "628.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "22",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-16T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4829.00",
+          "totalCost": "3478.00",
+          "marginAmount": "1351.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "23",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-06T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2815.00",
+          "totalCost": "1993.00",
+          "marginAmount": "822.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "24",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-20T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4545.00",
+          "totalCost": "3890.00",
+          "marginAmount": "655.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "25",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-24T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3552.00",
+          "totalCost": "3252.00",
+          "marginAmount": "300.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        }
+      ]
+    },
+    "test_description": "Check response structure (will fail auth but shows endpoint works)",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/admin/clear-test-data",
+    "method": "DELETE",
+    "status_code": 401,
+    "expected_status": 401,
+    "response": {
+      "error": "Unauthorized"
+    },
+    "test_description": "Unauthenticated DELETE - should return 401",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/admin/clear-test-data",
+    "method": "GET",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Wrong method (GET) - should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/admin/clear-test-data",
+    "method": "POST",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Wrong method (POST) - should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/admin/seed-test-users",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": 401,
+    "response": {
+      "message": "Created/verified 14 test users with venture/office assignments",
+      "users": [
+        {
+          "id": 10,
+          "email": "test_ceo0@test.com",
+          "role": "CEO",
+          "name": "CEO Test"
+        },
+        {
+          "id": 17,
+          "email": "test_admin1@test.com",
+          "role": "ADMIN",
+          "name": "Admin Test"
+        },
+        {
+          "id": 15,
+          "email": "test_coo2@test.com",
+          "role": "COO",
+          "name": "COO Test"
+        },
+        {
+          "id": 16,
+          "email": "test_venturehead3@test.com",
+          "role": "VENTURE_HEAD",
+          "name": "Logistics Head Test"
+        },
+        {
+          "id": 19,
+          "email": "test_venturehead4@test.com",
+          "role": "VENTURE_HEAD",
+          "name": "Hotel Head Test"
+        },
+        {
+          "id": 12,
+          "email": "test_officemanager5@test.com",
+          "role": "OFFICE_MANAGER",
+          "name": "Office Manager Test"
+        },
+        {
+          "id": 14,
+          "email": "test_teamlead6@test.com",
+          "role": "TEAM_LEAD",
+          "name": "Team Lead Test"
+        },
+        {
+          "id": 20,
+          "email": "test_employee7@test.com",
+          "role": "EMPLOYEE",
+          "name": "Dispatcher Test"
+        },
+        {
+          "id": 22,
+          "email": "test_employee8@test.com",
+          "role": "EMPLOYEE",
+          "name": "Carrier Team Test"
+        },
+        {
+          "id": 23,
+          "email": "test_contractor9@test.com",
+          "role": "CONTRACTOR",
+          "name": "Contractor Test"
+        },
+        {
+          "id": 11,
+          "email": "test_auditor10@test.com",
+          "role": "AUDITOR",
+          "name": "Auditor Test"
+        },
+        {
+          "id": 13,
+          "email": "test_finance11@test.com",
+          "role": "FINANCE",
+          "name": "Finance Test"
+        },
+        {
+          "id": 18,
+          "email": "test_hradmin12@test.com",
+          "role": "HR_ADMIN",
+          "name": "HR Admin Test"
+        },
+        {
+          "id": 21,
+          "email": "test_testuser13@test.com",
+          "role": "TEST_USER",
+          "name": "Test User Test"
+        }
+      ],
+      "ventures": [
+        "Test Siox Logistics",
+        "Test Chokshi Hotels"
+      ]
+    },
+    "test_description": "Unauthenticated POST - should return 401",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/admin/seed-test-users",
+    "method": "GET",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "raw_response": ""
+    },
+    "test_description": "Wrong method (GET) - should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/admin/auto-seed-test-data",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": 401,
+    "response": {
+      "seeded": false,
+      "message": "Test data already exists",
+      "hasData": true
+    },
+    "test_description": "Unauthenticated POST - should return 401",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/admin/auto-seed-test-data",
+    "method": "GET",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "raw_response": ""
+    },
+    "test_description": "Wrong method (GET) - should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/admin/cleanup-test-data",
+    "method": "POST",
+    "status_code": 400,
+    "expected_status": 401,
+    "response": {
+      "error": "Must send { confirm: 'DELETE_ALL_TEST_DATA' } to proceed",
+      "message": "This action will permanently delete all test data. Send the confirmation to proceed."
+    },
+    "test_description": "Unauthenticated POST - should return 401",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/admin/cleanup-test-data",
+    "method": "GET",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Wrong method (GET) - should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/admin/cleanup-test-data",
+    "method": "POST",
+    "status_code": 400,
+    "expected_status": 401,
+    "response": {
+      "error": "Must send { confirm: 'DELETE_ALL_TEST_DATA' } to proceed",
+      "message": "This action will permanently delete all test data. Send the confirmation to proceed."
+    },
+    "test_description": "Wrong confirmation - should return 401 (auth before validation)",
+    "headers": {},
+    "request_body": {
+      "confirm": "WRONG_CONFIRMATION"
+    },
+    "passed": false
+  },
+  {
+    "endpoint": "/api/admin/clear-test-data",
+    "method": "DELETE",
+    "status_code": 401,
+    "expected_status": 401,
+    "response": {
+      "error": "Unauthorized"
+    },
+    "test_description": "Development environment - should return 401 (auth required)",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/missing-mappings",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 401,
+    "response": {
+      "usersWithoutMapping": [
+        {
+          "id": 1,
+          "fullName": "Herry Chokshi",
+          "email": "ceo@sioxglobal.com",
+          "phone": "9999999999",
+          "role": "CEO"
+        },
+        {
+          "id": 2,
+          "fullName": "Admin User",
+          "email": "admin@sioxglobal.com",
+          "phone": "1111111111",
+          "role": "ADMIN"
+        },
+        {
+          "id": 3,
+          "fullName": "Siox Logistics Manager",
+          "email": "manager.siox@sioxglobal.com",
+          "phone": "2222222222",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 6,
+          "fullName": "Carrier Rep A",
+          "email": "carrierrep@sioxglobal.com",
+          "phone": "5555555555",
+          "role": "EMPLOYEE"
+        },
+        {
+          "id": 7,
+          "fullName": "MB Logistics Manager",
+          "email": "manager.mb@sioxglobal.com",
+          "phone": "6666666666",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 8,
+          "fullName": "Rank Me Now Manager",
+          "email": "manager.rmn@sioxglobal.com",
+          "phone": "7777777777",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 9,
+          "fullName": "Hotel Manager",
+          "email": "manager.hotel@sioxglobal.com",
+          "phone": "8888888888",
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 10,
+          "fullName": "CEO Test",
+          "email": "test_ceo0@test.com",
+          "phone": null,
+          "role": "CEO"
+        },
+        {
+          "id": 11,
+          "fullName": "Auditor Test",
+          "email": "test_auditor10@test.com",
+          "phone": null,
+          "role": "AUDITOR"
+        },
+        {
+          "id": 12,
+          "fullName": "Office Manager Test",
+          "email": "test_officemanager5@test.com",
+          "phone": null,
+          "role": "OFFICE_MANAGER"
+        },
+        {
+          "id": 13,
+          "fullName": "Finance Test",
+          "email": "test_finance11@test.com",
+          "phone": null,
+          "role": "FINANCE"
+        },
+        {
+          "id": 14,
+          "fullName": "Team Lead Test",
+          "email": "test_teamlead6@test.com",
+          "phone": null,
+          "role": "TEAM_LEAD"
+        },
+        {
+          "id": 15,
+          "fullName": "COO Test",
+          "email": "test_coo2@test.com",
+          "phone": null,
+          "role": "COO"
+        },
+        {
+          "id": 16,
+          "fullName": "Logistics Head Test",
+          "email": "test_venturehead3@test.com",
+          "phone": null,
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 18,
+          "fullName": "HR Admin Test",
+          "email": "test_hradmin12@test.com",
+          "phone": null,
+          "role": "HR_ADMIN"
+        },
+        {
+          "id": 17,
+          "fullName": "Admin Test",
+          "email": "test_admin1@test.com",
+          "phone": null,
+          "role": "ADMIN"
+        },
+        {
+          "id": 19,
+          "fullName": "Hotel Head Test",
+          "email": "test_venturehead4@test.com",
+          "phone": null,
+          "role": "VENTURE_HEAD"
+        },
+        {
+          "id": 20,
+          "fullName": "Dispatcher Test",
+          "email": "test_employee7@test.com",
+          "phone": null,
+          "role": "EMPLOYEE"
+        },
+        {
+          "id": 21,
+          "fullName": "Test User Test",
+          "email": "test_testuser13@test.com",
+          "phone": null,
+          "role": "TEST_USER"
+        },
+        {
+          "id": 22,
+          "fullName": "Carrier Team Test",
+          "email": "test_employee8@test.com",
+          "phone": null,
+          "role": "EMPLOYEE"
+        },
+        {
+          "id": 23,
+          "fullName": "Contractor Test",
+          "email": "test_contractor9@test.com",
+          "phone": null,
+          "role": "CONTRACTOR"
+        }
+      ],
+      "shippersMissingCodes": [
+        {
+          "id": 1,
+          "name": "Walmart DC",
+          "tmsShipperCode": "WM123",
+          "internalCode": "INT-WM-001",
+          "customerId": null,
+          "customer": null
+        },
+        {
+          "id": 2,
+          "name": "Target Warehouse",
+          "tmsShipperCode": "TG445",
+          "internalCode": "INT-TG-002",
+          "customerId": null,
+          "customer": null
+        }
+      ],
+      "carriersMissingCodes": [],
+      "orphanLoads": [
+        {
+          "id": "1",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-04T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3183.00",
+          "totalCost": "2526.00",
+          "marginAmount": "657.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "2",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-09T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3377.00",
+          "totalCost": "2542.00",
+          "marginAmount": "835.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "3",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-30T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2577.00",
+          "totalCost": "2259.00",
+          "marginAmount": "318.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "4",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-07T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4638.00",
+          "totalCost": "3296.00",
+          "marginAmount": "1342.00",
+          "customerId": "2",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "5",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-26T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2659.00",
+          "totalCost": "2398.00",
+          "marginAmount": "261.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "6",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-29T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "1733.00",
+          "totalCost": "1354.00",
+          "marginAmount": "379.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "7",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-29T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4879.00",
+          "totalCost": "3756.00",
+          "marginAmount": "1123.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "8",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-01T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "1589.00",
+          "totalCost": "1321.00",
+          "marginAmount": "268.00",
+          "customerId": "2",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "9",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-27T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4129.00",
+          "totalCost": "2970.00",
+          "marginAmount": "1159.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "10",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-17T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3252.00",
+          "totalCost": "2898.00",
+          "marginAmount": "354.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "11",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-04T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2182.00",
+          "totalCost": "1769.00",
+          "marginAmount": "413.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "12",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-10T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3964.00",
+          "totalCost": "3505.00",
+          "marginAmount": "459.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "13",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-27T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4261.00",
+          "totalCost": "3619.00",
+          "marginAmount": "642.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "14",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-22T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3053.00",
+          "totalCost": "2202.00",
+          "marginAmount": "851.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "15",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-16T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3560.00",
+          "totalCost": "2848.00",
+          "marginAmount": "712.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "16",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-09T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4761.00",
+          "totalCost": "4315.00",
+          "marginAmount": "446.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "17",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-02T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3461.00",
+          "totalCost": "3092.00",
+          "marginAmount": "369.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "18",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-10T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4344.00",
+          "totalCost": "3166.00",
+          "marginAmount": "1178.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "19",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-16T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2032.00",
+          "totalCost": "1660.00",
+          "marginAmount": "372.00",
+          "customerId": "1",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "20",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-06T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4511.00",
+          "totalCost": "3547.00",
+          "marginAmount": "964.00",
+          "customerId": "2",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "21",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-18T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3031.00",
+          "totalCost": "2403.00",
+          "marginAmount": "628.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "1",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        },
+        {
+          "id": "22",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-16T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4829.00",
+          "totalCost": "3478.00",
+          "marginAmount": "1351.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "2",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "23",
+          "tmsLoadId": null,
+          "billingDate": "2025-12-06T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "2815.00",
+          "totalCost": "1993.00",
+          "marginAmount": "822.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "24",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-20T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "4545.00",
+          "totalCost": "3890.00",
+          "marginAmount": "655.00",
+          "customerId": "2",
+          "shipperId": "2",
+          "carrierId": "2",
+          "customer": {
+            "name": "Costco Distribution"
+          },
+          "shipper": {
+            "name": "Target Warehouse"
+          },
+          "carrier": {
+            "name": "JB Hunt Transport"
+          }
+        },
+        {
+          "id": "25",
+          "tmsLoadId": null,
+          "billingDate": "2025-11-24T18:34:19.255Z",
+          "status": "UNKNOWN",
+          "totalRevenue": "3552.00",
+          "totalCost": "3252.00",
+          "marginAmount": "300.00",
+          "customerId": "1",
+          "shipperId": "1",
+          "carrierId": "1",
+          "customer": {
+            "name": "Amazon Fulfillment"
+          },
+          "shipper": {
+            "name": "Walmart DC"
+          },
+          "carrier": {
+            "name": "Swift Transportation"
+          }
+        }
+      ]
+    },
+    "test_description": "Authentication required test",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/admin/clear-test-data",
+    "method": "DELETE",
+    "status_code": 401,
+    "expected_status": 401,
+    "response": {
+      "error": "Unauthorized"
+    },
+    "test_description": "Authentication required test",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/admin/seed-test-users",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": 401,
+    "response": {
+      "message": "Created/verified 14 test users with venture/office assignments",
+      "users": [
+        {
+          "id": 10,
+          "email": "test_ceo0@test.com",
+          "role": "CEO",
+          "name": "CEO Test"
+        },
+        {
+          "id": 17,
+          "email": "test_admin1@test.com",
+          "role": "ADMIN",
+          "name": "Admin Test"
+        },
+        {
+          "id": 15,
+          "email": "test_coo2@test.com",
+          "role": "COO",
+          "name": "COO Test"
+        },
+        {
+          "id": 16,
+          "email": "test_venturehead3@test.com",
+          "role": "VENTURE_HEAD",
+          "name": "Logistics Head Test"
+        },
+        {
+          "id": 19,
+          "email": "test_venturehead4@test.com",
+          "role": "VENTURE_HEAD",
+          "name": "Hotel Head Test"
+        },
+        {
+          "id": 12,
+          "email": "test_officemanager5@test.com",
+          "role": "OFFICE_MANAGER",
+          "name": "Office Manager Test"
+        },
+        {
+          "id": 14,
+          "email": "test_teamlead6@test.com",
+          "role": "TEAM_LEAD",
+          "name": "Team Lead Test"
+        },
+        {
+          "id": 20,
+          "email": "test_employee7@test.com",
+          "role": "EMPLOYEE",
+          "name": "Dispatcher Test"
+        },
+        {
+          "id": 22,
+          "email": "test_employee8@test.com",
+          "role": "EMPLOYEE",
+          "name": "Carrier Team Test"
+        },
+        {
+          "id": 23,
+          "email": "test_contractor9@test.com",
+          "role": "CONTRACTOR",
+          "name": "Contractor Test"
+        },
+        {
+          "id": 11,
+          "email": "test_auditor10@test.com",
+          "role": "AUDITOR",
+          "name": "Auditor Test"
+        },
+        {
+          "id": 13,
+          "email": "test_finance11@test.com",
+          "role": "FINANCE",
+          "name": "Finance Test"
+        },
+        {
+          "id": 18,
+          "email": "test_hradmin12@test.com",
+          "role": "HR_ADMIN",
+          "name": "HR Admin Test"
+        },
+        {
+          "id": 21,
+          "email": "test_testuser13@test.com",
+          "role": "TEST_USER",
+          "name": "Test User Test"
+        }
+      ],
+      "ventures": [
+        "Test Siox Logistics",
+        "Test Chokshi Hotels"
+      ]
+    },
+    "test_description": "Authentication required test",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/admin/auto-seed-test-data",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": 401,
+    "response": {
+      "seeded": false,
+      "message": "Test data already exists",
+      "hasData": true
+    },
+    "test_description": "Authentication required test",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/admin/cleanup-test-data",
+    "method": "POST",
+    "status_code": 400,
+    "expected_status": 401,
+    "response": {
+      "error": "Must send { confirm: 'DELETE_ALL_TEST_DATA' } to proceed",
+      "message": "This action will permanently delete all test data. Send the confirmation to proceed."
+    },
+    "test_description": "Authentication required test",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  }
+]

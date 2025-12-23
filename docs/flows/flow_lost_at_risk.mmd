@@ -1,0 +1,72 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffebee', 'primaryBorderColor': '#c62828'}}}%%
+flowchart TD
+    subgraph UI["UI Layer"]
+        U1["/freight/at-risk"]
+        U2["/freight/lost"]
+        U3["/freight/lost-and-at-risk"]
+        U4["/freight/loads/[id]"]
+    end
+
+    subgraph API["API Layer"]
+        A1["POST /api/freight/loads/mark-at-risk"]
+        A2["POST /api/freight/loads/[id]/run-lost-load-agent"]
+        A3["POST /api/freight/loads/mark-lost"]
+        A4["GET /api/freight/at-risk-loads"]
+        A5["GET /api/freight/lost-loads"]
+        A6["GET /api/freight/lost-postmortem"]
+    end
+
+    subgraph LIB["Library Layer"]
+        L1["lib/freight/events.ts<br/>logLoadEvent()"]
+        L2["lib/ai/freightLostLoadAgent.ts<br/>runLostLoadRescueAgent()"]
+    end
+
+    subgraph DB["Database Layer"]
+        D1[("Load<br/>loadStatus, atRiskFlag, lostAt, lostReasonId")]
+        D2[("LogisticsLoadEvent<br/>loadId, type, message")]
+        D3[("LostLoadReason<br/>id, name, category")]
+    end
+
+    U4 -->|"Mark At-Risk button"| A1
+    A1 -->|"Update load"| D1
+    A1 -->|"atRiskFlag=true, loadStatus=AT_RISK"| D1
+    A1 -->|"logLoadEvent(STATUS_CHANGED)"| L1
+    L1 --> D2
+
+    U1 & U3 -->|"View at-risk loads"| A4
+    A4 --> D1
+
+    U4 -->|"Run AI Agent button"| A2
+    A2 -->|"Analyze load"| L2
+    L2 -->|"OpenAI API"| EXT1["External: OpenAI"]
+    L2 -->|"Auto-send outreach if enabled"| EXT2["External: SendGrid"]
+    L2 -->|"Return rescue plan"| U4
+
+    U4 -->|"Mark Lost button"| A3
+    A3 -->|"Validate lostReasonId"| D3
+    A3 -->|"Update load"| D1
+    A3 -->|"loadStatus=LOST, lostAt=now()"| D1
+    A3 -->|"logLoadEvent(LOST_CONFIRMED)"| L1
+    L1 --> D2
+
+    U2 & U3 -->|"View lost loads"| A5
+    A5 --> D1
+
+    U2 -->|"View postmortem"| A6
+    A6 --> D1
+    A6 --> D2
+
+    subgraph EVENT_TYPES["LogisticsLoadEvent Types"]
+        E1["STATUS_CHANGED"]
+        E2["LOST_CONFIRMED"]
+        E3["CARRIER_ASSIGNED"]
+        E4["NOTE_ADDED"]
+    end
+
+    subgraph LOST_REASONS["LostLoadReason Categories"]
+        LR1["RATE - Price too high"]
+        LR2["CAPACITY - No carriers available"]
+        LR3["TIMING - Pickup time issue"]
+        LR4["EQUIPMENT - Wrong equipment"]
+        LR5["OTHER - Various reasons"]
+    end

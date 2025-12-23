@@ -1,0 +1,71 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e3f2fd', 'primaryBorderColor': '#1976d2'}}}%%
+flowchart TD
+    subgraph USER["User Action"]
+        U1["User marks Load as DELIVERED<br/>POST /api/freight/loads/update"]
+    end
+
+    subgraph IMMEDIATE["Immediate Reactions"]
+        I1["Load.loadStatus = DELIVERED"]
+        I2["Load.billingDate set"]
+        I3["LogisticsLoadEvent logged<br/>type: DELIVERED"]
+        I4["AuditLog created<br/>domain: freight, action: LOAD_UPDATE"]
+        I5["Gamification: 25 points<br/>awardPointsForEvent('LOAD_COMPLETED')"]
+    end
+
+    subgraph GAMIFICATION["Gamification Layer"]
+        G1["GamificationEvent.create<br/>idempotencyKey: load-delivered-{id}"]
+        G2["GamificationPointsBalance.upsert<br/>increment points"]
+    end
+
+    subgraph SCHEDULED["Scheduled Job (7:00 AM EST)"]
+        S1["Incentive Daily Commit Job<br/>lib/jobs/incentiveDailyJob.ts"]
+        S2["For each active Venture + IncentivePlan"]
+        S3["loadFreightMetrics()<br/>Reads: Load WHERE DELIVERED + billingDate"]
+        S4["Calculate metrics:<br/>loads_completed, loads_revenue,<br/>loads_miles, loads_margin"]
+        S5["Apply IncentiveRules<br/>PERCENT_OF_METRIC, FLAT_PER_UNIT, etc."]
+        S6["DELETE existing IncentiveDaily<br/>for venture + date"]
+        S7["CREATE fresh IncentiveDaily records"]
+    end
+
+    subgraph BI["BI/Reporting Layer"]
+        B1["KPI Calculation<br/>On-demand when user views dashboard"]
+        B2["Briefing Generation<br/>On-demand when user requests"]
+        B3["P&L Calculations<br/>On-demand"]
+    end
+
+    U1 --> I1
+    I1 --> I2
+    I1 --> I3
+    I1 --> I4
+    I1 --> I5
+
+    I5 --> G1
+    G1 --> G2
+
+    I1 -.->|"Waits for 7 AM job"| S1
+    S1 --> S2
+    S2 --> S3
+    S3 --> S4
+    S4 --> S5
+    S5 --> S6
+    S6 --> S7
+
+    I1 -.->|"On-demand"| B1
+    I1 -.->|"On-demand"| B2
+    I1 -.->|"On-demand"| B3
+
+    style I5 fill:#c8e6c9
+    style S7 fill:#fff9c4
+    style B1 fill:#ffccbc
+    style B2 fill:#ffccbc
+    style B3 fill:#ffccbc
+
+    classDef immediate fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef scheduled fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef missing fill:#ffccbc,stroke:#d84315,stroke-width:2px,stroke-dasharray: 5 5
+
+    class I1,I2,I3,I4,I5 immediate
+    class S1,S2,S3,S4,S5,S6,S7 scheduled
+    class B1,B2,B3 missing
+
+

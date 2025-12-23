@@ -1,0 +1,75 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f3e5f5', 'primaryBorderColor': '#7b1fa2'}}}%%
+flowchart TD
+    subgraph UI["UI Layer"]
+        U1["/freight/outreach-war-room"]
+        U2["/freight/loads/[id]/find-carriers"]
+    end
+
+    subgraph API["API Layer"]
+        A1["POST /api/freight/outreach/preview"]
+        A2["POST /api/freight/outreach/send"]
+        A3["POST /api/freight/outreach/reply"]
+        A4["POST /api/freight/outreach/award"]
+    end
+
+    subgraph LIB["Library Layer"]
+        L1["lib/outreach/getVentureOutboundConfig.ts"]
+        L2["lib/outreach/selectCarriersForLoad.ts"]
+        L3["lib/outreach/providers/sendgrid.ts<br/>sendEmailBatch()"]
+        L4["lib/outreach/providers/twilio.ts<br/>sendSmsBatch()"]
+    end
+
+    subgraph DB["Database Layer"]
+        D1[("VentureOutboundConfig<br/>sendgridApiKey, twilioAccountSid")]
+        D2[("OutreachMessage<br/>channel, body, status")]
+        D3[("OutreachRecipient<br/>carrierId, status")]
+        D4[("OutreachConversation<br/>loadId, carrierId")]
+        D5[("OutreachReply<br/>message content")]
+        D6[("OutreachAttribution<br/>timeToCoverageMinutes")]
+        D7[("Load<br/>carrierId, loadStatus")]
+    end
+
+    U2 -->|"Select carriers, compose message"| A1
+    A1 -->|"Preview message"| U2
+    U2 -->|"Confirm send"| A2
+
+    A2 -->|"Get outbound config"| L1
+    L1 --> D1
+    A2 -->|"Validate eligible carriers"| L2
+    A2 -->|"Create message record"| D2
+    A2 -->|"Create recipient records"| D3
+
+    A2 -->|"channel=email"| L3
+    A2 -->|"channel=sms"| L4
+    L3 -->|"SendGrid API"| EXT1["External: SendGrid"]
+    L4 -->|"Twilio API"| EXT2["External: Twilio"]
+
+    EXT1 & EXT2 -->|"Update recipient status"| D3
+    D3 -->|"Update message status"| D2
+
+    subgraph REPLY["Reply Handling"]
+        R1["Carrier replies via email/SMS"]
+        R2["Webhook/manual entry"]
+    end
+
+    R1 --> R2
+    R2 --> A3
+    A3 -->|"Create/update conversation"| D4
+    A3 -->|"Log reply"| D5
+
+    U1 -->|"View conversations, click Award"| A4
+    A4 -->|"Validate conversation"| D4
+    A4 -->|"Update load.carrierId, loadStatus=COVERED"| D7
+    A4 -->|"Create/update attribution"| D6
+
+    subgraph MESSAGE_STATUS["OutreachMessage.status"]
+        MS1["QUEUED"]
+        MS2["SENT"]
+        MS3["PARTIAL"]
+        MS4["FAILED"]
+        MS5["DRY_RUN"]
+    end
+
+    MS1 --> MS2
+    MS1 --> MS3
+    MS1 --> MS4

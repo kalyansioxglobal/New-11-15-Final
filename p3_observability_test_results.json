@@ -1,0 +1,171 @@
+[
+  {
+    "endpoint": "/api/logistics/freight-pnl",
+    "method": "POST",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "POST method should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 400,
+    "response": {
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    },
+    "test_description": "Connection error: Invalid from date should return 400",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 400,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/logistics/freight-pnl?from=2023-01-01&to=2024-12-31 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d4828c90>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: Range >365 days should return 400",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 401,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/logistics/freight-pnl?from=2024-12-01&to=2024-12-07 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d482a150>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: Valid 7-day range should return 200 (may fail auth)",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 401,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/logistics/freight-pnl (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d482b750>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: Default 30-day window should return 200 (may fail auth)",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "POST",
+    "status_code": 0,
+    "expected_status": 405,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/bpo/kpi (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d4845290>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: POST method should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 400,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/bpo/kpi?from=2024-01-01&to=2024-12-31 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d4846b90>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: Range >90 days should return 400",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 401,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/bpo/kpi?from=2024-12-01&to=2024-12-07 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d48544d0>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: Valid 7-day range should return 200 (may fail auth)",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 401,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/bpo/kpi (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d4845f90>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: Default 30-day window should return 200 (may fail auth)",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/ventures",
+    "method": "POST",
+    "status_code": 0,
+    "expected_status": 405,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/ventures (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d4845810>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: POST method should return 405 with JSON error",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/ventures",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 401,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/ventures (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d482bc50>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: GET should return 200 with ventures array (may fail auth)",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/ventures",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 401,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/ventures (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d4829590>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: Default limit should be 50 (may fail auth)",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  },
+  {
+    "endpoint": "/api/ventures",
+    "method": "GET",
+    "status_code": 0,
+    "expected_status": 401,
+    "response": {
+      "error": "HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/ventures?limit=500 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0xff64d4854fd0>: Failed to establish a new connection: [Errno 111] Connection refused'))"
+    },
+    "test_description": "Connection error: Limit >200 should be capped at 200 (may fail auth)",
+    "headers": {},
+    "request_body": null,
+    "passed": false
+  }
+]

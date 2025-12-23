@@ -1,0 +1,59 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fff3e0', 'primaryBorderColor': '#e65100'}}}%%
+flowchart TD
+    subgraph USER["User Action"]
+        U1["User awards outreach<br/>POST /api/freight/outreach/award"]
+    end
+
+    subgraph IMMEDIATE["Immediate Reactions"]
+        I1["Load.carrierId = conversation.carrierId"]
+        I2["Load.loadStatus = COVERED"]
+        I3["OutreachAttribution.create<br/>timeToCoverageMinutes calculated"]
+        I4["Gamification: 15 points<br/>awardPointsForEvent('OUTREACH_AWARDED')"]
+        I5["GamificationEvent.create<br/>idempotencyKey: outreach-awarded-{loadId}"]
+        I6["GamificationPointsBalance.upsert<br/>increment points"]
+        I7["AuditLog created<br/>domain: freight, action: outreach.award"]
+    end
+
+    subgraph SCHEDULED["Scheduled Job (7:00 AM EST)"]
+        S1["Incentive Daily Commit Job"]
+        S2["Reads Load WHERE DELIVERED"]
+        S3["Calculates incentives<br/>based on delivered loads"]
+    end
+
+    subgraph MISSING["Missing Triggers"]
+        M1["No immediate KPI update<br/>when load COVERED"]
+        M2["No notification to dispatcher<br/>when load COVERED"]
+        M3["No task creation<br/>for follow-up actions"]
+    end
+
+    U1 --> I1
+    I1 --> I2
+    I1 --> I3
+    I1 --> I4
+    I4 --> I5
+    I5 --> I6
+    I1 --> I7
+
+    I2 -.->|"Waits for DELIVERED"| S1
+    S1 --> S2
+    S2 --> S3
+
+    I2 -.->|"Should trigger"| M1
+    I2 -.->|"Should trigger"| M2
+    I2 -.->|"Should trigger"| M3
+
+    style I4 fill:#c8e6c9
+    style S3 fill:#fff9c4
+    style M1 fill:#ffccbc
+    style M2 fill:#ffccbc
+    style M3 fill:#ffccbc
+
+    classDef immediate fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef scheduled fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef missing fill:#ffccbc,stroke:#d84315,stroke-width:2px,stroke-dasharray: 5 5
+
+    class I1,I2,I3,I4,I5,I6,I7 immediate
+    class S1,S2,S3 scheduled
+    class M1,M2,M3 missing
+
+

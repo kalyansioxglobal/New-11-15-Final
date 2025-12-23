@@ -1,0 +1,438 @@
+[
+  {
+    "endpoint": "/api/incentives/venture-timeseries?ventureId=1",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "ventureId": 1,
+      "from": "2025-11-08",
+      "to": "2025-12-07",
+      "points": [
+        {
+          "date": "2025-11-28",
+          "amount": 418.03
+        },
+        {
+          "date": "2025-11-29",
+          "amount": 533.79
+        },
+        {
+          "date": "2025-11-30",
+          "amount": 189.96
+        },
+        {
+          "date": "2025-12-01",
+          "amount": 281.58
+        },
+        {
+          "date": "2025-12-02",
+          "amount": 269.74
+        },
+        {
+          "date": "2025-12-03",
+          "amount": 394.35
+        },
+        {
+          "date": "2025-12-04",
+          "amount": 330.01
+        },
+        {
+          "date": "2025-12-05",
+          "amount": 391.19
+        },
+        {
+          "date": "2025-12-06",
+          "amount": 276.32
+        },
+        {
+          "date": "2025-12-07",
+          "amount": 524.41
+        }
+      ]
+    },
+    "test_description": "CEO access to venture 1 (should work)"
+  },
+  {
+    "endpoint": "/api/incentives/venture-timeseries?ventureId=2",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "ventureId": 2,
+      "from": "2025-11-08",
+      "to": "2025-12-07",
+      "points": []
+    },
+    "test_description": "CEO access to venture 2 (should work)"
+  },
+  {
+    "endpoint": "/api/incentives/venture-timeseries?ventureId=999",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "ventureId": 999,
+      "from": "2025-11-08",
+      "to": "2025-12-07",
+      "points": []
+    },
+    "test_description": "CEO access to non-existent venture 999 (should return empty data)"
+  },
+  {
+    "endpoint": "/api/incentives/user-timeseries?userId=1&ventureId=1",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "userId": 1,
+      "ventureId": 1,
+      "from": "2025-11-08",
+      "to": "2025-12-07",
+      "points": [
+        {
+          "date": "2025-11-28",
+          "amount": 418.03
+        },
+        {
+          "date": "2025-11-29",
+          "amount": 533.79
+        },
+        {
+          "date": "2025-11-30",
+          "amount": 189.96
+        },
+        {
+          "date": "2025-12-01",
+          "amount": 281.58
+        },
+        {
+          "date": "2025-12-02",
+          "amount": 269.74
+        },
+        {
+          "date": "2025-12-03",
+          "amount": 394.35
+        },
+        {
+          "date": "2025-12-04",
+          "amount": 330.01
+        },
+        {
+          "date": "2025-12-05",
+          "amount": 391.19
+        },
+        {
+          "date": "2025-12-06",
+          "amount": 276.32
+        },
+        {
+          "date": "2025-12-07",
+          "amount": 524.41
+        }
+      ]
+    },
+    "test_description": "CEO access to user 1 in venture 1 (should work)"
+  },
+  {
+    "endpoint": "/api/incentives/user-timeseries?userId=999&ventureId=1",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "userId": 999,
+      "ventureId": 1,
+      "from": "2025-11-08",
+      "to": "2025-12-07",
+      "points": []
+    },
+    "test_description": "CEO access to non-existent user 999 in venture 1 (should return empty data)"
+  },
+  {
+    "endpoint": "/api/incentives/venture-timeseries?ventureId=1&from=2025-09-09&to=2025-12-07",
+    "method": "GET",
+    "status_code": 400,
+    "response": {
+      "error": "Date range too large",
+      "detail": "Maximum allowed range is 90 days for venture incentives timeseries"
+    },
+    "test_description": "Exactly 90-day range (should work)"
+  },
+  {
+    "endpoint": "/api/incentives/venture-timeseries?ventureId=1&from=2025-09-08&to=2025-12-07",
+    "method": "GET",
+    "status_code": 400,
+    "response": {
+      "error": "Date range too large",
+      "detail": "Maximum allowed range is 90 days for venture incentives timeseries"
+    },
+    "test_description": "91-day range (should fail with 400)"
+  },
+  {
+    "endpoint": "/api/incentives/venture-timeseries?ventureId=1&from=2025-12-07&to=2025-12-07",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "ventureId": 1,
+      "from": "2025-12-07",
+      "to": "2025-12-07",
+      "points": [
+        {
+          "date": "2025-12-07",
+          "amount": 524.41
+        }
+      ]
+    },
+    "test_description": "Same from/to date (1 day range, should work)"
+  },
+  {
+    "endpoint": "/api/incentives/venture-timeseries?ventureId=1&from=2025-12-07&to=2026-01-06",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "ventureId": 1,
+      "from": "2025-12-07",
+      "to": "2026-01-06",
+      "points": [
+        {
+          "date": "2025-12-07",
+          "amount": 524.41
+        }
+      ]
+    },
+    "test_description": "Future date range (should work but return empty data)"
+  },
+  {
+    "endpoint": "/api/incentives/venture-timeseries?ventureId=1&from=2025-12-07&to=2025-11-07",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "ventureId": 1,
+      "from": "2025-12-07",
+      "to": "2025-11-07",
+      "points": []
+    },
+    "test_description": "Reverse date range (to < from, behavior depends on implementation)"
+  },
+  {
+    "endpoint": "/api/incentives/venture-timeseries?ventureId=1&from=2025-12-01&to=2025-12-07",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "ventureId": 1,
+      "from": "2025-12-01",
+      "to": "2025-12-07",
+      "points": [
+        {
+          "date": "2025-12-01",
+          "amount": 281.58
+        },
+        {
+          "date": "2025-12-02",
+          "amount": 269.74
+        },
+        {
+          "date": "2025-12-03",
+          "amount": 394.35
+        },
+        {
+          "date": "2025-12-04",
+          "amount": 330.01
+        },
+        {
+          "date": "2025-12-05",
+          "amount": 391.19
+        },
+        {
+          "date": "2025-12-06",
+          "amount": 276.32
+        },
+        {
+          "date": "2025-12-07",
+          "amount": 524.41
+        }
+      ]
+    },
+    "test_description": "Get venture 1 timeseries for consistency check"
+  },
+  {
+    "endpoint": "/api/incentives/user-timeseries?userId=1&ventureId=1&from=2025-12-01&to=2025-12-07",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "userId": 1,
+      "ventureId": 1,
+      "from": "2025-12-01",
+      "to": "2025-12-07",
+      "points": [
+        {
+          "date": "2025-12-01",
+          "amount": 281.58
+        },
+        {
+          "date": "2025-12-02",
+          "amount": 269.74
+        },
+        {
+          "date": "2025-12-03",
+          "amount": 394.35
+        },
+        {
+          "date": "2025-12-04",
+          "amount": 330.01
+        },
+        {
+          "date": "2025-12-05",
+          "amount": 391.19
+        },
+        {
+          "date": "2025-12-06",
+          "amount": 276.32
+        },
+        {
+          "date": "2025-12-07",
+          "amount": 524.41
+        }
+      ]
+    },
+    "test_description": "Get user 1 timeseries for consistency check"
+  },
+  {
+    "endpoint": "/api/ventures",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 6,
+        "name": "Chokshi Hotels",
+        "type": "HOSPITALITY",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 2,
+        "name": "MB Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 4,
+        "name": "Rank Me Now",
+        "type": "SAAS",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 5,
+        "name": "RevenelX",
+        "type": "BPO",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 1,
+        "name": "Siox Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 3,
+        "name": "Siox Transports",
+        "type": "LOGISTICS",
+        "logisticsRole": "CARRIER",
+        "offices": [],
+        "hotels": []
+      }
+    ],
+    "test_description": "Get ventures list (for frontend dropdown)"
+  },
+  {
+    "endpoint": "/api/incentives/venture-summary?ventureId=1",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "ventureId": 1,
+      "from": "2025-11-08",
+      "to": "2025-12-07",
+      "items": [
+        {
+          "userId": 1,
+          "userName": "Herry Chokshi",
+          "email": "ceo@sioxglobal.com",
+          "role": "CEO",
+          "totalAmount": 3609.38,
+          "daysWithIncentives": 10
+        }
+      ],
+      "totalAmount": 3609.38
+    },
+    "test_description": "Get venture summary (existing functionality)"
+  },
+  {
+    "endpoint": "/api/incentives/user-daily?userId=1&ventureId=1",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "userId": 1,
+      "ventureId": 1,
+      "from": "2025-11-08",
+      "to": "2025-12-07",
+      "items": [
+        {
+          "date": "2025-11-28",
+          "amount": 418.03,
+          "note": null
+        },
+        {
+          "date": "2025-11-29",
+          "amount": 533.79,
+          "note": null
+        },
+        {
+          "date": "2025-11-30",
+          "amount": 189.96,
+          "note": null
+        },
+        {
+          "date": "2025-12-01",
+          "amount": 281.58,
+          "note": null
+        },
+        {
+          "date": "2025-12-02",
+          "amount": 269.74,
+          "note": null
+        },
+        {
+          "date": "2025-12-03",
+          "amount": 394.35,
+          "note": null
+        },
+        {
+          "date": "2025-12-04",
+          "amount": 330.01,
+          "note": null
+        },
+        {
+          "date": "2025-12-05",
+          "amount": 391.19,
+          "note": null
+        },
+        {
+          "date": "2025-12-06",
+          "amount": 276.32,
+          "note": null
+        },
+        {
+          "date": "2025-12-07",
+          "amount": 524.41,
+          "note": null
+        }
+      ],
+      "totalAmount": 3609.38
+    },
+    "test_description": "Get user daily data (existing drill-down functionality)"
+  }
+]

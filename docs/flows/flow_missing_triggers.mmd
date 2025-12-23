@@ -1,0 +1,67 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffebee', 'primaryBorderColor': '#c62828'}}}%%
+flowchart TD
+    subgraph EVENTS["Events That Should Trigger"]
+        E1["Hotel Review Response<br/>HotelReview.respondedById set"]
+        E2["BPO Call Completion<br/>BpoCallLog created"]
+        E3["Hotel Dispute Resolution<br/>HotelDispute.status = WON/LOST"]
+        E4["Load DELIVERED<br/>Load.loadStatus = DELIVERED"]
+        E5["Hotel KPI Upload<br/>HotelKpiDaily created"]
+        E6["BPO KPI Upsert<br/>BpoKpiRecord created"]
+    end
+
+    subgraph MISSING_GAMIFICATION["Missing Gamification Triggers"]
+        M1["Hotel Review Response<br/>Should: 5-10 points<br/>Current: NO TRIGGER"]
+        M2["BPO Call Completion<br/>Should: 1-5 points<br/>Current: NO TRIGGER"]
+        M3["Hotel Dispute Resolution<br/>Should: 10-20 points<br/>Current: NO TRIGGER"]
+    end
+
+    subgraph MISSING_KPI["Missing KPI Triggers"]
+        M4["Load DELIVERED<br/>Should: Recalculate FreightKpiDaily<br/>Current: On-demand only"]
+        M5["Hotel KPI Upload<br/>Should: Aggregate HotelKpiDaily<br/>Current: On-demand only"]
+        M6["BPO KPI Upsert<br/>Should: Aggregate BpoKpiRecord<br/>Current: On-demand only"]
+    end
+
+    subgraph MISSING_BRIEFING["Missing Briefing Triggers"]
+        M7["Load DELIVERED (critical)<br/>Should: Update briefing<br/>Current: On-demand only"]
+        M8["Load LOST<br/>Should: Add to Firefront<br/>Current: On-demand only"]
+        M9["Hotel performance drop<br/>Should: Add to Stormfront<br/>Current: On-demand only"]
+    end
+
+    subgraph MISSING_TASKS["Missing Task Generation"]
+        M10["Hotel review needs response<br/>Should: Create REVIEW_RESPONSE task<br/>Current: NO TRIGGER"]
+        M11["Hotel dispute opened<br/>Should: Create DISPUTE_RESOLUTION task<br/>Current: NO TRIGGER"]
+        M12["BPO campaign low performance<br/>Should: Create CAMPAIGN_REVIEW task<br/>Current: NO TRIGGER"]
+    end
+
+    E1 --> M1
+    E2 --> M2
+    E3 --> M3
+    E4 --> M4
+    E4 --> M7
+    E5 --> M5
+    E6 --> M6
+
+    E1 -.->|"Should trigger"| M10
+    E3 -.->|"Should trigger"| M11
+    E2 -.->|"Should trigger"| M12
+
+    style M1 fill:#ffccbc
+    style M2 fill:#ffccbc
+    style M3 fill:#ffccbc
+    style M4 fill:#ffccbc
+    style M5 fill:#ffccbc
+    style M6 fill:#ffccbc
+    style M7 fill:#ffccbc
+    style M8 fill:#ffccbc
+    style M9 fill:#ffccbc
+    style M10 fill:#ffccbc
+    style M11 fill:#ffccbc
+    style M12 fill:#ffccbc
+
+    classDef event fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef missing fill:#ffccbc,stroke:#d84315,stroke-width:2px,stroke-dasharray: 5 5
+
+    class E1,E2,E3,E4,E5,E6 event
+    class M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12 missing
+
+

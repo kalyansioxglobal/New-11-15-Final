@@ -1,0 +1,764 @@
+{
+  "summary": {
+    "total_tests": 21,
+    "passed_tests": 13,
+    "failed_tests": 8,
+    "success_rate": 61.904761904761905,
+    "test_date": "2024-01-15",
+    "timestamp": "2025-12-07T06:49:51.145620"
+  },
+  "results": [
+    {
+      "endpoint": "/api/ventures",
+      "method": "GET",
+      "status_code": 200,
+      "response": [
+        {
+          "id": 6,
+          "name": "Chokshi Hotels",
+          "type": "HOSPITALITY",
+          "logisticsRole": null,
+          "offices": [],
+          "hotels": []
+        },
+        {
+          "id": 2,
+          "name": "MB Logistics",
+          "type": "LOGISTICS",
+          "logisticsRole": "BROKER",
+          "offices": [],
+          "hotels": []
+        },
+        {
+          "id": 4,
+          "name": "Rank Me Now",
+          "type": "SAAS",
+          "logisticsRole": null,
+          "offices": [],
+          "hotels": []
+        },
+        {
+          "id": 5,
+          "name": "RevenelX",
+          "type": "BPO",
+          "logisticsRole": null,
+          "offices": [],
+          "hotels": []
+        },
+        {
+          "id": 1,
+          "name": "Siox Logistics",
+          "type": "LOGISTICS",
+          "logisticsRole": "BROKER",
+          "offices": [],
+          "hotels": []
+        },
+        {
+          "id": 3,
+          "name": "Siox Transports",
+          "type": "LOGISTICS",
+          "logisticsRole": "CARRIER",
+          "offices": [],
+          "hotels": []
+        }
+      ],
+      "test_description": "Check existing ventures",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Set-Cookie": "next-auth.csrf-token=0baa63f004d0530054b44d20676ae664ad77784bbb1f869fe29a06aa19ae6a75%7C56dc775d683501e7a04adae0d3b0df59e0ab9dd32ac6f985ece6168b67a2465c; Path=/; HttpOnly; SameSite=Lax, next-auth.callback-url=http%3A%2F%2Flocalhost%3A3000; Path=/; HttpOnly; SameSite=Lax",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"aj3z47dj7rg7\"",
+        "Content-Length": "583",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": null,
+      "timestamp": "2025-12-07T06:49:49.202964"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "GET",
+      "status_code": 405,
+      "response": {
+        "error": "Method not allowed"
+      },
+      "test_description": "Test GET method (should return 405)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Allow": "POST",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"gz8ozgte0mu\"",
+        "Content-Length": "30",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": null,
+      "timestamp": "2025-12-07T06:49:49.598078"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "PUT",
+      "status_code": 405,
+      "response": {
+        "error": "Method not allowed"
+      },
+      "test_description": "Test PUT method (should return 405)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Allow": "POST",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"gz8ozgte0mu\"",
+        "Content-Length": "30",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": null,
+      "timestamp": "2025-12-07T06:49:49.664232"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "DELETE",
+      "status_code": 405,
+      "response": {
+        "error": "Method not allowed"
+      },
+      "test_description": "Test DELETE method (should return 405)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Allow": "POST",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"gz8ozgte0mu\"",
+        "Content-Length": "30",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": null,
+      "timestamp": "2025-12-07T06:49:49.682030"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 400,
+      "response": {
+        "error": "planId is required and must be a positive number"
+      },
+      "test_description": "Test missing planId (should return 400)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"3ctcj7zzar1o\"",
+        "Content-Length": "60",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {},
+      "timestamp": "2025-12-07T06:49:49.709593"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 400,
+      "response": {
+        "error": "planId is required and must be a positive number"
+      },
+      "test_description": "Test invalid planId string (should return 400)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"3ctcj7zzar1o\"",
+        "Content-Length": "60",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": "invalid"
+      },
+      "timestamp": "2025-12-07T06:49:49.729159"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 400,
+      "response": {
+        "error": "planId is required and must be a positive number"
+      },
+      "test_description": "Test negative planId (should return 400)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"3ctcj7zzar1o\"",
+        "Content-Length": "60",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": -1
+      },
+      "timestamp": "2025-12-07T06:49:49.760064"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 400,
+      "response": {
+        "error": "planId is required and must be a positive number"
+      },
+      "test_description": "Test zero planId (should return 400)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"3ctcj7zzar1o\"",
+        "Content-Length": "60",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 0
+      },
+      "timestamp": "2025-12-07T06:49:49.773943"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 500,
+      "response": {
+        "error": "Failed to compute incentives",
+        "detail": "Invalid date \u2013 expected YYYY-MM-DD"
+      },
+      "test_description": "Test invalid date format (should return 400)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"vmfl0bkzxx2e\"",
+        "Content-Length": "88",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 1,
+        "date": "invalid-date"
+      },
+      "timestamp": "2025-12-07T06:49:49.849539"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Test with planId only (default date)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 1
+      },
+      "timestamp": "2025-12-07T06:49:49.871988"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Test with planId and date 2024-01-15",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:49.891472"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Test with different planId (2)",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 2,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:49.915143"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Test PERCENT_OF_METRIC calculation",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:49.940145"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Test FLAT_PER_UNIT calculation",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 2,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:49.962803"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Test CURRENCY_PER_DOLLAR calculation",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:49 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 3,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:49.978937"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Test BONUS_ON_TARGET calculation",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:50 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 4,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:50.007015"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Test response format",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:50 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:50.024083"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "First run for idempotency test",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:50 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:50.041743"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Second run for idempotency test",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:51 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:51.060028"
+    },
+    {
+      "endpoint": "/api/incentives/run",
+      "method": "POST",
+      "status_code": 200,
+      "response": {
+        "items": [],
+        "count": 0
+      },
+      "test_description": "Run incentives for audit log test",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"escl8h9ahhm\"",
+        "Content-Length": "22",
+        "Vary": "Accept-Encoding",
+        "Date": "Sun, 07 Dec 2025 06:49:51 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5"
+      },
+      "request_body": {
+        "planId": 1,
+        "date": "2024-01-15"
+      },
+      "timestamp": "2025-12-07T06:49:51.076901"
+    },
+    {
+      "endpoint": "/api/admin/audit-logs",
+      "method": "GET",
+      "status_code": 200,
+      "response": {
+        "items": [
+          {
+            "id": 14,
+            "createdAt": "2025-12-07T06:49:51.075Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 1
+            }
+          },
+          {
+            "id": 13,
+            "createdAt": "2025-12-07T06:49:51.058Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 1
+            }
+          },
+          {
+            "id": 12,
+            "createdAt": "2025-12-07T06:49:50.039Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 1
+            }
+          },
+          {
+            "id": 11,
+            "createdAt": "2025-12-07T06:49:50.022Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 1
+            }
+          },
+          {
+            "id": 10,
+            "createdAt": "2025-12-07T06:49:50.000Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "4",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 4
+            }
+          },
+          {
+            "id": 9,
+            "createdAt": "2025-12-07T06:49:49.977Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "3",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 3
+            }
+          },
+          {
+            "id": 8,
+            "createdAt": "2025-12-07T06:49:49.961Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "2",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 2
+            }
+          },
+          {
+            "id": 7,
+            "createdAt": "2025-12-07T06:49:49.938Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 1
+            }
+          },
+          {
+            "id": 6,
+            "createdAt": "2025-12-07T06:49:49.913Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "2",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 2
+            }
+          },
+          {
+            "id": 5,
+            "createdAt": "2025-12-07T06:49:49.889Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2024-01-15",
+              "count": 0,
+              "planId": 1
+            }
+          },
+          {
+            "id": 4,
+            "createdAt": "2025-12-07T06:49:49.869Z",
+            "requestId": null,
+            "userId": 1,
+            "userRole": "CEO",
+            "ventureId": null,
+            "officeId": null,
+            "domain": "admin",
+            "action": "INCENTIVE_COMPUTE_RUN",
+            "entityType": "incentivePlan",
+            "entityId": "1",
+            "metadata": {
+              "date": "2025-12-07",
+              "count": 0,
+              "planId": 1
+            }
+          }
+        ],
+        "page": 1,
+        "pageSize": 50,
+        "total": 11,
+        "totalPages": 1
+      },
+      "test_description": "Check audit logs for incentive runs",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://*.replit.dev https://*.replit.app https://*.repl.co https://replit.com",
+        "Content-Type": "application/json; charset=utf-8",
+        "ETag": "\"x6ji5hnzd92dj\"",
+        "Vary": "Accept-Encoding",
+        "Content-Encoding": "gzip",
+        "Date": "Sun, 07 Dec 2025 06:49:51 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5",
+        "Transfer-Encoding": "chunked"
+      },
+      "request_body": {
+        "domain": "admin",
+        "action": "INCENTIVE_COMPUTE_RUN"
+      },
+      "timestamp": "2025-12-07T06:49:51.145260"
+    }
+  ]
+}

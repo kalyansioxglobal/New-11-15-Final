@@ -1,0 +1,523 @@
+[
+  {
+    "test_name": "Method_POST_Validation",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "POST",
+    "status_code": 405,
+    "expected_status": 405,
+    "passed": true,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "POST method should return 405 Method Not Allowed"
+  },
+  {
+    "test_name": "Method_PUT_Validation",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "PUT",
+    "status_code": 405,
+    "expected_status": 405,
+    "passed": true,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "PUT method should return 405 Method Not Allowed"
+  },
+  {
+    "test_name": "Method_DELETE_Validation",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "DELETE",
+    "status_code": 405,
+    "expected_status": 405,
+    "passed": true,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "DELETE method should return 405 Method Not Allowed"
+  },
+  {
+    "test_name": "Authorization_Check",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "items": [
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T03:54:58.729Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Authorization check - should work in dev mode (auto-auth as CEO)"
+  },
+  {
+    "test_name": "Default_Behavior",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "items": [
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T03:54:58.729Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Default behavior should return last 7 days, paginated"
+  },
+  {
+    "test_name": "Invalid_From_Date",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 400,
+    "expected_status": 400,
+    "passed": true,
+    "response": {
+      "error": "Invalid from date",
+      "detail": "from must be a valid date string"
+    },
+    "test_description": "Invalid from date should return 400"
+  },
+  {
+    "test_name": "Invalid_To_Date",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 400,
+    "expected_status": 400,
+    "passed": true,
+    "response": {
+      "error": "Invalid to date",
+      "detail": "to must be a valid date string"
+    },
+    "test_description": "Invalid to date should return 400"
+  },
+  {
+    "test_name": "Date_Range_Too_Large",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 400,
+    "expected_status": 400,
+    "passed": true,
+    "response": {
+      "error": "Date range too large",
+      "detail": "Maximum allowed range is 90 days"
+    },
+    "test_description": "Date range >90 days should return 400"
+  },
+  {
+    "test_name": "Valid_Date_Range",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "items": [
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T03:54:58.729Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Valid 7-day date range should return 200"
+  },
+  {
+    "test_name": "Custom_Page_Size",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "items": [
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T03:54:58.729Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 25,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Custom pageSize=25 should work"
+  },
+  {
+    "test_name": "PageSize_Cap",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "items": [
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T03:54:58.729Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 200,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "PageSize should be capped at 200"
+  },
+  {
+    "test_name": "Domain_Filter",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "items": [
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T03:54:58.729Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Domain filter should work"
+  },
+  {
+    "test_name": "Action_Filter",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "items": [
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T03:54:58.729Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Action filter should work"
+  },
+  {
+    "test_name": "UserId_Filter",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "items": [
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T03:54:58.729Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "UserId filter should work"
+  },
+  {
+    "test_name": "Empty_Table_Handling",
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 50,
+      "total": 0,
+      "totalPages": 0
+    },
+    "test_description": "Should handle empty results gracefully"
+  },
+  {
+    "test_name": "Freight_Load_Update",
+    "endpoint": "/api/freight/loads/update",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "load": {
+        "id": 1,
+        "ventureId": 1,
+        "officeId": null,
+        "tmsLoadId": null,
+        "reference": "SX-NEW-PHI-10000",
+        "shipperName": null,
+        "shipperRef": null,
+        "customerName": null,
+        "customerId": 1,
+        "pickupCity": "New York",
+        "pickupState": "NY",
+        "pickupZip": null,
+        "pickupDate": "2025-11-24T02:00:23.177Z",
+        "dropCity": "Philadelphia",
+        "dropState": "PA",
+        "dropZip": null,
+        "dropDate": "2025-11-25T02:00:23.177Z",
+        "scheduledPickupAt": null,
+        "scheduledDeliveryAt": null,
+        "actualPickupAt": null,
+        "actualDeliveryAt": null,
+        "equipmentType": "Dry Van",
+        "weightLbs": 12732,
+        "rate": null,
+        "currency": "USD",
+        "loadStatus": "FELL_OFF",
+        "atRiskFlag": true,
+        "lostAt": null,
+        "fellOffAt": "2025-11-24T02:00:23.177Z",
+        "lostReasonId": null,
+        "status": null,
+        "lostReason": null,
+        "dormantReason": null,
+        "notes": "Test update at 2025-12-07T03:55:12.306716",
+        "carrierId": 1,
+        "createdById": null,
+        "isTest": true,
+        "createdAt": "2025-11-22T02:00:23.177Z",
+        "updatedAt": "2025-12-07T03:55:12.323Z",
+        "buyRate": null,
+        "sellRate": null,
+        "shipperId": 1,
+        "lostReasonCategory": null,
+        "billAmount": 3339,
+        "costAmount": 2554,
+        "marginAmount": 785,
+        "marginPercentage": 24,
+        "arInvoiceDate": null,
+        "apInvoiceDate": null,
+        "dispatchDate": null,
+        "arPaymentStatus": null,
+        "arDatePaid": null,
+        "arBalanceDue": null,
+        "billingDate": null,
+        "miles": null,
+        "rpm": null,
+        "lineHaulRevenue": null,
+        "fuelRevenue": null,
+        "accessorialRevenue": null,
+        "otherRevenue": null,
+        "lineHaulCost": null,
+        "fuelCost": null,
+        "lumperCost": null,
+        "tollsCost": null,
+        "detentionCost": null,
+        "otherCost": null,
+        "createdByTmsName": null,
+        "salesAgentAliasId": null,
+        "csrAliasId": null,
+        "dispatcherAliasId": null,
+        "venture": {
+          "id": 1,
+          "name": "Siox Logistics"
+        },
+        "office": null,
+        "shipper": {
+          "id": 1,
+          "name": "Walmart DC"
+        },
+        "carrier": {
+          "id": 1,
+          "name": "Swift Transportation"
+        },
+        "customer": {
+          "id": 1,
+          "name": "Amazon Fulfillment"
+        }
+      }
+    },
+    "test_description": "Freight load update should create audit log"
+  },
+  {
+    "test_name": "BPO_KPI_Upsert",
+    "endpoint": "/api/bpo/kpi/upsert",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": 200,
+    "passed": true,
+    "response": {
+      "success": true,
+      "kpi": {
+        "id": 905,
+        "campaignId": 1,
+        "date": "2025-12-07T00:00:00.000Z",
+        "talkTimeMin": 0,
+        "handledCalls": 50,
+        "outboundCalls": 0,
+        "leadsCreated": 0,
+        "demosBooked": 0,
+        "salesClosed": 0,
+        "fteCount": null,
+        "avgQaScore": null,
+        "revenue": 0,
+        "cost": 0,
+        "isTest": true,
+        "createdAt": "2025-12-07T03:55:12.481Z"
+      }
+    },
+    "test_description": "BPO KPI upsert should create audit log"
+  },
+  {
+    "test_name": "Admin_Cleanup_Test_Data",
+    "endpoint": "/api/admin/cleanup-test-data",
+    "method": "POST",
+    "status_code": 500,
+    "expected_status": 500,
+    "passed": true,
+    "response": {
+      "error": "Cleanup failed",
+      "message": "\nInvalid `prisma.hotelProperty.deleteMany()` invocation:\n\n\nForeign key constraint violated on the constraint: `HotelKpiDaily_hotelId_fkey`"
+    },
+    "test_description": "Admin cleanup should create audit log"
+  }
+]

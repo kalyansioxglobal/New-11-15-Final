@@ -1,0 +1,429 @@
+================================================================================
+CALL VOLUME KPI + RINGCENTRAL INTEGRATION READINESS AUDIT
+SIOX Command Center
+Generated: December 13, 2025
+================================================================================
+
+================================================================================
+A) CURRENT STATE SUMMARY
+================================================================================
+
+1. WHERE CALL VOLUME IS TRACKED TODAY
+-------------------------------------
+
+MODEL/FIELD: EmployeeKpiDaily.callsMade
+  - Location: prisma/schema.prisma (lines 1012-1041)
+  - Type: Int? (nullable integer)
+  - Structure: Per user + per day + per venture + per office
+  - Unique constraint: @@unique([userId, date, ventureId, officeId])
+
+RELATED FIELDS IN EmployeeKpiDaily:
+  - hoursWorked: Float? (call duration tracked as hours)
+  - tasksCompleted, loadsTouched, loadsCovered, contactsMade
+  - Additional KPIs: quotesGiven, quotesWon, revenueGenerated, demosBooked
+
+2. DATA FLOW: MANUAL vs DERIVED
+-------------------------------
+
+CURRENTLY: HYBRID (Manual Entry + CSV Import)
+
+Manual Entry Path:
+  - UI: pages/sales/sales-kpi.tsx (SaaS ventures) - lines 109-121 show manual input fields
+  - UI: pages/freight/sales-kpi.tsx (Freight ventures)
+  - API: pages/api/sales-kpi/record.ts (POST to record daily KPIs)
+  - Both pages have manual input forms for calls, hours, demos, clients
+
+Automated Import Path (CSV/Excel):
+  - API: pages/api/import/ringcentral.ts
+  - Normalizer: lib/import/normalizers.ts (normalizeRingCentralRow function)
+  - Mapper: lib/import/mappingEngine.ts (mapRingCentralAndRecordKpi function)
+  - This processes EXPORTED RingCentral call logs (not live API)
+
+IMPORTANT: Current RingCentral import is FILE-BASED, NOT API-BASED
+  - User must export call reports from RingCentral manually
+  - Upload CSV/Excel file through import UI
+  - System parses and maps to users, then increments EmployeeKpiDaily.callsMade
+
+3. UI PAGES SHOWING CALL VOLUME KPI
+-----------------------------------
+
+| Page Route                    | File Path                      | Purpose                      |
+|-------------------------------|--------------------------------|------------------------------|
+| /sales/sales-kpi              | pages/sales/sales-kpi.tsx      | SaaS sales rep KPIs          |
+| /freight/sales-kpi            | pages/freight/sales-kpi.tsx    | Freight sales rep KPIs       |
+| /my-day                       | pages/my-day.tsx               | Personal daily dashboard     |
+| /ventures/[id]/people         | pages/ventures/[id]/people.tsx | Team performance view        |
+| /ventures/[id]/freight        | pages/ventures/[id]/freight.tsx| Freight venture overview     |
+
+4. API ENDPOINTS FOR CALL VOLUME
+--------------------------------
+
+READ (GET):
+  - /api/sales-kpi - Aggregates EmployeeKpiDaily by user with callsMade totals
+    File: pages/api/sales-kpi/index.ts
+
+WRITE (POST/PATCH):
+  - /api/sales-kpi/record - Manual KPI entry (calls, hours, demos)
+    File: pages/api/sales-kpi/record.ts
+  - /api/import/ringcentral - Bulk CSV import
+    File: pages/api/import/ringcentral.ts
+  - /api/employee-kpi/daily - Generic KPI upsert
+    File: pages/api/employee-kpi/daily.ts
+  - /api/freight-kpi/upsert - Freight-specific KPI upsert
+    File: pages/api/freight-kpi/upsert.ts
+  - /api/freight-kpi/bulk-upsert - Bulk freight KPI import
+    File: pages/api/freight-kpi/bulk-upsert.ts
+
+
+================================================================================
+B) INTEGRATION READINESS
+================================================================================
+
+1. EXISTING RINGCENTRAL CODE
+-----------------------------
+
+STATUS: PARTIAL - CSV IMPORT ONLY (No Live API Integration)
+
+Existing Files:
+  | File Path                         | Purpose                                      |
+  |-----------------------------------|----------------------------------------------|
+  | lib/import/types.ts               | NormalizedRingCentralCall interface          |
+  | lib/import/normalizers.ts         | normalizeRingCentralRow() - CSV parser       |
+  | lib/import/mappingEngine.ts       | mapRingCentralAndRecordKpi() - user mapping  |
+  | pages/api/import/ringcentral.ts   | POST endpoint for CSV upload                 |
+
+NormalizedRingCentralCall Structure (lib/import/types.ts):
+  {
+    rcUserName: string | null;
+    rcEmail: string | null;
+    rcExtension: string | null;
+    totalCalls: number;
+    totalMinutes: number;
+  }
+
+CSV Column Mapping (lib/import/normalizers.ts):
+  - User Name / Name / User → rcUserName
+  - Email / User Email → rcEmail
+  - Extension / Ext → rcExtension
+  - Total Calls / Calls → totalCalls
+  - Total Duration (min) / Minutes → totalMinutes
+
+WHAT'S MISSING FOR LIVE API:
+  - No RingCentral API client (OAuth2, JWT, SDK)
+  - No env vars for RINGCENTRAL_CLIENT_ID, RINGCENTRAL_CLIENT_SECRET, etc.
+  - No background sync job to pull call logs automatically
+  - No webhook handler for real-time call events
+
+2. EXISTING ENVIRONMENT VARIABLES
+----------------------------------
+
+RingCentral-specific: NONE DEFINED
+
+Existing secrets/env vars (for reference):
+  - DATABASE_URL, PGHOST, PGPORT, etc. (PostgreSQL)
+  - SENDGRID_API_KEY (email)
+  - GOOGLE_PLACES_API_KEY
+  - NEXTAUTH_SECRET, NEXTAUTH_URL
+
+REQUIRED FOR LIVE RINGCENTRAL API:
+  - RINGCENTRAL_CLIENT_ID
+  - RINGCENTRAL_CLIENT_SECRET
+  - RINGCENTRAL_SERVER_URL (sandbox vs production)
+  - RINGCENTRAL_JWT_TOKEN (preferred for server-to-server auth)
+
+3. EXISTING JOBS FRAMEWORK
+--------------------------
+
+STATUS: YES - READY TO HOST SYNC JOB
+
+Location: lib/jobs/
+
+Existing Jobs:
+  | File                         | Purpose                          | Pattern                    |
+  |------------------------------|----------------------------------|----------------------------|
+  | quoteTimeoutJob.ts           | Expire quotes with no response   | Batch + JobRunLog          |
+  | churnRecalcJob.ts            | Recalculate shipper/customer churn| Batch + JobRunLog         |
+  | fmcsaAutosyncJob.ts          | FMCSA carrier data sync          | External API integration   |
+
+Job Trigger Endpoints:
+  - POST /api/jobs/quote-timeout
+  - POST /api/jobs/churn-recalc
+  - POST /api/jobs/task-generation
+
+Pattern Summary:
+  - Jobs accept options: { ventureId?, dryRun?, limit? }
+  - Jobs return stats object + jobRunLogId
+  - Execution logged to JobRunLog model with: jobName, status, startedAt, endedAt, statsJson
+  - Admin-only access enforced via requireUser + isGlobalAdmin
+
+A RingCentral sync job would fit this pattern perfectly.
+
+4. USER MAPPING INFRASTRUCTURE
+------------------------------
+
+STATUS: YES - ALREADY EXISTS
+
+UserMapping Model (prisma/schema.prisma lines 143-166):
+
+  model UserMapping {
+    id              Int     @id @default(autoincrement())
+    userId          Int     @unique
+    rcExtension     String?    // ← RingCentral extension
+    rcUserName      String?    // ← RingCentral display name
+    rcEmail         String?    // ← RingCentral email
+    tmsEmployeeCode String?
+    tmsEmail        String?
+    notes           String?
+    user            User    @relation(...)
+    
+    @@index([rcExtension])
+    @@index([rcEmail])
+  }
+
+User Model Phone Fields (prisma/schema.prisma lines 11-17):
+  - extension: String?   // ← could map to RC extension
+  - phone: String?       // ← personal phone
+  - phoneUs: String?     // ← US phone number
+  - phoneIn: String?     // ← India phone number
+
+MAPPING STRATEGY (already implemented in mappingEngine.ts):
+  1. First try to match by rcEmail → User.email
+  2. If not found, try UserMapping.rcExtension lookup
+  3. If autoCreateUser=true, create new User record
+
+READY FOR LIVE API: Just need to populate UserMapping.rcExtension or use email matching.
+
+
+================================================================================
+C) CUSTOMER PHONE MATCHING (OPTIONAL LINKAGE)
+================================================================================
+
+1. CUSTOMER PHONE FIELDS
+-------------------------
+
+Customer Model (prisma/schema.prisma lines 914-954):
+  - phone: String?
+  - email: String?
+
+LogisticsShipper Model (prisma/schema.prisma lines 1131-1166):
+  - phone: String?
+  - email: String?
+  - contactName: String?
+
+CustomerApprovalRequest:
+  - contactPhone: String?
+
+2. PHONE NORMALIZATION
+----------------------
+
+STATUS: NO DEDICATED UTILITY EXISTS
+
+The codebase does NOT have:
+  - Phone number normalization library (libphonenumber, phone-parser)
+  - Consistent E.164 format storage
+  - Phone deduplication logic
+
+RISK ASSESSMENT:
+  - Phone numbers likely stored in various formats (+1, (555) 123-4567, etc.)
+  - Matching RingCentral caller ID to Customer.phone would require normalization
+  - Shared numbers (main office lines) could cause false matches
+
+RECOMMENDATION:
+  - For v1 Call Volume KPI, do NOT attempt customer linkage
+  - Focus solely on user-level call counts
+  - Customer linkage can be Phase 2 with proper phone normalization
+
+
+================================================================================
+D) RECOMMENDED PIPELINE
+================================================================================
+
+RECOMMENDATION: OPTION A (Store Raw Call Logs)
+
+Reasoning:
+1. The existing CSV import already directly increments EmployeeKpiDaily.callsMade
+2. However, storing raw call logs provides:
+   - Audit trail (who called whom, when, duration)
+   - Future analytics (call by time of day, average duration trends)
+   - Customer linkage when phone normalization is added
+   - Dispute resolution ("I made 50 calls, not 40!")
+3. The BpoCallLog model already exists for BPO ventures - similar pattern
+
+PROPOSED PIPELINE:
+
+  [RingCentral API]
+        ↓
+  (Scheduled Job - every 15 min or daily)
+        ↓
+  [FreightCallLog table] ← NEW model, stores raw call records
+        ↓
+  (Aggregate on read OR nightly job)
+        ↓
+  [EmployeeKpiDaily.callsMade] ← update daily totals
+
+OPTION B (Direct Increment) ANALYSIS:
+  - Already works via CSV import today
+  - Simpler implementation
+  - BUT: No audit trail, no raw data for future analysis
+  - If there's a bug or duplicate import, hard to reconcile
+
+VERDICT: Option A is better for enterprise accountability requirements.
+
+
+================================================================================
+E) MINIMAL SETUP PLAN (NO CODE YET)
+================================================================================
+
+1. NEW MODEL NEEDED: FreightCallLog
+-----------------------------------
+
+  model FreightCallLog {
+    id              Int       @id @default(autoincrement())
+    ventureId       Int
+    userId          Int?      // mapped user, null if unmapped
+    rcCallId        String    @unique // RingCentral call UUID
+    rcExtension     String?
+    direction       String    // INBOUND, OUTBOUND
+    fromNumber      String?
+    toNumber        String?
+    startTime       DateTime
+    duration        Int       // seconds
+    result          String?   // ANSWERED, MISSED, VOICEMAIL
+    customerId      Int?      // optional customer linkage
+    isTest          Boolean   @default(false)
+    createdAt       DateTime  @default(now())
+    
+    venture         Venture   @relation(...)
+    user            User?     @relation(...)
+    customer        Customer? @relation(...)
+    
+    @@index([ventureId, userId, startTime])
+    @@index([ventureId, startTime])
+    @@index([rcExtension])
+  }
+
+2. NEW ENV VARS NEEDED
+----------------------
+
+  RINGCENTRAL_SERVER_URL   = "https://platform.ringcentral.com"  # or sandbox
+  RINGCENTRAL_CLIENT_ID    = "<from RC developer portal>"
+  RINGCENTRAL_CLIENT_SECRET= "<from RC developer portal>"
+  RINGCENTRAL_JWT_TOKEN    = "<service account JWT>"
+
+3. NEW FILES NEEDED
+-------------------
+
+  | File                              | Purpose                                    |
+  |-----------------------------------|--------------------------------------------|
+  | lib/integrations/ringcentralClient.ts | RC API client (OAuth, token refresh)   |
+  | lib/jobs/ringcentralSyncJob.ts    | Fetch call logs, map users, store records  |
+  | pages/api/jobs/ringcentral-sync.ts| Trigger endpoint for the sync job          |
+
+4. CALL → USER MAPPING LOGIC
+----------------------------
+
+RingCentral call log record provides:
+  - extension.id (numeric extension ID)
+  - extension.extensionNumber (3-4 digit ext)
+  - from.name, from.extensionNumber, from.phoneNumber
+  - to.name, to.extensionNumber, to.phoneNumber
+
+Mapping priority:
+  1. UserMapping.rcExtension = call.extension.extensionNumber
+  2. UserMapping.rcEmail = call.extension.uri → extract email
+  3. User.extension = call.extension.extensionNumber (fallback)
+
+5. COMPUTE CALLS/DAY KPI
+------------------------
+
+Option A (On Insert):
+  - After inserting FreightCallLog, immediately upsert EmployeeKpiDaily
+  - Pro: Always up to date
+  - Con: More writes per call
+
+Option B (Scheduled Aggregation):
+  - Run nightly job to count FreightCallLog per user/day and update EmployeeKpiDaily
+  - Pro: Fewer writes, easier to reconcile
+  - Con: Dashboard slightly stale until next run
+
+RECOMMENDATION: Option A (on insert) for real-time visibility, matching current pattern.
+
+
+================================================================================
+F) FILE INDEX - ALL RELEVANT PATHS FOUND
+================================================================================
+
+SCHEMA & MODELS:
+  prisma/schema.prisma (EmployeeKpiDaily, UserMapping, User, Customer, BpoCallLog)
+
+IMPORT/MAPPING ENGINE (EXISTING):
+  lib/import/types.ts
+  lib/import/normalizers.ts
+  lib/import/mappingEngine.ts
+  pages/api/import/ringcentral.ts
+
+KPI API ENDPOINTS:
+  pages/api/sales-kpi/index.ts
+  pages/api/sales-kpi/record.ts
+  pages/api/employee-kpi/daily.ts
+  pages/api/freight-kpi/upsert.ts
+  pages/api/freight-kpi/bulk-upsert.ts
+  pages/api/freight-kpi/sales.ts
+  pages/api/freight-kpi/quotes.ts
+
+UI PAGES:
+  pages/sales/sales-kpi.tsx
+  pages/freight/sales-kpi.tsx
+  pages/my-day.tsx
+  pages/ventures/[id]/people.tsx
+  pages/ventures/[id]/freight.tsx
+  pages/freight-kpis.tsx
+  pages/import/index.tsx
+  pages/mappings/index.tsx
+  pages/logistics/missing-mappings.tsx
+
+JOBS FRAMEWORK:
+  lib/jobs/quoteTimeoutJob.ts
+  lib/jobs/churnRecalcJob.ts
+  lib/jobs/fmcsaAutosyncJob.ts
+  pages/api/jobs/quote-timeout.ts
+  pages/api/jobs/churn-recalc.ts
+  pages/api/jobs/task-generation.ts
+
+INTEGRATIONS:
+  lib/integrations/fmcsaClient.ts (example pattern for external API)
+
+INCENTIVES/ANALYTICS:
+  lib/incentives/calculateIncentives.ts
+  components/FreightMiniKpi.tsx
+
+SEED DATA:
+  prisma/seedComprehensive.ts
+  prisma/seedTestData.ts
+
+DOCUMENTATION:
+  docs/system-truth-map.md
+  USER_GUIDE.md
+  TECH_DEBT.md
+  SECURITY_AUDIT.md
+
+
+================================================================================
+G) SUMMARY TABLE
+================================================================================
+
+| Question                                  | Answer                                       |
+|-------------------------------------------|----------------------------------------------|
+| Current call volume field                 | EmployeeKpiDaily.callsMade                   |
+| Structure                                 | Per user + per day + per venture + per office|
+| Data entry method                         | Manual form + CSV import (hybrid)            |
+| Live RingCentral API integration          | NO - only file import exists                 |
+| RingCentral env vars defined              | NO                                           |
+| User mapping infrastructure               | YES - UserMapping model with rcExtension     |
+| Jobs framework ready                      | YES - lib/jobs/* pattern                     |
+| Phone normalization for customer matching | NO - would need to add                       |
+| Recommended pipeline                      | Option A - store raw logs, then aggregate    |
+
+================================================================================
+END OF AUDIT REPORT
+================================================================================

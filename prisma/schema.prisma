@@ -1,0 +1,2878 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// USER – team members across ventures
+model User {
+  id                         Int                         @id @default(autoincrement())
+  email                      String                      @unique
+  fullName                   String?                     @map("name")
+  phone                      String?
+  alias                      String?                     @unique
+  extension                  String?
+  phoneUs                    String?
+  phoneIn                    String?
+  role                       UserRole                    @default(EMPLOYEE)
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
+  avatarUrl                  String?
+  password                   String?
+  legacyDepartment           Department?                 @map("department")
+  impersonatedById           Int?
+  isActive                   Boolean                     @default(true)
+  isTestUser                 Boolean                     @default(false)
+  jobDepartmentId            Int?
+  jobRoleId                  Int?
+  reportsToId                Int?
+  activityLogs               ActivityLog[]
+  aiDraftTemplatesCreated    AiDraftTemplate[]
+  aiUsageLogs                AiUsageLog[]
+  attendance                 Attendance[]
+  auditLogs                  AuditLog[]
+  auditRunsInitiated         AuditRun[]
+  bpoAgents                  BpoAgent[]
+  bpoAgentMetrics            BpoAgentMetric[]            @relation("BpoAgentMetrics")
+  carrierContacts            CarrierContact[]            @relation("CarrierContactMadeBy")
+  CarrierDispatcher          CarrierDispatcher[]
+  csrCustomers               Customer[]                  @relation("CustomerCsr")
+  dispatcherCustomers        Customer[]                  @relation("CustomerDispatcher")
+  salesCustomers             Customer[]                  @relation("CustomerSalesRep")
+  customersLastTouched       Customer[]                  @relation("CustomerLastTouchBy")
+  customerApprovalsCreated   CustomerApproval[]          @relation("CustomerApprovalRequestedBy")
+  customerApprovalsDecided   CustomerApprovalRequest[]   @relation("CustomerApprovalDecisionUser")
+  customerApprovalsRequested CustomerApprovalRequest[]   @relation("CustomerApprovalRequestUser")
+  customerTouches            CustomerTouch[]
+  emailProviderConnections   EmailProviderConnection[]
+  employeeKpis               EmployeeKpiDaily[]
+  eodReportsReviewed         EodReport[]                 @relation("EodReportReviewer")
+  eodReportsAuthored         EodReport[]                 @relation("EodReportAuthor")
+  feedbackResolved           FeedbackSubmission[]        @relation("FeedbackResolvedBy")
+  feedbackSubmitted          FeedbackSubmission[]        @relation("FeedbackSubmittedBy")
+  filesUploaded              File[]                      @relation("FileUploader")
+  freightQuotesSales         FreightQuote[]              @relation("FreightQuoteSalesperson")
+  gamificationEvents         GamificationEvent[]
+  gamificationPoints         GamificationPointsBalance?
+  holdingDocsUploaded        HoldingAssetDocument[]      @relation("HoldingDocUploader")
+  hotelDisputesCreated       HotelDispute[]              @relation("HotelDisputeCreatedBy")
+  hotelDisputesOwned         HotelDispute[]              @relation("HotelDisputeOwner")
+  hotelDisputeNotes          HotelDisputeNote[]
+  hotelNightAuditsPosted     HotelNightAudit[]
+  hotelReviewsResponded      HotelReview[]               @relation("ReviewResponder")
+  itAssets                   ITAsset[]                   @relation("ITAssetCurrentUser")
+  incidentsAssigned          ITIncident[]                @relation("AssignedIncidents")
+  incidentsReported          ITIncident[]                @relation("ReportedIncidents")
+  impersonationsReceived     ImpersonationLog[]          @relation("ImpersonatedUser")
+  impersonationsInitiated    ImpersonationLog[]          @relation("ImpersonationInitiator")
+  importJobsCreated          ImportJob[]                 @relation("ImportJobCreator")
+  importMappingsCreated      ImportMapping[]             @relation("ImportMappingCreator")
+  incentiveDailies           IncentiveDaily[]
+  incentivePayouts           IncentivePayout[]
+  incentiveScenarios         IncentiveScenario[]
+  insurancePoliciesCreated   InsurancePolicy[]           @relation("InsurancePolicyCreator")
+  loadsCreated               Load[]                      @relation("LoadCreatedBy")
+  loadEventsCreated          LogisticsLoadEvent[]        @relation("LoadEventCreator")
+  missedEodExplanations      MissedEodExplanation[]      @relation("MissedEodExplanations")
+  notifications              Notification[]
+  offices                    OfficeUser[]
+  policiesCreated            Policy[]
+  salesOnboardings           SalesClientOnboarding[]     @relation("SalesOnboarder")
+  salesPersonCosts           SalesPersonCost[]
+  staffAliases               StaffAlias[]
+  tasksAssigned              Task[]                      @relation("TaskAssignedTo")
+  tasksCreated               Task[]                      @relation("TaskCreatedBy")
+  taskOverdueExplanations    TaskOverdueExplanation[]    @relation("TaskOverdueExplanations")
+  impersonatedBy             User?                       @relation("Impersonation", fields: [impersonatedById], references: [id])
+  impersonating              User[]                      @relation("Impersonation")
+  jobDepartment              JobDepartment?              @relation(fields: [jobDepartmentId], references: [id])
+  jobRole                    JobRole?                    @relation(fields: [jobRoleId], references: [id])
+  reportsTo                  User?                       @relation("ReportingHierarchy", fields: [reportsToId], references: [id])
+  directReports              User[]                      @relation("ReportingHierarchy")
+  incentiveOverrides         UserIncentiveOverride[]
+  mappings                   UserMapping?
+  preferences                UserPreferences?
+  permissionOverridesCreated VenturePermissionOverride[] @relation("PermissionOverrideCreator")
+  ventures                   VentureUser[]
+  quarantineResolved         WebhookQuarantine[]         @relation("QuarantineResolvedBy")
+
+  @@index([jobDepartmentId])
+  @@index([jobRoleId])
+  @@index([alias])
+  @@index([reportsToId])
+}
+
+/// AiUsageLog – tracks all AI API calls for rate limiting and audit
+model AiUsageLog {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  endpoint        String
+  tokensEstimated Int      @default(0)
+  inputLength     Int      @default(0)
+  outputLength    Int      @default(0)
+  success         Boolean  @default(true)
+  errorType       String?
+  requestId       String?
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([endpoint])
+}
+
+/// UserPreferences – user-specific UI/UX settings
+model UserPreferences {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  theme       String   @default("system")
+  density     String   @default("comfortable")
+  fontSize    String   @default("medium")
+  landingPage String   @default("freight")
+  layout      Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// UserMapping – bridges employees across external systems (RingCentral, TMS, etc.)
+model UserMapping {
+  id              Int      @id @default(autoincrement())
+  userId          Int      @unique
+  rcExtension     String?
+  rcUserName      String?
+  rcEmail         String?
+  tmsEmployeeCode String?
+  tmsEmail        String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([rcExtension])
+  @@index([rcEmail])
+  @@index([tmsEmployeeCode])
+  @@index([tmsEmail])
+}
+
+/// StaffAlias – staff names/aliases for matching imported data to users
+model StaffAlias {
+  id                Int       @id @default(autoincrement())
+  name              String
+  normalizedName    String    @unique
+  role              StaffRole
+  userId            Int?
+  isPrimaryForUser  Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  loadsAsCSR        Load[]    @relation("CSRAlias")
+  loadsAsDispatcher Load[]    @relation("DispatcherAlias")
+  loadsAsSalesAgent Load[]    @relation("SalesAgentAlias")
+  user              User?     @relation(fields: [userId], references: [id])
+
+  @@index([normalizedName])
+  @@index([userId])
+  @@index([role])
+}
+
+/// SalesPersonCost – tracks monthly cost for salespersons (for ROI calculations)
+model SalesPersonCost {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  monthlyCost   Float    @default(0)
+  effectiveFrom DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, effectiveFrom])
+}
+
+/// InsurancePolicy – tracks insurance documents per venture
+model InsurancePolicy {
+  id           Int       @id @default(autoincrement())
+  ventureId    Int
+  name         String
+  provider     String?
+  policyNumber String?
+  coverageType String?
+  fileUrl      String
+  startDate    DateTime?
+  endDate      DateTime?
+  status       String?
+  createdById  Int
+  createdAt    DateTime  @default(now())
+  createdBy    User      @relation("InsurancePolicyCreator", fields: [createdById], references: [id])
+  venture      Venture   @relation(fields: [ventureId], references: [id])
+
+  @@index([ventureId])
+  @@index([status])
+  @@index([endDate])
+}
+
+/// Junction table: User ↔ Venture (many-to-many)
+model VentureUser {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  ventureId Int
+  role      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venture   Venture  @relation(fields: [ventureId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ventureId])
+}
+
+/// Junction table: User ↔ Office (many-to-many)
+model OfficeUser {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  officeId  Int
+  role      String?
+  createdAt DateTime @default(now())
+  office    Office   @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, officeId])
+}
+
+/// Top-level company/brand (Siox Logistics, MB Logistics, Rank Me Now, etc.)
+model Venture {
+  id                       Int                        @id @default(autoincrement())
+  slug                     String?                    @unique
+  /// Short venture code for references (SX, MB, CH, etc.)
+  code                     String?                    @unique
+  name                     String
+  type                     VentureType
+  logisticsRole            LogisticsRole?
+  isActive                 Boolean                    @default(true)
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  isTest                   Boolean                    @default(false)
+  aiDraftTemplates         AiDraftTemplate[]
+  approvalRoutes           ApprovalRouting?
+  attendance               Attendance[]
+  auditRuns                AuditRun[]
+  bankAccounts             BankAccount[]
+  bankSnapshots            BankAccountSnapshot[]
+  bpoAgents                BpoAgent[]
+  bpoCallLogs              BpoCallLog[]
+  bpoCampaigns             BpoCampaign[]
+  carrierVentureStats      CarrierVentureStats[]
+  customers                Customer[]
+  customerApprovals        CustomerApproval[]
+  customerApprovalRequests CustomerApprovalRequest[]
+  customerTouches          CustomerTouch[]
+  dispatchConversations    DispatchConversation[]
+  dispatchDrivers          DispatchDriver[]
+  dispatchLoads            DispatchLoad[]
+  dispatchTrucks           DispatchTruck[]
+  emailProviderConnections EmailProviderConnection[]
+  employeeKpis             EmployeeKpiDaily[]
+  eodReports               EodReport[]
+  files                    File[]
+  freightKpis              FreightKpiDaily[]
+  freightQuotes            FreightQuote[]
+  gamificationConfig       GamificationConfig?
+  gamificationEvents       GamificationEvent[]
+  holdingAssets            HoldingAsset[]
+  hotelKpis                HotelKpiDaily[]
+  hotels                   HotelProperty[]
+  itAssets                 ITAsset[]
+  itincidents              ITIncident[]
+  incentiveDailies         IncentiveDaily[]
+  incentivePayouts         IncentivePayout[]
+  incentivePlans           IncentivePlan[]
+  incentiveScenarios       IncentiveScenario[]
+  insurancePolicies        InsurancePolicy[]
+  loads                    Load[]
+  logisticsShippers        LogisticsShipper[]
+  missedEodExplanations    MissedEodExplanation[]
+  offices                  Office[]
+  outreachAttributions     OutreachAttribution[]
+  outreachConversations    OutreachConversation[]
+  outreachMessages         OutreachMessage[]
+  policies                 Policy[]
+  saasCustomers            SaasCustomer[]
+  salesOnboardings         SalesClientOnboarding[]
+  settlements              Settlement[]
+  tasks                    Task[]
+  TaskOverdueExplanation   TaskOverdueExplanation[]
+  ThreePlLoadMapping       ThreePlLoadMapping[]
+  outboundConfig           VentureOutboundConfig?
+  permissionOverride       VenturePermissionOverride?
+  users                    VentureUser[]
+
+  @@unique([name, logisticsRole])
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  requestId  String?
+  userId     Int?
+  userRole   String?
+  ventureId  Int?
+  officeId   Int?
+  domain     String
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@index([domain])
+  @@index([action])
+  @@index([ventureId])
+  @@index([officeId])
+}
+
+/// Physical / functional office (Vadodara sales, MB Mohali, etc.)
+model Office {
+  id                 Int                 @id @default(autoincrement())
+  ventureId          Int
+  name               String              @unique
+  city               String?
+  country            String?             @default("India")
+  timezone           String?
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  isTest             Boolean             @default(false)
+  attendance         Attendance[]
+  auditRuns          AuditRun[]
+  bpoCallLogs        BpoCallLog[]
+  bpoCampaigns       BpoCampaign[]
+  employeeKpis       EmployeeKpiDaily[]
+  eodReports         EodReport[]
+  files              File[]
+  gamificationEvents GamificationEvent[]
+  itassets           ITAsset[]
+  itincidents        ITIncident[]
+  incentiveDaily     IncentiveDaily[]
+  loads              Load[]
+  venture            Venture             @relation(fields: [ventureId], references: [id])
+  users              OfficeUser[]
+  policies           Policy[]
+  tasks              Task[]
+}
+
+/// TASKS – generic work items per venture/office
+model Task {
+  id                 Int                     @id @default(autoincrement())
+  ventureId          Int?
+  officeId           Int?
+  title              String
+  description        String?
+  status             TaskStatus              @default(OPEN)
+  priority           TaskPriority            @default(MEDIUM)
+  dueDate            DateTime?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  assignedTo         Int?
+  createdBy          Int?
+  isTest             Boolean                 @default(false)
+  completedAt        DateTime?
+  customerId         Int?
+  loadId             Int?
+  quoteId            Int?
+  type               TaskType                @default(OTHER)
+  files              File[]
+  assignedUser       User?                   @relation("TaskAssignedTo", fields: [assignedTo], references: [id])
+  creator            User?                   @relation("TaskCreatedBy", fields: [createdBy], references: [id])
+  customer           Customer?               @relation(fields: [customerId], references: [id])
+  load               Load?                   @relation(fields: [loadId], references: [id])
+  office             Office?                 @relation(fields: [officeId], references: [id])
+  quote              FreightQuote?           @relation(fields: [quoteId], references: [id])
+  venture            Venture?                @relation(fields: [ventureId], references: [id])
+  overdueExplanation TaskOverdueExplanation? @relation("TaskOverdueExplanations")
+
+  @@index([ventureId, assignedTo, status, dueDate])
+  @@index([ventureId, status, type, createdAt])
+}
+
+/// POLICY – insurance, leases, contracts, licenses, permits per venture/office
+model Policy {
+  id        Int          @id @default(autoincrement())
+  ventureId Int
+  officeId  Int?
+  provider  String?
+  startDate DateTime?
+  endDate   DateTime?
+  status    PolicyStatus @default(ACTIVE)
+  notes     String?
+  isTest    Boolean      @default(false)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  createdBy Int?
+  fileUrl   String?
+  name      String
+  policyNo  String?
+  type      PolicyType
+  files     File[]
+  creator   User?        @relation(fields: [createdBy], references: [id])
+  office    Office?      @relation(fields: [officeId], references: [id])
+  venture   Venture      @relation(fields: [ventureId], references: [id])
+}
+
+/// FREIGHT KPIs – daily metrics for logistics ventures
+model FreightKpiDaily {
+  id                  Int      @id @default(autoincrement())
+  ventureId           Int
+  date                DateTime
+  loadsInbound        Int      @default(0)
+  loadsQuoted         Int      @default(0)
+  loadsCovered        Int      @default(0)
+  loadsLost           Int      @default(0)
+  totalRevenue        Float    @default(0)
+  totalCost           Float    @default(0)
+  totalProfit         Float    @default(0)
+  avgMarginPct        Float    @default(0)
+  activeShippers      Int      @default(0)
+  newShippers         Int      @default(0)
+  churnedShippers     Int      @default(0)
+  reactivatedShippers Int      @default(0)
+  atRiskShippers      Int      @default(0)
+  activeCarriers      Int      @default(0)
+  newCarriers         Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  venture             Venture  @relation(fields: [ventureId], references: [id])
+
+  @@unique([ventureId, date])
+}
+
+/// HOTEL PROPERTY – individual hotels for hospitality ventures
+model HotelProperty {
+  id           Int                @id @default(autoincrement())
+  name         String
+  code         String?            @unique
+  ventureId    Int
+  brand        String?
+  rooms        Int?
+  city         String?
+  state        String?
+  country      String?
+  status       HotelStatus        @default(ACTIVE)
+  isTest       Boolean            @default(false)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  auditRuns    AuditRun[]
+  files        File[]
+  dailyReports HotelDailyReport[]
+  disputes     HotelDispute[]
+  kpis         HotelKpiDaily[]
+  nightAudits  HotelNightAudit[]
+  pnlMonthly   HotelPnlMonthly[]
+  venture      Venture            @relation(fields: [ventureId], references: [id])
+  reviews      HotelReview[]
+}
+
+/// HOTEL KPIs – daily metrics per hotel property
+model HotelKpiDaily {
+  id                   Int           @id @default(autoincrement())
+  date                 DateTime
+  roomsSold            Int           @default(0)
+  roomsAvailable       Int           @default(0)
+  occupancyPct         Float         @default(0)
+  roomRevenue          Float         @default(0)
+  adr                  Float         @default(0)
+  revpar               Float         @default(0)
+  otherRevenue         Float         @default(0)
+  totalRevenue         Float         @default(0)
+  grossOperatingProfit Float         @default(0)
+  goppar               Float         @default(0)
+  cancellations        Int           @default(0)
+  noShows              Int           @default(0)
+  walkins              Int           @default(0)
+  complaints           Int           @default(0)
+  reviewScore          Float?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  hotelId              Int
+  roomsOutOfOrder      Int           @default(0)
+  ventureId            Int
+  hotel                HotelProperty @relation(fields: [hotelId], references: [id])
+  venture              Venture       @relation(fields: [ventureId], references: [id])
+
+  @@unique([hotelId, date])
+  @@index([ventureId, date])
+}
+
+/// HOTEL DAILY REPORT – daily revenue & dues breakdown per hotel
+model HotelDailyReport {
+  id           Int           @id @default(autoincrement())
+  hotelId      Int
+  date         DateTime
+  roomSold     Int?
+  totalRoom    Int?
+  cash         Float?
+  credit       Float?
+  online       Float?
+  refund       Float?
+  total        Float?
+  dues         Float?
+  lostDues     Float?
+  occupancy    Float?
+  adr          Float?
+  revpar       Float?
+  highLossFlag Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  hotel        HotelProperty @relation(fields: [hotelId], references: [id])
+
+  @@unique([hotelId, date])
+}
+
+/// HOTEL NIGHT AUDIT – tracks GL posting status per hotel per night
+model HotelNightAudit {
+  id             Int           @id @default(autoincrement())
+  hotelId        Int
+  auditDate      DateTime
+  postedToGl     Boolean       @default(false)
+  postedByUserId Int?
+  postedAt       DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  hotel          HotelProperty @relation(fields: [hotelId], references: [id])
+  postedBy       User?         @relation(fields: [postedByUserId], references: [id])
+
+  @@unique([hotelId, auditDate])
+}
+
+/// HOTEL P&L MONTHLY – monthly profit & loss statement per hotel
+model HotelPnlMonthly {
+  id                 Int           @id @default(autoincrement())
+  hotelId            Int
+  year               Int
+  month              Int
+  baseRevenue        Decimal?
+  payroll            Decimal?      @default(0)
+  utilities          Decimal?      @default(0)
+  repairsMaintenance Decimal?      @default(0)
+  marketing          Decimal?      @default(0)
+  otaCommissions     Decimal?      @default(0)
+  insurance          Decimal?      @default(0)
+  propertyTax        Decimal?      @default(0)
+  adminGeneral       Decimal?      @default(0)
+  cashExpenses       Decimal?      @default(0)
+  bankExpenses       Decimal?      @default(0)
+  other1Label        String?
+  other1Amount       Decimal?      @default(0)
+  other2Label        String?
+  other2Amount       Decimal?      @default(0)
+  other3Label        String?
+  other3Amount       Decimal?      @default(0)
+  other4Label        String?
+  other4Amount       Decimal?      @default(0)
+  other5Label        String?
+  other5Amount       Decimal?      @default(0)
+  other6Label        String?
+  other6Amount       Decimal?      @default(0)
+  other7Label        String?
+  other7Amount       Decimal?      @default(0)
+  other8Label        String?
+  other8Amount       Decimal?      @default(0)
+  notes              String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  hotel              HotelProperty @relation(fields: [hotelId], references: [id])
+
+  @@unique([hotelId, year, month])
+  @@index([hotelId, year])
+}
+
+/// 3PL Load mapping – links external TMS loads to internal loads for sync
+model ThreePlLoadMapping {
+  id             Int       @id @default(autoincrement())
+  threePlLoadId  String    @unique
+  loadId         Int?
+  ventureId      Int?
+  lastModifiedAt DateTime?
+  syncedAt       DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  load           Load?     @relation(fields: [loadId], references: [id])
+  venture        Venture?  @relation(fields: [ventureId], references: [id])
+
+  @@index([loadId])
+  @@index([ventureId])
+  @@index([lastModifiedAt])
+}
+
+/// GENERAL LEDGER ENTRY – journal entries from night audits
+model GeneralLedgerEntry {
+  id          Int      @id @default(autoincrement())
+  hotelId     Int
+  auditDate   DateTime
+  accountCode String
+  debit       Float    @default(0)
+  credit      Float    @default(0)
+  description String?
+  createdAt   DateTime @default(now())
+
+  @@index([hotelId, auditDate])
+}
+
+/// FREIGHT LOAD – individual shipments for logistics ventures
+model Load {
+  id                            Int                    @id @default(autoincrement())
+  ventureId                     Int?
+  officeId                      Int?
+  tmsLoadId                     String?                @unique
+  reference                     String?
+  shipperName                   String?
+  shipperRef                    String?
+  customerName                  String?
+  customerId                    Int?
+  pickupCity                    String?
+  pickupState                   String?
+  pickupZip                     String?
+  pickupDate                    DateTime?
+  dropCity                      String?
+  dropState                     String?
+  dropZip                       String?
+  dropDate                      DateTime?
+  scheduledPickupAt             DateTime?
+  scheduledDeliveryAt           DateTime?
+  preferredBonusesJson          String?
+  deliveryAppointment           DateTime?
+  deliveryFlexHours             Int?
+  actualPickupAt                DateTime?
+  actualDeliveryAt              DateTime?
+  equipmentType                 String?
+  weightLbs                     Int?
+  rate                          Float?
+  currency                      String                 @default("USD")
+  loadStatus                    LoadStatus             @default(OPEN)
+  atRiskFlag                    Boolean                @default(false)
+  lostAt                        DateTime?
+  fellOffAt                     DateTime?
+  lostReasonId                  Int?
+  status                        String?
+  lostReason                    String?
+  dormantReason                 String?
+  notes                         String?
+  carrierId                     Int?
+  createdById                   Int?
+  isTest                        Boolean                @default(false)
+  createdAt                     DateTime               @default(now())
+  updatedAt                     DateTime               @updatedAt
+  buyRate                       Float?
+  sellRate                      Float?
+  shipperId                     Int?
+  lostReasonCategory            String?
+  billAmount                    Float?
+  costAmount                    Float?
+  marginAmount                  Float?
+  marginPercentage              Float?
+  arInvoiceDate                 DateTime?
+  apInvoiceDate                 DateTime?
+  dispatchDate                  DateTime?
+  arPaymentStatus               String?
+  arDatePaid                    DateTime?
+  arBalanceDue                  Float?
+  billingDate                   DateTime?
+  miles                         Float?
+  rpm                           Float?
+  lineHaulRevenue               Float?
+  fuelRevenue                   Float?
+  accessorialRevenue            Float?
+  otherRevenue                  Float?
+  lineHaulCost                  Float?
+  fuelCost                      Float?
+  lumperCost                    Float?
+  tollsCost                     Float?
+  detentionCost                 Float?
+  otherCost                     Float?
+  createdByTmsName              String?
+  salesAgentAliasId             Int?
+  csrAliasId                    Int?
+  dispatcherAliasId             Int?
+  lastCarrierDropNotificationAt DateTime?
+  contacts                      CarrierContact[]
+  dispatchConversations         DispatchConversation[]
+  dispatchLoads                 DispatchLoad[]
+  files                         File[]
+  freightQuote                  FreightQuote?
+  carrier                       Carrier?               @relation(fields: [carrierId], references: [id])
+  createdBy                     User?                  @relation("LoadCreatedBy", fields: [createdById], references: [id])
+  csrAlias                      StaffAlias?            @relation("CSRAlias", fields: [csrAliasId], references: [id])
+  customer                      Customer?              @relation(fields: [customerId], references: [id])
+  dispatcherAlias               StaffAlias?            @relation("DispatcherAlias", fields: [dispatcherAliasId], references: [id])
+  lostReasonRef                 LostLoadReason?        @relation(fields: [lostReasonId], references: [id])
+  office                        Office?                @relation(fields: [officeId], references: [id])
+  salesAgentAlias               StaffAlias?            @relation("SalesAgentAlias", fields: [salesAgentAliasId], references: [id])
+  shipper                       LogisticsShipper?      @relation("LoadShipper", fields: [shipperId], references: [id])
+  venture                       Venture?               @relation(fields: [ventureId], references: [id])
+  events                        LogisticsLoadEvent[]
+  outreachAttribution           OutreachAttribution?
+  outreachConversations         OutreachConversation[]
+  outreachMessages              OutreachMessage[]
+  tasks                         Task[]
+  ThreePlLoadMapping            ThreePlLoadMapping[]
+  quarantineAttachments         WebhookQuarantine[]    @relation("QuarantineAttachedLoad")
+
+  @@index([billingDate])
+  @@index([arInvoiceDate])
+  @@index([ventureId])
+  @@index([status])
+  @@index([loadStatus])
+  @@index([lostAt])
+  @@index([pickupDate])
+  @@index([ventureId, pickupDate])
+  @@index([ventureId, createdAt])
+  @@index([carrierId])
+  @@index([shipperId])
+  @@index([customerId])
+  @@index([loadStatus, ventureId])
+  @@index([loadStatus, lostAt])
+  @@index([loadStatus, pickupDate])
+  @@index([salesAgentAliasId])
+  @@index([csrAliasId])
+  @@index([dispatcherAliasId])
+}
+
+/// Lost Load Reason – categorized reasons for lost/fell-off loads
+model LostLoadReason {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  category    String?
+  isActive    Boolean @default(true)
+  loads       Load[]
+}
+
+/// CARRIER – trucking companies for freight brokerage
+model Carrier {
+  id                            Int                    @id @default(autoincrement())
+  name                          String
+  legalName                     String?
+  dbaName                       String?
+  mcNumber                      String?                @unique
+  dotNumber                     String?                @unique
+  tmsCarrierCode                String?                @unique
+  ein                           String?
+  email                         String?
+  phone                         String?
+  addressLine1                  String?
+  addressLine2                  String?
+  city                          String?
+  state                         String?
+  postalCode                    String?
+  country                       String?
+  equipmentTypes                String?
+  lanesJson                     String?
+  rating                        Int?
+  powerUnits                    Int?
+  drivers                       Int?
+  operatingStatus               String?
+  entityType                    String?
+  isPassengerCarrier            Boolean?
+  safetyRating                  String?
+  safetyRatingDate              DateTime?
+  mcs150Outdated                Boolean?
+  oosDate                       DateTime?
+  issScore                      Float?
+  bipdInsuranceOnFile           Int?
+  bipdInsuranceRequired         Boolean?
+  bipdRequiredAmount            Int?
+  cargoInsuranceOnFile          Int?
+  cargoInsuranceRequired        Boolean?
+  bondInsuranceOnFile           Int?
+  bondInsuranceRequired         Boolean?
+  crashTotal                    Int?
+  fatalCrash                    Int?
+  injCrash                      Int?
+  towawayCrash                  Int?
+  driverInsp                    Int?
+  driverOosInsp                 Int?
+  driverOosRate                 Float?
+  driverOosRateNationalAverage  Float?
+  vehicleInsp                   Int?
+  vehicleOosInsp                Int?
+  vehicleOosRate                Float?
+  vehicleOosRateNationalAverage Float?
+  hazmatInsp                    Int?
+  hazmatOosInsp                 Int?
+  hazmatOosRate                 Float?
+  hazmatOosRateNationalAverage  Float?
+  active                        Boolean                @default(true)
+  blocked                       Boolean                @default(false)
+  complianceStatus              ComplianceStatus       @default(PASS)
+  fmcsaStatus                   String?
+  fmcsaStatusRaw                String?
+  fmcsaCargoTypesRaw            String?
+  fmcsaAuthorized               Boolean?               @default(true)
+  fmcsaLastUpdated              DateTime?
+  fmcsaLastSyncAt               DateTime?
+  fmcsaSyncError                String?
+  preferredLanesJson            String?
+  onTimePercentage              Int?
+  recentLoadsDelivered          Int?
+  disqualified                  Boolean?               @default(false)
+  matchingNotes                 String?
+  notes                         String?
+  createdAt                     DateTime               @default(now())
+  updatedAt                     DateTime               @updatedAt
+  dispatchersJson               String?
+  contacts                      CarrierContact[]
+  dispatchers                   CarrierDispatcher[]
+  CarrierPreferredLane          CarrierPreferredLane[]
+  ventureStats                  CarrierVentureStats[]
+  dispatchConversations         DispatchConversation[] @relation("CarrierDispatchConversations")
+  dispatchDrivers               DispatchDriver[]
+  files                         File[]
+  loads                         Load[]
+  outreachAttributions          OutreachAttribution[]
+  outreachConversations         OutreachConversation[]
+  outreachRecipients            OutreachRecipient[]
+  quarantineAttachments         WebhookQuarantine[]    @relation("QuarantineAttachedCarrier")
+
+  @@index([name])
+  @@index([mcNumber])
+  @@index([active, blocked])
+  @@index([fmcsaAuthorized, active])
+  @@index([operatingStatus])
+  @@index([fmcsaStatus])
+}
+
+/// Preferred lanes saved by carriers for prioritized matching
+model CarrierPreferredLane {
+  id          Int      @id @default(autoincrement())
+  carrierId   Int
+  origin      String
+  destination String
+  radius      Int      @default(200)
+  createdAt   DateTime @default(now())
+  carrier     Carrier  @relation(fields: [carrierId], references: [id])
+
+  @@unique([carrierId, origin, destination])
+  @@index([carrierId])
+}
+
+/// CarrierVentureStats – venture-scoped carrier performance metrics
+/// Stores per-venture intelligence for carrier matching (on-time rate, loads, etc.)
+model CarrierVentureStats {
+  id                   Int       @id @default(autoincrement())
+  carrierId            Int
+  ventureId            Int
+  onTimePct            Float     @default(0)
+  recentLoadsDelivered Int       @default(0)
+  lastLoadDeliveredAt  DateTime?
+  laneAffinityScore    Float     @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  carrier              Carrier   @relation(fields: [carrierId], references: [id], onDelete: Cascade)
+  venture              Venture   @relation(fields: [ventureId], references: [id], onDelete: Cascade)
+
+  @@unique([carrierId, ventureId])
+  @@index([ventureId])
+  @@index([carrierId])
+}
+
+/// Preferred lanes saved by shippers (customers) with optional bonus
+model ShipperPreferredLane {
+  id          Int      @id @default(autoincrement())
+  shipperId   Int
+  origin      String
+  destination String
+  bonus       Int?     @default(0)
+  createdAt   DateTime @default(now())
+  customer    Customer @relation(fields: [shipperId], references: [id])
+
+  @@unique([shipperId, origin, destination])
+  @@index([shipperId])
+}
+
+/// CARRIER DISPATCHER – dispatchers managed by a carrier
+model CarrierDispatcher {
+  id                     String   @id @default(cuid())
+  carrierId              Int
+  name                   String
+  role                   String?
+  email                  String?
+  phone                  String?
+  mobile                 String?
+  isPrimary              Boolean  @default(false)
+  isBackup               Boolean  @default(false)
+  preferredContactMethod String?
+  notes                  String?
+  userId                 Int?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  carrier                Carrier  @relation(fields: [carrierId], references: [id])
+  user                   User?    @relation(fields: [userId], references: [id])
+
+  @@index([carrierId])
+}
+
+/// CUSTOMER – broker list / shipper customers
+model Customer {
+  id                    Int                       @id @default(autoincrement())
+  name                  String
+  email                 String?
+  phone                 String?
+  address               String?
+  tmsCustomerCode       String?                   @unique
+  internalCode          String?                   @unique
+  assignedManagerName   String?
+  assignedManagerUserId Int?
+  vertical              String?
+  isActive              Boolean                   @default(true)
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+  ventureId             Int?
+  assignedSalesId       Int?
+  assignedCsrId         Int?
+  assignedDispatcherId  Int?
+  churnRiskScore        Int?
+  churnStatus           ShipperChurnStatus        @default(ACTIVE)
+  lastLoadDate          DateTime?
+  lifecycleStatus       String?
+  loadFrequencyDays     Float?
+  source                String?
+  lastTouchAt           DateTime?
+  lastTouchByUserId     Int?
+  csr                   User?                     @relation("CustomerCsr", fields: [assignedCsrId], references: [id])
+  dispatcher            User?                     @relation("CustomerDispatcher", fields: [assignedDispatcherId], references: [id])
+  salesRep              User?                     @relation("CustomerSalesRep", fields: [assignedSalesId], references: [id])
+  lastTouchBy           User?                     @relation("CustomerLastTouchBy", fields: [lastTouchByUserId], references: [id])
+  venture               Venture?                  @relation(fields: [ventureId], references: [id])
+  approvals             CustomerApproval[]
+  approvalRequests      CustomerApprovalRequest[]
+  touches               CustomerTouch[]
+  freightQuotes         FreightQuote[]
+  loads                 Load[]
+  shippers              LogisticsShipper[]
+  ShipperPreferredLane  ShipperPreferredLane[]
+  tasks                 Task[]
+
+  @@index([tmsCustomerCode])
+  @@index([internalCode])
+  @@index([ventureId])
+  @@index([assignedSalesId])
+  @@index([assignedCsrId])
+  @@index([assignedDispatcherId])
+  @@index([lastTouchAt])
+}
+
+/// CUSTOMER TOUCH – sales activity tracking for customer outreach
+model CustomerTouch {
+  id         Int                  @id @default(autoincrement())
+  ventureId  Int
+  customerId Int
+  userId     Int
+  channel    CustomerTouchChannel
+  outcome    String?
+  notes      String?
+  createdAt  DateTime             @default(now())
+  customer   Customer             @relation(fields: [customerId], references: [id])
+  user       User                 @relation(fields: [userId], references: [id])
+  venture    Venture              @relation(fields: [ventureId], references: [id])
+
+  @@index([ventureId, customerId, createdAt])
+  @@index([ventureId, userId, createdAt])
+}
+
+/// CARRIER CONTACT LOG – outreach history for carriers
+model CarrierContact {
+  id             Int      @id @default(autoincrement())
+  carrierId      Int
+  loadId         Int?
+  madeById       Int
+  channel        String
+  subject        String?
+  body           String?
+  outcome        String?
+  notes          String?
+  lanesDiscussed String?
+  createdAt      DateTime @default(now())
+  carrier        Carrier  @relation(fields: [carrierId], references: [id])
+  load           Load?    @relation(fields: [loadId], references: [id])
+  madeBy         User     @relation("CarrierContactMadeBy", fields: [madeById], references: [id])
+
+  @@index([carrierId])
+}
+
+/// EMPLOYEE KPIs – daily per-employee metrics
+model EmployeeKpiDaily {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  ventureId        Int
+  officeId         Int?
+  date             DateTime
+  hoursPlanned     Float?
+  hoursWorked      Float?
+  tasksCompleted   Int?
+  loadsTouched     Int?
+  loadsCovered     Int?
+  contactsMade     Int?
+  callsMade        Int?
+  ticketsClosed    Int?
+  qaScore          Float?
+  revenueGenerated Float?
+  quotesGiven      Int?
+  quotesWon        Int?
+  demosBooked      Int?
+  clientsOnboarded Int?
+  notes            String?
+  isTest           Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  avgCallMinutes   Float?
+  totalCallMinutes Float?
+  office           Office?  @relation(fields: [officeId], references: [id])
+  user             User     @relation(fields: [userId], references: [id])
+  venture          Venture  @relation(fields: [ventureId], references: [id])
+
+  @@unique([userId, date, ventureId, officeId])
+}
+
+/// EOD REPORT – End-of-Day reports submitted by employees
+model EodReport {
+  id              Int             @id @default(autoincrement())
+  userId          Int
+  ventureId       Int
+  officeId        Int?
+  date            DateTime
+  summary         String
+  accomplishments String?
+  blockers        String?
+  tomorrowPlan    String?
+  hoursWorked     Float?
+  tasksCompleted  Int?
+  status          EodReportStatus @default(SUBMITTED)
+  managerNotes    String?
+  reviewedAt      DateTime?
+  reviewedById    Int?
+  isTest          Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  office          Office?         @relation(fields: [officeId], references: [id])
+  reviewedBy      User?           @relation("EodReportReviewer", fields: [reviewedById], references: [id])
+  user            User            @relation("EodReportAuthor", fields: [userId], references: [id])
+  venture         Venture         @relation(fields: [ventureId], references: [id])
+
+  @@unique([userId, date, ventureId])
+  @@index([userId])
+  @@index([ventureId])
+  @@index([date])
+}
+
+/// ATTENDANCE – daily attendance records
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  ventureId Int
+  officeId  Int?
+  date      DateTime
+  status    String
+  notes     String?
+  isTest    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  office    Office?  @relation(fields: [officeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  venture   Venture  @relation(fields: [ventureId], references: [id])
+
+  @@unique([userId, date, ventureId, officeId])
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  title      String
+  body       String?
+  type       String?
+  entityType String?
+  entityId   Int?
+  isRead     Boolean  @default(false)
+  isTest     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model ImpersonationLog {
+  id             Int       @id @default(autoincrement())
+  initiatorId    Int
+  impersonatedId Int
+  startedAt      DateTime  @default(now())
+  endedAt        DateTime?
+  reason         String?
+  ipAddress      String?
+  impersonated   User      @relation("ImpersonatedUser", fields: [impersonatedId], references: [id])
+  initiator      User      @relation("ImpersonationInitiator", fields: [initiatorId], references: [id])
+}
+
+model LogisticsShipper {
+  id                   Int                       @id @default(autoincrement())
+  ventureId            Int
+  name                 String
+  tmsShipperCode       String?                   @unique
+  internalCode         String?                   @unique
+  customerId           Int?
+  contactName          String?
+  email                String?
+  phone                String?
+  addressLine1         String?
+  addressLine2         String?
+  city                 String?
+  state                String?
+  postalCode           String?
+  country              String?
+  notes                String?
+  isActive             Boolean                   @default(true)
+  lastLoadDate         DateTime?
+  churnStatus          ShipperChurnStatus        @default(ACTIVE)
+  churnedAt            DateTime?
+  reactivatedAt        DateTime?
+  firstLoadDate        DateTime?
+  totalLoadsHistoric   Int                       @default(0)
+  avgLoadsPerMonth     Float?
+  loadFrequencyDays    Float?
+  expectedNextLoadDate DateTime?
+  churnRiskScore       Int?
+  metricsCalculatedAt  DateTime?
+  isTest               Boolean                   @default(false)
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+  isDefault            Boolean                   @default(false)
+  approvalRequests     CustomerApprovalRequest[]
+  files                File[]
+  freightQuotes        FreightQuote[]
+  loads                Load[]                    @relation("LoadShipper")
+  customer             Customer?                 @relation(fields: [customerId], references: [id])
+  venture              Venture                   @relation(fields: [ventureId], references: [id])
+
+  @@index([tmsShipperCode])
+  @@index([internalCode])
+  @@index([lastLoadDate])
+  @@index([churnStatus])
+  @@index([churnRiskScore])
+}
+
+model LogisticsLoadEvent {
+  id          Int           @id @default(autoincrement())
+  loadId      Int
+  type        LoadEventType
+  message     String?
+  data        Json?
+  createdById Int?
+  createdAt   DateTime      @default(now())
+  createdBy   User?         @relation("LoadEventCreator", fields: [createdById], references: [id])
+  load        Load          @relation(fields: [loadId], references: [id])
+}
+
+model FreightQuote {
+  id                  Int                      @id @default(autoincrement())
+  ventureId           Int
+  customerId          Int
+  shipperId           Int?
+  salespersonUserId   Int
+  status              FreightQuoteStatus       @default(DRAFT)
+  customerTypeAtQuote FreightQuoteCustomerType
+  sellRate            Float?
+  buyRateEstimate     Float?
+  marginEstimate      Float?
+  counterOfferRate    Float?
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @updatedAt
+  sentAt              DateTime?
+  respondedAt         DateTime?
+  bookedAt            DateTime?
+  expiresAt           DateTime?
+  rejectionReasonCode String?
+  rejectionReasonText String?
+  notes               String?
+  approvalRequestId   Int?
+  loadId              Int?                     @unique
+  origin              String?
+  destination         String?
+  equipmentType       String?
+  customer            Customer                 @relation(fields: [customerId], references: [id])
+  load                Load?                    @relation(fields: [loadId], references: [id])
+  salesperson         User                     @relation("FreightQuoteSalesperson", fields: [salespersonUserId], references: [id])
+  shipper             LogisticsShipper?        @relation(fields: [shipperId], references: [id])
+  venture             Venture                  @relation(fields: [ventureId], references: [id])
+  tasks               Task[]
+
+  @@index([ventureId])
+  @@index([customerId])
+  @@index([salespersonUserId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model HotelReview {
+  id            Int           @id @default(autoincrement())
+  hotelId       Int
+  source        ReviewSource
+  externalId    String?
+  reviewerName  String?
+  rating        Float?
+  title         String?
+  comment       String?
+  language      String?       @default("en")
+  reviewDate    DateTime?
+  responseText  String?
+  respondedById Int?
+  respondedAt   DateTime?
+  isTest        Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  hotel         HotelProperty @relation(fields: [hotelId], references: [id])
+  respondedBy   User?         @relation("ReviewResponder", fields: [respondedById], references: [id])
+}
+
+model BpoCampaign {
+  id           Int              @id @default(autoincrement())
+  ventureId    Int
+  name         String
+  clientName   String?
+  formulaJson  Json?
+  description  String?
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  officeId     Int?
+  timezone     String?
+  vertical     String?
+  agents       BpoAgent[]
+  agentMetrics BpoAgentMetric[]
+  callLogs     BpoCallLog[]
+  office       Office?          @relation(fields: [officeId], references: [id])
+  venture      Venture          @relation(fields: [ventureId], references: [id])
+  dailyMetrics BpoDailyMetric[]
+  kpiRecords   BpoKpiRecord[]
+}
+
+model BpoAgent {
+  id              Int            @id @default(autoincrement())
+  userId          Int
+  ventureId       Int
+  campaignId      Int?
+  employeeId      String?
+  isActive        Boolean        @default(true)
+  seatMonthlyCost Float?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  campaign        BpoCampaign?   @relation(fields: [campaignId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
+  venture         Venture        @relation(fields: [ventureId], references: [id])
+  callLogs        BpoCallLog[]
+  kpiRecords      BpoKpiRecord[]
+}
+
+model BpoKpiRecord {
+  id            Int         @id @default(autoincrement())
+  campaignId    Int
+  agentId       Int
+  date          DateTime
+  calls         Int?
+  talkTimeSec   Int?
+  qaScore       Float?
+  customJson    Json?
+  scoreComputed Float?
+  isTest        Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  agent         BpoAgent    @relation(fields: [agentId], references: [id])
+  campaign      BpoCampaign @relation(fields: [campaignId], references: [id])
+
+  @@unique([campaignId, agentId, date])
+  @@index([campaignId, date])
+}
+
+/// Campaign-level daily aggregates for BPO operations
+model BpoDailyMetric {
+  id            Int         @id @default(autoincrement())
+  campaignId    Int
+  date          DateTime
+  talkTimeMin   Int?
+  handledCalls  Int?
+  outboundCalls Int?
+  leadsCreated  Int?
+  demosBooked   Int?
+  salesClosed   Int?
+  fteCount      Float?
+  avgQaScore    Float?
+  revenue       Float?
+  cost          Float?
+  isTest        Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  campaign      BpoCampaign @relation(fields: [campaignId], references: [id])
+
+  @@unique([campaignId, date])
+  @@index([campaignId, date])
+}
+
+/// Individual call logs for BPO agents
+model BpoCallLog {
+  id             Int          @id @default(autoincrement())
+  agentId        Int
+  ventureId      Int
+  officeId       Int?
+  campaignId     Int?
+  callStartedAt  DateTime
+  callEndedAt    DateTime?
+  dialCount      Int          @default(1)
+  isConnected    Boolean      @default(false)
+  appointmentSet Boolean      @default(false)
+  dealWon        Boolean      @default(false)
+  revenue        Float        @default(0)
+  notes          String?
+  isTest         Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  agent          BpoAgent     @relation(fields: [agentId], references: [id])
+  campaign       BpoCampaign? @relation(fields: [campaignId], references: [id])
+  office         Office?      @relation(fields: [officeId], references: [id])
+  venture        Venture      @relation(fields: [ventureId], references: [id])
+
+  @@index([agentId, callStartedAt])
+  @@index([campaignId, callStartedAt])
+  @@index([ventureId, callStartedAt])
+}
+
+/// Agent-level daily metrics for BPO agents
+model BpoAgentMetric {
+  id            Int         @id @default(autoincrement())
+  campaignId    Int
+  userId        Int?
+  agentName     String?
+  date          DateTime
+  talkTimeMin   Int?
+  handledCalls  Int?
+  outboundCalls Int?
+  leadsCreated  Int?
+  demosBooked   Int?
+  salesClosed   Int?
+  avgQaScore    Float?
+  isTest        Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  campaign      BpoCampaign @relation(fields: [campaignId], references: [id])
+  user          User?       @relation("BpoAgentMetrics", fields: [userId], references: [id])
+
+  @@index([campaignId, date])
+  @@index([userId, date])
+}
+
+model SaasCustomer {
+  id            Int                @id @default(autoincrement())
+  ventureId     Int
+  name          String
+  email         String?
+  domain        String?
+  notes         String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  venture       Venture            @relation(fields: [ventureId], references: [id])
+  subscriptions SaasSubscription[]
+}
+
+model SaasSubscription {
+  id                Int                    @id @default(autoincrement())
+  customerId        Int
+  planName          String
+  mrr               Float
+  startedAt         DateTime
+  cancelledAt       DateTime?
+  cancelReason      String?
+  cancelFeedback    String?
+  saveOfferMade     String?
+  saveOfferAccepted Boolean?
+  isActive          Boolean                @default(true)
+  notes             String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  customer          SaasCustomer           @relation(fields: [customerId], references: [id])
+  onboarding        SalesClientOnboarding?
+
+  @@index([customerId])
+  @@index([startedAt])
+  @@index([cancelledAt])
+  @@index([isActive])
+}
+
+/// SALES CLIENT ONBOARDING – tracks clients onboarded by salespeople with subscription link
+model SalesClientOnboarding {
+  id                 Int               @id @default(autoincrement())
+  salesUserId        Int
+  ventureId          Int
+  clientName         String
+  clientEmail        String?
+  clientCompany      String?
+  subscriptionId     Int?              @unique
+  subscriptionStatus String            @default("PENDING")
+  onboardedAt        DateTime          @default(now())
+  notes              String?
+  isTest             Boolean           @default(false)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  salesUser          User              @relation("SalesOnboarder", fields: [salesUserId], references: [id])
+  subscription       SaasSubscription? @relation(fields: [subscriptionId], references: [id])
+  venture            Venture           @relation(fields: [ventureId], references: [id])
+
+  @@index([salesUserId])
+  @@index([ventureId])
+  @@index([subscriptionStatus])
+  @@index([onboardedAt])
+}
+
+model HoldingAsset {
+  id            Int                    @id @default(autoincrement())
+  ventureId     Int?
+  name          String
+  type          String
+  location      String?
+  valueEstimate Float?
+  acquiredDate  DateTime?
+  notes         String?
+  isActive      Boolean                @default(true)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  venture       Venture?               @relation(fields: [ventureId], references: [id])
+  documents     HoldingAssetDocument[]
+
+  @@index([ventureId])
+  @@index([type])
+}
+
+model HoldingAssetDocument {
+  id           Int          @id @default(autoincrement())
+  assetId      Int
+  name         String
+  description  String?
+  category     String?
+  fileUrl      String
+  fileName     String
+  mimeType     String?
+  sizeBytes    Int?
+  uploadedById Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  asset        HoldingAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  uploadedBy   User         @relation("HoldingDocUploader", fields: [uploadedById], references: [id])
+
+  @@index([assetId])
+  @@index([category])
+}
+
+model BankAccount {
+  id            Int            @id @default(autoincrement())
+  ventureId     Int
+  name          String
+  bankName      String?
+  accountNumber String?
+  currency      String         @default("USD")
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  venture       Venture        @relation(fields: [ventureId], references: [id])
+  snapshots     BankSnapshot[]
+
+  @@index([ventureId])
+}
+
+model BankSnapshot {
+  id            Int         @id @default(autoincrement())
+  bankAccountId Int
+  balance       Float
+  snapshotDate  DateTime    @default(now())
+  notes         String?
+  createdAt     DateTime    @default(now())
+  bankAccount   BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+
+  @@index([bankAccountId, snapshotDate])
+}
+
+model BankAccountSnapshot {
+  id           Int      @id @default(autoincrement())
+  ventureId    Int?
+  bankName     String?
+  accountName  String?
+  accountLast4 String?
+  date         DateTime
+  balance      Float?
+  currency     String   @default("USD")
+  notes        String?
+  createdAt    DateTime @default(now())
+  venture      Venture? @relation(fields: [ventureId], references: [id])
+
+  @@index([ventureId, date])
+}
+
+model File {
+  id           Int               @id @default(autoincrement())
+  ventureId    Int?
+  officeId     Int?
+  taskId       Int?
+  policyId     Int?
+  loadId       Int?
+  shipperId    Int?
+  carrierId    Int?
+  hotelId      Int?
+  fileName     String
+  mimeType     String
+  sizeBytes    Int
+  provider     String            @default("supabase")
+  bucket       String
+  path         String
+  tag          String?
+  uploadedById Int
+  createdAt    DateTime          @default(now())
+  deletedAt    DateTime?
+  carrier      Carrier?          @relation(fields: [carrierId], references: [id])
+  hotel        HotelProperty?    @relation(fields: [hotelId], references: [id])
+  load         Load?             @relation(fields: [loadId], references: [id])
+  office       Office?           @relation(fields: [officeId], references: [id])
+  policy       Policy?           @relation(fields: [policyId], references: [id])
+  shipper      LogisticsShipper? @relation(fields: [shipperId], references: [id])
+  task         Task?             @relation(fields: [taskId], references: [id])
+  uploadedBy   User              @relation("FileUploader", fields: [uploadedById], references: [id])
+  venture      Venture?          @relation(fields: [ventureId], references: [id])
+
+  @@index([ventureId])
+  @@index([loadId])
+  @@index([carrierId])
+  @@index([shipperId])
+}
+
+/// JOB DEPARTMENT – Real-world departments scoped by venture type
+model JobDepartment {
+  id          Int          @id @default(autoincrement())
+  name        String
+  ventureType VentureType?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  jobRoles    JobRole[]
+  users       User[]
+
+  @@unique([name, ventureType])
+  @@index([ventureType])
+}
+
+/// JOB ROLE – Real-world job titles within departments
+model JobRole {
+  id           Int           @id @default(autoincrement())
+  name         String
+  isManager    Boolean       @default(false)
+  departmentId Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  department   JobDepartment @relation(fields: [departmentId], references: [id])
+  users        User[]
+
+  @@unique([name, departmentId])
+  @@index([departmentId])
+}
+
+model CustomerApprovalRequest {
+  id                    Int                    @id @default(autoincrement())
+  businessUnit          String                 @default("LOGISTICS")
+  ventureId             Int?
+  customerId            Int?
+  shipperId             Int?
+  customerLegalName     String
+  dbaName               String?
+  addressLine1          String
+  addressLine2          String?
+  city                  String?
+  state                 String?
+  postalCode            String?
+  country               String?
+  contactName           String?
+  contactPhone          String?
+  contactEmail          String?
+  website               String?
+  customerCode          String?
+  usdotNumber           String?
+  mcNumber              String?
+  referenceNotes        String?
+  paymentTermsRequested String?
+  creditLimitRequested  Float?
+  status                CustomerApprovalStatus @default(PENDING)
+  decisionNotes         String?
+  decidedAt             DateTime?
+  decidedByUserId       Int?
+  requestedByUserId     Int?
+  autoChecks            Json?
+  checklist             Json?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  customer              Customer?              @relation(fields: [customerId], references: [id])
+  decidedByUser         User?                  @relation("CustomerApprovalDecisionUser", fields: [decidedByUserId], references: [id])
+  requestedByUser       User?                  @relation("CustomerApprovalRequestUser", fields: [requestedByUserId], references: [id])
+  shipper               LogisticsShipper?      @relation(fields: [shipperId], references: [id])
+  venture               Venture?               @relation(fields: [ventureId], references: [id])
+
+  @@index([businessUnit])
+  @@index([status])
+  @@index([customerCode])
+}
+
+/// Per-venture email routing for customer approvals
+model ApprovalRouting {
+  id        Int      @id @default(autoincrement())
+  ventureId Int      @unique
+  toEmails  String
+  ccEmails  String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  venture   Venture  @relation(fields: [ventureId], references: [id])
+}
+
+/// CUSTOMER APPROVAL – per-venture customer approval workflow
+model CustomerApproval {
+  id            Int       @id @default(autoincrement())
+  customerId    Int
+  ventureId     Int
+  requestedById Int
+  status        String    @default("PENDING")
+  notes         String?
+  decisionNotes String?
+  decidedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  customer      Customer  @relation(fields: [customerId], references: [id])
+  requestedBy   User      @relation("CustomerApprovalRequestedBy", fields: [requestedById], references: [id])
+  venture       Venture   @relation(fields: [ventureId], references: [id])
+
+  @@index([customerId])
+  @@index([ventureId, status])
+}
+
+/// EMAIL OTP – passwordless login codes
+model EmailOtp {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([code])
+}
+
+/// Permission Matrix – stores role-based permissions as JSON
+model PermissionMatrix {
+  id        Int      @id @default(1)
+  json      Json
+  updatedAt DateTime @updatedAt
+}
+
+/// Venture Permission Override – venture-specific permission overrides
+model VenturePermissionOverride {
+  id            Int      @id @default(autoincrement())
+  ventureId     Int      @unique
+  roleOverrides Json
+  isActive      Boolean  @default(true)
+  createdById   Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdBy     User?    @relation("PermissionOverrideCreator", fields: [createdById], references: [id])
+  venture       Venture  @relation(fields: [ventureId], references: [id])
+
+  @@index([ventureId])
+  @@index([isActive])
+}
+
+/// HOTEL DISPUTE – chargebacks, OTA disputes, guest billing issues
+model HotelDispute {
+  id              Int                 @id @default(autoincrement())
+  propertyId      Int
+  reservationId   String?
+  folioNumber     String?
+  type            HotelDisputeType
+  channel         HotelDisputeChannel
+  sourceRef       String?
+  guestName       String?
+  guestEmail      String?
+  guestPhone      String?
+  postedDate      DateTime?
+  stayFrom        DateTime?
+  stayTo          DateTime?
+  currency        String              @default("USD")
+  disputedAmount  Float
+  originalAmount  Float?
+  status          HotelDisputeStatus  @default(OPEN)
+  reason          String?
+  internalNotes   String?
+  evidenceDueDate DateTime?
+  submittedDate   DateTime?
+  decisionDate    DateTime?
+  outcomeNotes    String?
+  ownerId         Int?
+  createdById     Int?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  createdBy       User?               @relation("HotelDisputeCreatedBy", fields: [createdById], references: [id])
+  owner           User?               @relation("HotelDisputeOwner", fields: [ownerId], references: [id])
+  property        HotelProperty       @relation(fields: [propertyId], references: [id])
+  notes           HotelDisputeNote[]
+
+  @@index([propertyId])
+  @@index([status])
+}
+
+/// HOTEL DISPUTE NOTE – activity log for disputes
+model HotelDisputeNote {
+  id        Int          @id @default(autoincrement())
+  disputeId Int
+  authorId  Int?
+  body      String
+  createdAt DateTime     @default(now())
+  author    User?        @relation(fields: [authorId], references: [id])
+  dispute   HotelDispute @relation(fields: [disputeId], references: [id])
+
+  @@index([disputeId])
+}
+
+/// IMPORT JOB – tracks file uploads and import status
+model ImportJob {
+  id           Int            @id @default(autoincrement())
+  type         ImportType
+  fileName     String
+  filePath     String?
+  mimeType     String?
+  status       ImportStatus   @default(UPLOADED)
+  rowCount     Int?
+  successCount Int?
+  errorCount   Int?
+  errorMessage String?
+  errorRows    Json?
+  mappingId    Int?
+  createdById  Int?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  createdBy    User?          @relation("ImportJobCreator", fields: [createdById], references: [id])
+  mapping      ImportMapping? @relation(fields: [mappingId], references: [id])
+
+  @@index([status])
+  @@index([type])
+  @@index([createdById])
+}
+
+/// IMPORT MAPPING – saved column mappings for reusable import templates
+model ImportMapping {
+  id          Int         @id @default(autoincrement())
+  name        String
+  type        ImportType
+  sourceHash  String?
+  configJson  Json
+  createdById Int?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  importJobs  ImportJob[]
+  createdBy   User?       @relation("ImportMappingCreator", fields: [createdById], references: [id])
+
+  @@unique([name, type])
+  @@index([type])
+  @@index([sourceHash])
+}
+
+/// IT ASSET – hardware and equipment tracking
+model ITAsset {
+  id               Int              @id @default(autoincrement())
+  ventureId        Int
+  officeId         Int?
+  tag              String
+  type             String
+  make             String?
+  model            String?
+  serialNumber     String?
+  status           String           @default("AVAILABLE")
+  purchaseDate     DateTime?
+  warrantyExpiry   DateTime?
+  assignedToUserId Int?
+  assignedSince    DateTime?
+  notes            String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  assignedToUser   User?            @relation("ITAssetCurrentUser", fields: [assignedToUserId], references: [id])
+  office           Office?          @relation(fields: [officeId], references: [id])
+  venture          Venture          @relation(fields: [ventureId], references: [id])
+  files            ITAssetFile[]
+  history          ITAssetHistory[]
+  incidents        ITIncident[]
+
+  @@unique([ventureId, tag])
+  @@index([ventureId])
+  @@index([officeId])
+  @@index([status])
+  @@index([assignedToUserId])
+}
+
+/// IT ASSET FILE – attachments for IT assets
+model ITAssetFile {
+  id        Int      @id @default(autoincrement())
+  assetId   Int
+  fileUrl   String
+  fileName  String
+  createdAt DateTime @default(now())
+  asset     ITAsset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+}
+
+/// IT ASSET HISTORY – assignment and change tracking
+model ITAssetHistory {
+  id         Int      @id @default(autoincrement())
+  assetId    Int
+  action     String
+  fromUserId Int?
+  toUserId   Int?
+  notes      String?
+  createdAt  DateTime @default(now())
+  asset      ITAsset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+  @@index([action])
+}
+
+/// IT INCIDENT – issues and problems with IT assets
+model ITIncident {
+  id                   Int                    @id @default(autoincrement())
+  ventureId            Int
+  officeId             Int?
+  assetId              Int?
+  reporterUserId       Int?
+  assignedToUserId     Int?
+  title                String
+  description          String?
+  status               String                 @default("OPEN")
+  severity             String                 @default("LOW")
+  category             String?
+  resolution           String?
+  resolvedAt           DateTime?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  asset                ITAsset?               @relation(fields: [assetId], references: [id])
+  assignedToUser       User?                  @relation("AssignedIncidents", fields: [assignedToUserId], references: [id])
+  office               Office?                @relation(fields: [officeId], references: [id])
+  reporterUser         User?                  @relation("ReportedIncidents", fields: [reporterUserId], references: [id])
+  venture              Venture                @relation(fields: [ventureId], references: [id])
+  ITIncidentTagMapping ITIncidentTagMapping[]
+
+  @@index([ventureId])
+  @@index([officeId])
+  @@index([assetId])
+  @@index([status])
+  @@index([severity])
+  @@index([reporterUserId])
+  @@index([assignedToUserId])
+}
+
+/// EMAIL LOG – tracks all outbound emails for audit and agent activity
+model EmailLog {
+  id            Int      @id @default(autoincrement())
+  venture       String?
+  fromAddress   String
+  toAddress     String
+  subject       String
+  bodyPreview   String?
+  relatedLoadId Int?
+  sentByUserId  Int?
+  sentByAgent   Boolean  @default(false)
+  status        String   @default("SENT")
+  errorMessage  String?
+  createdAt     DateTime @default(now())
+
+  @@index([relatedLoadId])
+  @@index([sentByUserId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// RATE LIMIT WINDOW – persistent rate limiting for security-critical endpoints
+model RateLimitWindow {
+  id          Int      @id @default(autoincrement())
+  ipHash      String
+  routeKey    String
+  windowStart DateTime
+  expiresAt   DateTime
+  hitCount    Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([ipHash, routeKey, windowStart])
+  @@index([expiresAt])
+}
+
+/// INCENTIVE PLAN – venture-level incentive structure
+model IncentivePlan {
+  id            Int             @id @default(autoincrement())
+  ventureId     Int
+  name          String
+  isActive      Boolean         @default(true)
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  venture       Venture         @relation(fields: [ventureId], references: [id])
+  rules         IncentiveRule[]
+
+  @@index([ventureId])
+  @@index([isActive])
+}
+
+/// INCENTIVE QUALIFICATION – minimum criteria to qualify for incentives
+model IncentiveQualification {
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String?
+  conditions  Json
+  rules       IncentiveRule[]
+}
+
+/// INCENTIVE RULE – specific calculation rule within a plan
+model IncentiveRule {
+  id              Int                     @id @default(autoincrement())
+  planId          Int
+  roleKey         String
+  metricKey       String
+  calcType        IncentiveCalcType
+  rate            Float?
+  currency        String?
+  qualificationId Int?
+  config          Json?
+  isEnabled       Boolean                 @default(true)
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  plan            IncentivePlan           @relation(fields: [planId], references: [id], onDelete: Cascade)
+  qualification   IncentiveQualification? @relation(fields: [qualificationId], references: [id])
+  userOverrides   UserIncentiveOverride[]
+
+  @@index([planId])
+  @@index([roleKey])
+  @@index([metricKey])
+}
+
+/// USER INCENTIVE OVERRIDE – per-user customizations to incentive rules
+model UserIncentiveOverride {
+  id           Int           @id @default(autoincrement())
+  userId       Int
+  ruleId       Int
+  overrideRate Float?
+  isActive     Boolean       @default(true)
+  rule         IncentiveRule @relation(fields: [ruleId], references: [id])
+  user         User          @relation(fields: [userId], references: [id])
+
+  @@unique([userId, ruleId])
+  @@index([userId])
+  @@index([ruleId])
+}
+
+/// INCENTIVE DAILY – calculated daily incentive per user
+model IncentiveDaily {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  ventureId Int
+  officeId  Int?
+  date      DateTime
+  amount    Float
+  currency  String
+  breakdown Json?
+  isTest    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  office    Office?  @relation(fields: [officeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  venture   Venture  @relation(fields: [ventureId], references: [id])
+
+  @@unique([userId, date, ventureId])
+  @@index([userId])
+  @@index([ventureId])
+  @@index([officeId])
+  @@index([date])
+  @@index([ventureId, date])
+  @@index([userId, date])
+}
+
+model IncentiveScenario {
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  ventureId       Int
+  createdByUserId Int
+  name            String
+  description     String?
+  config          Json
+  isPinned        Boolean  @default(false)
+  createdByUser   User     @relation(fields: [createdByUserId], references: [id])
+  venture         Venture  @relation(fields: [ventureId], references: [id])
+
+  @@unique([ventureId, name])
+  @@index([ventureId])
+  @@index([createdByUserId])
+}
+
+/// INCENTIVE PAYOUT – periodic payout aggregation with approval workflow
+model IncentivePayout {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  ventureId   Int
+  periodStart DateTime
+  periodEnd   DateTime
+  amount      Float
+  currency    String
+  breakdown   Json?
+  status      String   @default("CALCULATED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+  venture     Venture  @relation(fields: [ventureId], references: [id])
+
+  @@index([userId, ventureId, periodStart, periodEnd])
+  @@unique([userId, ventureId, periodStart, periodEnd])
+}
+
+model GamificationConfig {
+  id        Int      @id @default(autoincrement())
+  ventureId Int      @unique
+  config    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  venture   Venture  @relation(fields: [ventureId], references: [id])
+}
+
+model GamificationEvent {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  ventureId Int
+  type      String
+  points    Int
+  metadata  Json?
+  createdAt DateTime @default(now())
+  officeId  Int?
+  Office    Office?  @relation(fields: [officeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  venture   Venture  @relation(fields: [ventureId], references: [id])
+}
+
+model GamificationPointsBalance {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  points    Int      @default(0)
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model TaskOverdueExplanation {
+  id        Int      @id @default(autoincrement())
+  taskId    Int      @unique
+  userId    Int
+  ventureId Int
+  reason    String
+  createdAt DateTime @default(now())
+  task      Task     @relation("TaskOverdueExplanations", fields: [taskId], references: [id])
+  user      User     @relation("TaskOverdueExplanations", fields: [userId], references: [id])
+  venture   Venture  @relation(fields: [ventureId], references: [id])
+}
+
+model MissedEodExplanation {
+  id              Int        @id @default(autoincrement())
+  userId          Int
+  ventureId       Int
+  createdAt       DateTime   @default(now())
+  consecutiveDays Int
+  explanation     String
+  managerNotified Boolean    @default(false)
+  missedDates     DateTime[]
+  notifiedAt      DateTime?
+  resolvedAt      DateTime?
+  updatedAt       DateTime   @updatedAt
+  user            User       @relation("MissedEodExplanations", fields: [userId], references: [id])
+  venture         Venture    @relation(fields: [ventureId], references: [id])
+}
+
+model AuditRun {
+  id                Int            @id @default(autoincrement())
+  initiatedByUserId Int?
+  scopeVentureId    Int?
+  scopeOfficeId     Int?
+  scopePropertyId   Int?
+  overallScore      Int?
+  createdAt         DateTime       @default(now())
+  finishedAt        DateTime?
+  issues            AuditIssue[]
+  initiatedBy       User?          @relation(fields: [initiatedByUserId], references: [id])
+  scopeOffice       Office?        @relation(fields: [scopeOfficeId], references: [id])
+  scopeProperty     HotelProperty? @relation(fields: [scopePropertyId], references: [id])
+  scopeVenture      Venture?       @relation(fields: [scopeVentureId], references: [id])
+}
+
+model AuditCheck {
+  id          Int          @id @default(autoincrement())
+  key         String       @unique
+  module      String
+  severity    String
+  description String?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  issues      AuditIssue[]
+}
+
+model AuditIssue {
+  id           Int        @id @default(autoincrement())
+  auditRunId   Int
+  auditCheckId Int
+  module       String
+  severity     String
+  status       String     @default("OPEN")
+  targetType   String
+  targetId     String?
+  message      String
+  details      Json?
+  createdAt    DateTime   @default(now())
+  auditCheck   AuditCheck @relation(fields: [auditCheckId], references: [id])
+  auditRun     AuditRun   @relation(fields: [auditRunId], references: [id])
+
+  @@index([auditRunId])
+  @@index([auditCheckId])
+}
+
+model ApiRouteConfig {
+  id                  Int      @id @default(autoincrement())
+  path                String   @unique
+  description         String?
+  requiresAuth        Boolean  @default(true)
+  isAuthProtected     Boolean  @default(false)
+  usesExternalService Boolean  @default(false)
+  requiresRateLimit   Boolean  @default(false)
+  isRateLimited       Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  action      String
+  module      String?
+  entityType  String?
+  entityId    String?
+  description String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id])
+}
+
+/// JOB RUN LOG – tracks scheduled job executions
+model JobRunLog {
+  id        Int       @id @default(autoincrement())
+  ventureId Int?
+  jobName   JobName
+  status    String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  statsJson String?
+  error     String?
+
+  @@index([jobName])
+  @@index([startedAt])
+  @@index([ventureId])
+}
+
+model AiDraftTemplate {
+  id        Int      @id @default(autoincrement())
+  ventureId Int?
+  createdBy Int
+  name      String
+  domain    String
+  prompt    String
+  config    Json?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  creator   User     @relation(fields: [createdBy], references: [id])
+  venture   Venture? @relation(fields: [ventureId], references: [id])
+}
+
+model ITIncidentTag {
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @unique
+  createdAt            DateTime               @default(now())
+  ITIncidentTagMapping ITIncidentTagMapping[]
+}
+
+model ITIncidentTagMapping {
+  id         Int           @id @default(autoincrement())
+  incidentId Int
+  tagId      Int
+  incident   ITIncident    @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  tag        ITIncidentTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([incidentId, tagId])
+}
+
+model FmcsaSyncLog {
+  id                 Int       @id @default(autoincrement())
+  startedAt          DateTime  @default(now())
+  finishedAt         DateTime?
+  offsetStart        Int
+  offsetEnd          Int?
+  limit              Int
+  fetched            Int       @default(0)
+  imported           Int       @default(0)
+  updated            Int       @default(0)
+  skipped            Int       @default(0)
+  status             String    @default("running")
+  errorText          String?
+  totalCarriersAfter Int?
+
+  @@index([startedAt])
+  @@index([status])
+}
+
+/// VENTURE OUTBOUND CONFIG – provider credentials and identity per venture
+model VentureOutboundConfig {
+  id                  Int      @id @default(autoincrement())
+  ventureId           Int      @unique
+  emailProvider       String   @default("none")
+  smsProvider         String   @default("none")
+  sendgridApiKeyEnv   String?
+  sendgridFromEmail   String?
+  sendgridFromName    String?
+  twilioAccountSidEnv String?
+  twilioAuthTokenEnv  String?
+  twilioFromNumber    String?
+  isEnabled           Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  venture             Venture  @relation(fields: [ventureId], references: [id])
+}
+
+/// OUTREACH MESSAGE – bulk outreach sent for a load
+model OutreachMessage {
+  id          Int                 @id @default(autoincrement())
+  ventureId   Int
+  loadId      Int
+  channel     String
+  subject     String?
+  body        String
+  createdById Int
+  status      String              @default("QUEUED")
+  provider    String
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  load        Load                @relation(fields: [loadId], references: [id])
+  venture     Venture             @relation(fields: [ventureId], references: [id])
+  recipients  OutreachRecipient[]
+
+  @@index([loadId, createdAt])
+  @@index([ventureId, createdAt])
+}
+
+/// OUTREACH RECIPIENT – individual recipient of an outreach message
+model OutreachRecipient {
+  id        Int             @id @default(autoincrement())
+  messageId Int
+  carrierId Int
+  toEmail   String?
+  toPhone   String?
+  status    String          @default("PENDING")
+  error     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  carrier   Carrier         @relation(fields: [carrierId], references: [id])
+  message   OutreachMessage @relation(fields: [messageId], references: [id])
+
+  @@index([messageId])
+  @@index([carrierId])
+}
+
+/// OUTREACH CONVERSATION – tracks message thread per load/carrier/channel
+model OutreachConversation {
+  id            Int             @id @default(autoincrement())
+  ventureId     Int
+  loadId        Int?
+  carrierId     Int
+  channel       String
+  lastMessageAt DateTime        @default(now())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  carrier       Carrier         @relation(fields: [carrierId], references: [id])
+  load          Load?           @relation(fields: [loadId], references: [id])
+  venture       Venture         @relation(fields: [ventureId], references: [id])
+  replies       OutreachReply[]
+
+  @@unique([ventureId, loadId, carrierId, channel])
+  @@index([loadId, lastMessageAt])
+  @@index([carrierId, ventureId])
+}
+
+/// OUTREACH REPLY – individual message in a conversation (inbound or outbound)
+model OutreachReply {
+  id             Int                  @id @default(autoincrement())
+  conversationId Int
+  direction      String
+  messageId      Int?
+  body           String
+  rawPayload     Json?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  conversation   OutreachConversation @relation(fields: [conversationId], references: [id])
+
+  @@index([conversationId, createdAt])
+}
+
+/// OUTREACH ATTRIBUTION – ROI tracking per load outreach
+model OutreachAttribution {
+  id                      Int      @id @default(autoincrement())
+  ventureId               Int
+  loadId                  Int      @unique
+  messageId               Int?
+  carrierId               Int?
+  channel                 String?
+  timeToFirstReplyMinutes Int?
+  timeToCoverageMinutes   Int?
+  margin                  Decimal? @db.Decimal(12, 2)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  carrier                 Carrier? @relation(fields: [carrierId], references: [id])
+  load                    Load     @relation(fields: [loadId], references: [id])
+  venture                 Venture  @relation(fields: [ventureId], references: [id])
+
+  @@index([ventureId, createdAt])
+}
+
+/// WEBHOOK QUARANTINE – unmatched or unverified inbound webhooks
+model WebhookQuarantine {
+  id                Int       @id @default(autoincrement())
+  channel           String
+  reason            String
+  status            String    @default("PENDING")
+  fromAddress       String
+  toAddress         String
+  subject           String?
+  body              String
+  rawPayload        Json
+  externalId        String?
+  ventureIdGuess    Int?
+  carrierIdGuess    Int?
+  loadIdGuess       Int?
+  resolvedAt        DateTime?
+  resolvedById      Int?
+  attachedLoadId    Int?
+  attachedCarrierId Int?
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  attachedCarrier   Carrier?  @relation("QuarantineAttachedCarrier", fields: [attachedCarrierId], references: [id])
+  attachedLoad      Load?     @relation("QuarantineAttachedLoad", fields: [attachedLoadId], references: [id])
+  resolvedBy        User?     @relation("QuarantineResolvedBy", fields: [resolvedById], references: [id])
+
+  @@unique([channel, externalId])
+  @@index([channel, status])
+  @@index([createdAt])
+  @@index([status])
+}
+
+/// FEEDBACK SUBMISSION – user feedback and bug reports
+model FeedbackSubmission {
+  id           Int       @id @default(autoincrement())
+  userId       Int?
+  email        String?
+  type         String
+  priority     String    @default("NORMAL")
+  subject      String
+  description  String
+  pageUrl      String?
+  browserInfo  String?
+  attachments  String?
+  status       String    @default("NEW")
+  resolvedAt   DateTime?
+  resolvedById Int?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  resolvedBy   User?     @relation("FeedbackResolvedBy", fields: [resolvedById], references: [id])
+  user         User?     @relation("FeedbackSubmittedBy", fields: [userId], references: [id])
+
+  @@index([type, status])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+/// DISPATCH DRIVER – drivers for carrier dispatch dashboard
+model DispatchDriver {
+  id            Int                    @id @default(autoincrement())
+  ventureId     Int
+  carrierId     Int?
+  firstName     String
+  lastName      String
+  phone         String
+  email         String?
+  licenseNumber String?
+  licenseExpiry DateTime?
+  status        String                 @default("AVAILABLE")
+  notes         String?
+  isTest        Boolean                @default(false)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  conversations DispatchConversation[]
+  carrier       Carrier?               @relation(fields: [carrierId], references: [id])
+  venture       Venture                @relation(fields: [ventureId], references: [id])
+  dispatchLoads DispatchLoad[]
+  truck         DispatchTruck?
+
+  @@index([ventureId])
+  @@index([carrierId])
+  @@index([status])
+}
+
+/// DISPATCH TRUCK – trucks/equipment for dispatch
+model DispatchTruck {
+  id            Int             @id @default(autoincrement())
+  ventureId     Int
+  driverId      Int?            @unique
+  unitNumber    String
+  type          String
+  make          String?
+  model         String?
+  year          Int?
+  vin           String?
+  plateNumber   String?
+  status        String          @default("AVAILABLE")
+  notes         String?
+  isTest        Boolean         @default(false)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  dispatchLoads DispatchLoad[]
+  driver        DispatchDriver? @relation(fields: [driverId], references: [id])
+  venture       Venture         @relation(fields: [ventureId], references: [id])
+
+  @@index([ventureId])
+  @@index([status])
+}
+
+/// DISPATCH LOAD – loads assigned to drivers/trucks for dispatch
+model DispatchLoad {
+  id              Int                    @id @default(autoincrement())
+  ventureId       Int
+  loadId          Int?
+  driverId        Int?
+  truckId         Int?
+  referenceNumber String
+  status          String                 @default("PENDING")
+  pickupAddress   String
+  pickupCity      String
+  pickupState     String
+  pickupDate      DateTime
+  deliveryAddress String
+  deliveryCity    String
+  deliveryState   String
+  deliveryDate    DateTime
+  rate            Decimal                @db.Decimal(10, 2)
+  driverPay       Decimal?               @db.Decimal(10, 2)
+  notes           String?
+  isTest          Boolean                @default(false)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  conversations   DispatchConversation[]
+  driver          DispatchDriver?        @relation(fields: [driverId], references: [id])
+  load            Load?                  @relation(fields: [loadId], references: [id])
+  truck           DispatchTruck?         @relation(fields: [truckId], references: [id])
+  venture         Venture                @relation(fields: [ventureId], references: [id])
+  settlements     Settlement[]
+
+  @@index([ventureId])
+  @@index([status])
+  @@index([driverId])
+  @@index([pickupDate])
+}
+
+/// SETTLEMENT – driver/carrier payments
+model Settlement {
+  id             Int           @id @default(autoincrement())
+  ventureId      Int
+  dispatchLoadId Int?
+  driverId       Int?
+  carrierId      Int?
+  amount         Decimal       @db.Decimal(10, 2)
+  type           String
+  description    String?
+  status         String        @default("PENDING")
+  paidAt         DateTime?
+  isTest         Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  dispatchLoad   DispatchLoad? @relation(fields: [dispatchLoadId], references: [id])
+  venture        Venture       @relation(fields: [ventureId], references: [id])
+
+  @@index([ventureId])
+  @@index([status])
+  @@index([driverId])
+}
+
+/// DISPATCH CONVERSATION – unified email/SMS conversation threads for dispatch
+model DispatchConversation {
+  id                   Int               @id @default(autoincrement())
+  ventureId            Int
+  channel              String
+  subject              String?
+  status               String            @default("OPEN")
+  participantType      String
+  participantId        Int?
+  driverId             Int?
+  carrierId            Int?
+  dispatchLoadId       Int?
+  loadId               Int?
+  externalAddress      String
+  lastMessageAt        DateTime?
+  unreadCount          Int               @default(0)
+  isTest               Boolean           @default(false)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  assignedAt           DateTime?
+  assignedDispatcherId Int?
+  assignmentStatus     String            @default("UNASSIGNED")
+  carrier              Carrier?          @relation("CarrierDispatchConversations", fields: [carrierId], references: [id])
+  dispatchLoad         DispatchLoad?     @relation(fields: [dispatchLoadId], references: [id])
+  driver               DispatchDriver?   @relation(fields: [driverId], references: [id])
+  load                 Load?             @relation(fields: [loadId], references: [id])
+  venture              Venture           @relation(fields: [ventureId], references: [id])
+  messages             DispatchMessage[]
+
+  @@index([ventureId, channel])
+  @@index([status])
+  @@index([externalAddress])
+  @@index([driverId])
+  @@index([carrierId])
+  @@index([assignedDispatcherId])
+}
+
+/// DISPATCH MESSAGE – individual messages in a dispatch conversation
+model DispatchMessage {
+  id              Int                  @id @default(autoincrement())
+  conversationId  Int
+  direction       String
+  channel         String
+  fromAddress     String
+  toAddress       String
+  subject         String?
+  body            String
+  status          String               @default("SENT")
+  externalId      String?
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  readAt          DateTime?
+  metadata        Json?
+  createdAt       DateTime             @default(now())
+  emailMessageId  String?
+  emailReferences String?
+  handledById     Int?
+  inReplyToId     String?
+  conversation    DispatchConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([createdAt])
+  @@index([externalId])
+  @@index([emailMessageId])
+  @@index([inReplyToId])
+}
+
+/// EMAIL PROVIDER CONNECTION – OAuth connections for Gmail/Outlook per venture
+model EmailProviderConnection {
+  id             Int       @id @default(autoincrement())
+  ventureId      Int
+  provider       String
+  emailAddress   String
+  accessToken    String
+  refreshToken   String?
+  tokenExpiresAt DateTime?
+  syncEnabled    Boolean   @default(true)
+  syncFilters    Json?
+  lastSyncAt     DateTime?
+  status         String    @default("ACTIVE")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  userId         Int
+  user           User      @relation(fields: [userId], references: [id])
+  venture        Venture   @relation(fields: [ventureId], references: [id])
+
+  @@unique([userId, emailAddress])
+  @@index([userId])
+  @@index([ventureId])
+  @@index([provider])
+}
+
+enum EodReportStatus {
+  SUBMITTED
+  REVIEWED
+  NEEDS_ATTENTION
+}
+
+enum FreightQuoteStatus {
+  DRAFT
+  SENT
+  NO_RESPONSE
+  REJECTED
+  COUNTERED
+  ACCEPTED
+  BOOKED
+  EXPIRED
+}
+
+enum FreightQuoteCustomerType {
+  NEW
+  EXISTING
+}
+
+enum UserRole {
+  CEO
+  ADMIN
+  VENTURE_HEAD
+  OFFICE_MANAGER
+  EMPLOYEE
+  COO
+  TEAM_LEAD
+  CONTRACTOR
+  AUDITOR
+  FINANCE
+  HR_ADMIN
+  TEST_USER
+  CSR
+  DISPATCHER
+  CARRIER_TEAM
+  ACCOUNTING
+}
+
+enum Department {
+  DISPATCH
+  CARRIER_TEAM
+  SHIPPER_SALES
+  FINANCE
+  HR
+  MANAGEMENT
+  OPERATIONS
+  OTHER
+}
+
+enum VentureType {
+  LOGISTICS
+  TRANSPORT
+  HOSPITALITY
+  BPO
+  SAAS
+  TESTING
+  HOLDINGS
+}
+
+enum ReviewSource {
+  GOOGLE
+  TRIPADVISOR
+  BOOKING
+  EXPEDIA
+  OTHER
+}
+
+enum TaskStatus {
+  OPEN
+  IN_PROGRESS
+  BLOCKED
+  DONE
+  OVERDUE
+  CANCELED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TaskType {
+  QUOTE_FOLLOWUP
+  QUOTE_EXPIRING
+  DORMANT_CUSTOMER_FOLLOWUP
+  CHURN_AT_RISK_FOLLOWUP
+  OTHER
+}
+
+enum JobName {
+  QUOTE_TIMEOUT
+  CHURN_RECALC
+  TASK_GENERATION
+  INCENTIVE_DAILY
+  KPI_AGGREGATION
+}
+
+enum PolicyType {
+  INSURANCE
+  LEASE
+  CONTRACT
+  LICENSE
+  PERMIT
+  OTHER
+}
+
+enum PolicyStatus {
+  ACTIVE
+  EXPIRED
+  PENDING
+  CANCELLED
+}
+
+enum HotelStatus {
+  ACTIVE
+  CLOSED
+  RENOVATION
+  SOLD
+}
+
+enum HotelDisputeStatus {
+  OPEN
+  IN_PROGRESS
+  WON
+  LOST
+  CLOSED_NO_ACTION
+}
+
+enum HotelDisputeType {
+  CHARGEBACK
+  OTA_DISPUTE
+  RATE_DISCREPANCY
+  GUEST_COMPLAINT
+  NO_SHOW
+  OTHER
+}
+
+enum HotelDisputeChannel {
+  OTA
+  CREDIT_CARD_PROCESSOR
+  BANK
+  DIRECT_GUEST
+  CORPORATE
+  OTHER
+}
+
+enum LoadStatus {
+  OPEN
+  WORKING
+  COVERED
+  AT_RISK
+  FELL_OFF
+  LOST
+  DELIVERED
+  DORMANT
+  MAYBE
+  MOVED
+}
+
+enum ShipperChurnStatus {
+  ACTIVE
+  AT_RISK
+  CHURNED
+  REACTIVATED
+  NEW
+}
+
+enum LoadEventType {
+  QUOTE_SENT
+  CARRIER_OFFERED
+  CARRIER_REJECTED
+  SHIPPER_REJECTED
+  FELL_OFF
+  LOST_CONFIRMED
+  STATUS_CHANGED
+  NOTE
+  AI_RISK
+  PICKUP_CONFIRMED
+  PICKUP_SCHEDULED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERY_SCHEDULED
+  DELIVERED
+  POD_RECEIVED
+  INVOICED
+  PAID
+  CLAIM_FILED
+  CLAIM_UNDER_REVIEW
+  CLAIM_APPROVED
+  CLAIM_DENIED
+  CLAIM_RESOLVED
+  DETENTION_START
+  DETENTION_END
+  TONU
+  RESCHEDULED
+}
+
+enum LogisticsRole {
+  BROKER
+  CARRIER
+}
+
+enum StaffRole {
+  SALES_AGENT
+  CSR
+  DISPATCHER
+  HOTEL_MANAGER
+  REVENUE_MANAGER
+  HOUSEKEEPER
+  BPO_AGENT
+  TEAM_LEAD
+}
+
+enum CustomerTouchChannel {
+  CALL
+  EMAIL
+  TEXT
+  MEETING
+  OTHER
+}
+
+enum ComplianceStatus {
+  PASS
+  FLAG
+  FAIL
+}
+
+enum CustomerApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ImportType {
+  LOADS
+  CUSTOMERS
+  CARRIERS
+  SHIPPERS
+  HOTEL_KPIS
+  HOTEL_DAILY
+  FREIGHT_KPIS
+  HOTEL_DISPUTES
+  BANK_TRANSACTIONS
+  HOTEL_REVIEWS
+  BPO_METRICS
+  GENERIC
+}
+
+enum ImportStatus {
+  UPLOADED
+  MAPPED
+  VALIDATED
+  IMPORTING
+  IMPORTED
+  FAILED
+}
+
+enum IncentiveCalcType {
+  PERCENT_OF_METRIC
+  FLAT_PER_UNIT
+  CURRENCY_PER_DOLLAR
+  TIERED_SLAB
+  BONUS_ON_TARGET
+  LOAD_LEVEL_BONUS
+}

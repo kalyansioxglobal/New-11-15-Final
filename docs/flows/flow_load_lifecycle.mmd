@@ -1,0 +1,51 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e8f5e9', 'primaryBorderColor': '#1b5e20'}}}%%
+flowchart TD
+    subgraph STATUS["LoadStatus State Machine"]
+        OPEN["OPEN<br/>(New load)"]
+        WORKING["WORKING<br/>(Being worked)"]
+        QUOTED["QUOTED<br/>(From quote conversion)"]
+        AT_RISK["AT_RISK<br/>(Flagged)"]
+        COVERED["COVERED<br/>(Carrier assigned)"]
+        LOST["LOST<br/>(Failed to cover)"]
+        FELL_OFF["FELL_OFF<br/>(Carrier backed out)"]
+        DORMANT["DORMANT<br/>(Inactive)"]
+        DELIVERED["DELIVERED<br/>(Complete)"]
+    end
+
+    OPEN -->|"Begin working"| WORKING
+    QUOTED -->|"Begin working"| WORKING
+    WORKING -->|"Carrier assigned via outreach/award"| COVERED
+    WORKING -->|"Mark at risk"| AT_RISK
+    WORKING -->|"Cannot cover"| LOST
+    AT_RISK -->|"Carrier assigned"| COVERED
+    AT_RISK -->|"Cannot cover"| LOST
+    COVERED -->|"Carrier backs out"| FELL_OFF
+    COVERED -->|"Delivered successfully"| DELIVERED
+    FELL_OFF -->|"Re-cover"| COVERED
+    FELL_OFF -->|"Cannot re-cover"| LOST
+    WORKING -->|"No activity"| DORMANT
+    DORMANT -->|"Reactivate"| WORKING
+
+    subgraph API["API Endpoints"]
+        A1["POST /api/freight/loads/mark-at-risk"]
+        A2["POST /api/freight/loads/mark-lost"]
+        A3["POST /api/freight/loads/mark-felloff"]
+        A4["POST /api/freight/outreach/award"]
+        A5["PUT /api/freight/loads/[id]"]
+    end
+
+    A1 --> AT_RISK
+    A2 --> LOST
+    A3 --> FELL_OFF
+    A4 --> COVERED
+    A5 -->|"status update"| WORKING
+    A5 -->|"status update"| DELIVERED
+
+    subgraph DB["Database"]
+        D1[("Load<br/>loadStatus: LoadStatus")]
+        D2[("LogisticsLoadEvent<br/>type: LoadEventType")]
+    end
+
+    AT_RISK -->|"logLoadEvent(STATUS_CHANGED)"| D2
+    LOST -->|"logLoadEvent(LOST_CONFIRMED)"| D2
+    COVERED -->|"logLoadEvent via award"| D2

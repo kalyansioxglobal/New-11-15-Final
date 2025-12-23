@@ -1,0 +1,89 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e8f5e9', 'primaryBorderColor': '#2e7d32'}}}%%
+flowchart TD
+    subgraph SCHEDULER["Scheduled Jobs Runner<br/>scripts/scheduled-jobs-runner.ts"]
+        S1["2:00 AM: Churn Recalculation"]
+        S2["6:00 AM: Quote Timeout"]
+        S3["6:30 AM: Task Generation"]
+        S4["7:00 AM: Incentive Daily Commit"]
+    end
+
+    subgraph CHURN["Churn Recalculation<br/>lib/jobs/churnRecalcJob.ts"]
+        C1["For each active Venture"]
+        C2["updateAllShipperChurnStatuses()"]
+        C3["calculateShipperMetrics()"]
+        C4["Update LogisticsShipper:<br/>churnStatus, churnRiskScore"]
+        C5["Update Customer:<br/>churnScore"]
+        C6["JobRunLog created"]
+    end
+
+    subgraph QUOTE["Quote Timeout<br/>lib/jobs/quoteTimeoutJob.ts"]
+        Q1["Find quotes: expiryDate < now<br/>AND status = PENDING"]
+        Q2["Update FreightQuote:<br/>status = EXPIRED"]
+        Q3["JobRunLog created"]
+    end
+
+    subgraph TASKS["Task Generation<br/>lib/freight/taskRules.ts"]
+        T1["For each active Venture"]
+        T2["runDormantCustomerRule()<br/>No load 21 days + no touch 7 days"]
+        T3["runQuoteExpiringRule()<br/>Expiring in 24 hours"]
+        T4["runQuoteNoResponseRule()<br/>No response in 48 hours"]
+        T5["Create Tasks:<br/>DORMANT_CUSTOMER_FOLLOWUP<br/>QUOTE_EXPIRING<br/>QUOTE_NO_RESPONSE"]
+        T6["JobRunLog created"]
+    end
+
+    subgraph INCENTIVES["Incentive Daily Commit<br/>lib/jobs/incentiveDailyJob.ts"]
+        I1["For each active Venture + IncentivePlan"]
+        I2["Reads data:<br/>Load (DELIVERED)<br/>BpoCallLog<br/>HotelReview<br/>HotelKpiDaily"]
+        I3["Calculates metrics per user"]
+        I4["Applies IncentiveRules"]
+        I5["DELETE existing IncentiveDaily<br/>for venture + date"]
+        I6["CREATE fresh IncentiveDaily records"]
+        I7["JobRunLog created"]
+    end
+
+    S1 --> C1
+    C1 --> C2
+    C2 --> C3
+    C3 --> C4
+    C3 --> C5
+    C4 --> C6
+
+    S2 --> Q1
+    Q1 --> Q2
+    Q2 --> Q3
+
+    S3 --> T1
+    T1 --> T2
+    T1 --> T3
+    T1 --> T4
+    T2 --> T5
+    T3 --> T5
+    T4 --> T5
+    T5 --> T6
+
+    S4 --> I1
+    I1 --> I2
+    I2 --> I3
+    I3 --> I4
+    I4 --> I5
+    I5 --> I6
+    I6 --> I7
+
+    style S1 fill:#e3f2fd
+    style S2 fill:#e3f2fd
+    style S3 fill:#e3f2fd
+    style S4 fill:#e3f2fd
+    style C6 fill:#c8e6c9
+    style Q3 fill:#c8e6c9
+    style T6 fill:#c8e6c9
+    style I7 fill:#c8e6c9
+
+    classDef scheduled fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef job fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef result fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+
+    class S1,S2,S3,S4 scheduled
+    class C1,C2,C3,C4,C5,Q1,Q2,T1,T2,T3,T4,T5,I1,I2,I3,I4,I5,I6 job
+    class C6,Q3,T6,I7 result
+
+

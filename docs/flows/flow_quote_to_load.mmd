@@ -1,0 +1,59 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e1f5fe', 'primaryBorderColor': '#01579b'}}}%%
+flowchart TD
+    subgraph UI["UI Layer"]
+        Q1["/freight/quotes/new"]
+        Q2["/freight/quotes/[id]"]
+    end
+
+    subgraph API["API Layer"]
+        A1["POST /api/freight/quotes/create"]
+        A2["PATCH /api/freight/quotes/[id]/status"]
+        A3["POST /api/freight/quotes/[id]/convert-to-load"]
+    end
+
+    subgraph LIB["Library Layer"]
+        L1["lib/freight/customerDedupe.ts<br/>findDuplicateCustomers()"]
+        L2["lib/logistics/customerLocation.ts<br/>getOrCreateDefaultLocation()"]
+    end
+
+    subgraph DB["Database Layer"]
+        D1[("Customer")]
+        D2[("LogisticsShipper")]
+        D3[("FreightQuote")]
+        D4[("Load")]
+    end
+
+    Q1 -->|"Submit quote form"| A1
+    A1 -->|"Check duplicates"| L1
+    L1 -->|"Query existing"| D1
+    A1 -->|"Create/get shipper"| L2
+    L2 -->|"Create default location"| D2
+    A1 -->|"Create quote"| D3
+
+    Q2 -->|"Update status"| A2
+    A2 -->|"DRAFT→SENT→ACCEPTED"| D3
+
+    Q2 -->|"Convert to load"| A3
+    A3 -->|"Validate status=ACCEPTED/BOOKED"| D3
+    A3 -->|"Create load"| D4
+    A3 -->|"Update quote.loadId"| D3
+
+    subgraph STATUS["FreightQuote Status Flow"]
+        S1["DRAFT"]
+        S2["SENT"]
+        S3["NO_RESPONSE"]
+        S4["REJECTED"]
+        S5["COUNTERED"]
+        S6["ACCEPTED"]
+        S7["BOOKED"]
+        S8["EXPIRED"]
+    end
+
+    S1 --> S2
+    S2 --> S3
+    S2 --> S4
+    S2 --> S5
+    S2 --> S6
+    S5 --> S6
+    S6 --> S7
+    S2 --> S8

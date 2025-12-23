@@ -1,0 +1,138 @@
+[
+  {
+    "flow": "Freight",
+    "step": "Create Load",
+    "status": "PASS",
+    "notes": "Load created with ID 2053, margin calculated: $500",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.119460"
+  },
+  {
+    "flow": "Freight",
+    "step": "Mark Lost",
+    "status": "PASS",
+    "notes": "Load 2053 marked as LOST successfully",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.139838"
+  },
+  {
+    "flow": "Freight",
+    "step": "Mark At-Risk",
+    "status": "PASS",
+    "notes": "Load 2054 marked as AT_RISK successfully",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.175882"
+  },
+  {
+    "flow": "Freight",
+    "step": "P&L View (freight/pnl)",
+    "status": "PASS",
+    "notes": "P&L data retrieved: 419 loads, $516246 total margin",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.246877"
+  },
+  {
+    "flow": "Freight",
+    "step": "P&L View (logistics/freight-pnl)",
+    "status": "PASS",
+    "notes": "Logistics P&L data retrieved: 1185 loads, $1447349 total margin",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.288475"
+  },
+  {
+    "flow": "Hotels",
+    "step": "Dispute Create",
+    "status": "PASS",
+    "notes": "Dispute created with ID 4, amount: $250.0",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.307604"
+  },
+  {
+    "flow": "Hotels",
+    "step": "Dispute Update",
+    "status": "PASS",
+    "notes": "Dispute 4 updated to IN_PROGRESS status",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.706456"
+  },
+  {
+    "flow": "Hotels",
+    "step": "Disputes List",
+    "status": "PASS",
+    "notes": "Retrieved 3 disputes (total: 3)",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.725910"
+  },
+  {
+    "flow": "Hotels",
+    "step": "Disputes Summary",
+    "status": "PASS",
+    "notes": "Summary retrieved: 3 total disputes, $400 disputed",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.740809"
+  },
+  {
+    "flow": "Hotels",
+    "step": "Hotel KPI Index",
+    "status": "PASS",
+    "notes": "Hotel KPI data retrieved successfully",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:12.968654"
+  },
+  {
+    "flow": "Hotels",
+    "step": "Hospitality Dashboard",
+    "status": "PASS",
+    "notes": "Dashboard loaded: 20 hotels, $2965916.86267065 7-day revenue",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:13.028287"
+  },
+  {
+    "flow": "Hotels",
+    "step": "Rate-Shopping Placeholder",
+    "status": "PASS",
+    "notes": "Hotel snapshot endpoint responding (may be placeholder)",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:13.105879"
+  },
+  {
+    "flow": "BPO",
+    "step": "KPI Upsert",
+    "status": "PASS",
+    "notes": "KPI upserted successfully (ID: 906), 25 leads created",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:13.126306"
+  },
+  {
+    "flow": "BPO",
+    "step": "KPI Dashboard",
+    "status": "PASS",
+    "notes": "KPI dashboard loaded: 0 leads, 0 calls",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:13.140204"
+  },
+  {
+    "flow": "BPO",
+    "step": "BPO Dashboard",
+    "status": "PASS",
+    "notes": "BPO dashboard loaded: 3 campaigns, $1500 revenue",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:13.154529"
+  },
+  {
+    "flow": "BPO",
+    "step": "Agent Filters",
+    "status": "PASS",
+    "notes": "Agent list retrieved: 0 agents shown (total: 0)",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:13.169438"
+  },
+  {
+    "flow": "BPO",
+    "step": "Agent Search Filter",
+    "status": "PASS",
+    "notes": "Agent search filter working: 0 results for 'test'",
+    "blockers": "",
+    "timestamp": "2025-12-07T04:05:13.180660"
+  }
+]

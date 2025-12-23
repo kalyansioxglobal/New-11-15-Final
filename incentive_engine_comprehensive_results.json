@@ -1,0 +1,212 @@
+{
+  "summary": {
+    "total_tests": 25,
+    "passed_tests": 25,
+    "failed_tests": 0,
+    "success_rate": 100.0,
+    "test_date": "2024-01-15",
+    "timestamp": "2025-12-07T06:51:34.743776"
+  },
+  "results": [
+    {
+      "test_name": "Method GET validation",
+      "expected": 405,
+      "actual": 405,
+      "passed": true,
+      "details": "Should return 405 Method Not Allowed",
+      "timestamp": "2025-12-07T06:51:33.485061"
+    },
+    {
+      "test_name": "Method PUT validation",
+      "expected": 405,
+      "actual": 405,
+      "passed": true,
+      "details": "Should return 405 Method Not Allowed",
+      "timestamp": "2025-12-07T06:51:33.501547"
+    },
+    {
+      "test_name": "Method DELETE validation",
+      "expected": 405,
+      "actual": 405,
+      "passed": true,
+      "details": "Should return 405 Method Not Allowed",
+      "timestamp": "2025-12-07T06:51:33.517761"
+    },
+    {
+      "test_name": "Input validation: Invalid planId type",
+      "expected": 400,
+      "actual": 400,
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.535095"
+    },
+    {
+      "test_name": "Input validation: Negative planId",
+      "expected": 400,
+      "actual": 400,
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.551261"
+    },
+    {
+      "test_name": "Input validation: Zero planId",
+      "expected": 400,
+      "actual": 400,
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.566564"
+    },
+    {
+      "test_name": "Input validation: Missing planId",
+      "expected": 400,
+      "actual": 400,
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.581671"
+    },
+    {
+      "test_name": "Input validation: Invalid date format",
+      "expected": 500,
+      "actual": 500,
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.654306"
+    },
+    {
+      "test_name": "Total incentive items",
+      "expected": 3,
+      "actual": 3,
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.675064"
+    },
+    {
+      "test_name": "PERCENT_OF_METRIC calculation",
+      "expected": 90,
+      "actual": 90,
+      "passed": true,
+      "details": "Rule should calculate correct incentive amount",
+      "timestamp": "2025-12-07T06:51:33.675098"
+    },
+    {
+      "test_name": "FLAT_PER_UNIT calculation",
+      "expected": 150,
+      "actual": 150,
+      "passed": true,
+      "details": "Rule should calculate correct incentive amount",
+      "timestamp": "2025-12-07T06:51:33.675109"
+    },
+    {
+      "test_name": "CURRENCY_PER_DOLLAR calculation",
+      "expected": 225,
+      "actual": 225,
+      "passed": true,
+      "details": "Rule should calculate correct incentive amount",
+      "timestamp": "2025-12-07T06:51:33.675118"
+    },
+    {
+      "test_name": "BONUS_ON_TARGET calculation",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "details": "Rule should calculate correct incentive amount",
+      "timestamp": "2025-12-07T06:51:33.675127"
+    },
+    {
+      "test_name": "Total incentive amount",
+      "expected": 465,
+      "actual": 465,
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.675141"
+    },
+    {
+      "test_name": "Item 1 structure",
+      "expected": "All required fields",
+      "actual": "All present",
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.675151"
+    },
+    {
+      "test_name": "Item 2 structure",
+      "expected": "All required fields",
+      "actual": "All present",
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.675160"
+    },
+    {
+      "test_name": "Item 3 structure",
+      "expected": "All required fields",
+      "actual": "All present",
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.675168"
+    },
+    {
+      "test_name": "Audit log structure",
+      "expected": "All required fields",
+      "actual": "All present",
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.708768"
+    },
+    {
+      "test_name": "Audit domain",
+      "expected": "admin",
+      "actual": "admin",
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.708799"
+    },
+    {
+      "test_name": "Audit action",
+      "expected": "INCENTIVE_COMPUTE_RUN",
+      "actual": "INCENTIVE_COMPUTE_RUN",
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.708808"
+    },
+    {
+      "test_name": "Audit entityType",
+      "expected": "incentivePlan",
+      "actual": "incentivePlan",
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.708815"
+    },
+    {
+      "test_name": "Audit metadata planId",
+      "expected": 1,
+      "actual": 1,
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.708822"
+    },
+    {
+      "test_name": "Audit metadata date",
+      "expected": "2024-01-15",
+      "actual": "2024-01-15",
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:33.708830"
+    },
+    {
+      "test_name": "Idempotency - count consistency",
+      "expected": 3,
+      "actual": 3,
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:34.743531"
+    },
+    {
+      "test_name": "Idempotency - amount consistency",
+      "expected": "Same amounts",
+      "actual": "Same amounts",
+      "passed": true,
+      "details": "",
+      "timestamp": "2025-12-07T06:51:34.743565"
+    }
+  ]
+}

@@ -1,0 +1,3311 @@
+[
+  {
+    "endpoint": "/api/ventures",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 6,
+        "name": "Chokshi Hotels",
+        "type": "HOSPITALITY",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 2,
+        "name": "MB Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 4,
+        "name": "Rank Me Now",
+        "type": "SAAS",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 5,
+        "name": "RevenelX",
+        "type": "BPO",
+        "logisticsRole": null,
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 1,
+        "name": "Siox Logistics",
+        "type": "LOGISTICS",
+        "logisticsRole": "BROKER",
+        "offices": [],
+        "hotels": []
+      },
+      {
+        "id": 3,
+        "name": "Siox Transports",
+        "type": "LOGISTICS",
+        "logisticsRole": "CARRIER",
+        "offices": [],
+        "hotels": []
+      }
+    ],
+    "test_description": "Verify Venture model access for incentive plans",
+    "headers": {},
+    "request_body": null,
+    "timestamp": "2025-12-07T05:05:10.119607"
+  },
+  {
+    "endpoint": "/api/admin/users",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "users": [
+        {
+          "id": 2,
+          "name": "Admin User",
+          "email": "admin@sioxglobal.com",
+          "phone": "1111111111",
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "ADMIN",
+          "legacyDepartment": "MANAGEMENT",
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": false,
+          "ventureIds": [
+            1,
+            2
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 7,
+              "userId": 2,
+              "ventureId": 1,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.377Z",
+              "venture": {
+                "id": 1,
+                "slug": "siox-logistics",
+                "code": "SX",
+                "name": "Siox Logistics",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.343Z",
+                "updatedAt": "2025-12-07T02:26:01.278Z",
+                "isTest": false
+              }
+            },
+            {
+              "id": 8,
+              "userId": 2,
+              "ventureId": 2,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.378Z",
+              "venture": {
+                "id": 2,
+                "slug": "mb-logistics",
+                "code": "MB",
+                "name": "MB Logistics",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.345Z",
+                "updatedAt": "2025-12-07T02:26:01.280Z",
+                "isTest": false
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 6,
+          "name": "Carrier Rep A",
+          "email": "carrierrep@sioxglobal.com",
+          "phone": "5555555555",
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": "CARRIER_TEAM",
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": false,
+          "ventureIds": [
+            1
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 15,
+              "userId": 6,
+              "ventureId": 1,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.389Z",
+              "venture": {
+                "id": 1,
+                "slug": "siox-logistics",
+                "code": "SX",
+                "name": "Siox Logistics",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.343Z",
+                "updatedAt": "2025-12-07T02:26:01.278Z",
+                "isTest": false
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 1,
+          "name": "Herry Chokshi",
+          "email": "ceo@sioxglobal.com",
+          "phone": "9999999999",
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "CEO",
+          "legacyDepartment": "MANAGEMENT",
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": false,
+          "ventureIds": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 1,
+              "userId": 1,
+              "ventureId": 1,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.369Z",
+              "venture": {
+                "id": 1,
+                "slug": "siox-logistics",
+                "code": "SX",
+                "name": "Siox Logistics",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.343Z",
+                "updatedAt": "2025-12-07T02:26:01.278Z",
+                "isTest": false
+              }
+            },
+            {
+              "id": 2,
+              "userId": 1,
+              "ventureId": 2,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.371Z",
+              "venture": {
+                "id": 2,
+                "slug": "mb-logistics",
+                "code": "MB",
+                "name": "MB Logistics",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.345Z",
+                "updatedAt": "2025-12-07T02:26:01.280Z",
+                "isTest": false
+              }
+            },
+            {
+              "id": 3,
+              "userId": 1,
+              "ventureId": 3,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.372Z",
+              "venture": {
+                "id": 3,
+                "slug": "siox-transports",
+                "code": "ST",
+                "name": "Siox Transports",
+                "type": "LOGISTICS",
+                "logisticsRole": "CARRIER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.347Z",
+                "updatedAt": "2025-12-07T02:26:01.281Z",
+                "isTest": false
+              }
+            },
+            {
+              "id": 4,
+              "userId": 1,
+              "ventureId": 4,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.373Z",
+              "venture": {
+                "id": 4,
+                "slug": "rank-me-now",
+                "code": "RM",
+                "name": "Rank Me Now",
+                "type": "SAAS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.348Z",
+                "updatedAt": "2025-12-07T02:26:01.282Z",
+                "isTest": false
+              }
+            },
+            {
+              "id": 5,
+              "userId": 1,
+              "ventureId": 5,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.375Z",
+              "venture": {
+                "id": 5,
+                "slug": "revenelx",
+                "code": "RX",
+                "name": "RevenelX",
+                "type": "BPO",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.349Z",
+                "updatedAt": "2025-12-07T02:26:01.283Z",
+                "isTest": false
+              }
+            },
+            {
+              "id": 6,
+              "userId": 1,
+              "ventureId": 6,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.376Z",
+              "venture": {
+                "id": 6,
+                "slug": "chokshi-hotels",
+                "code": "CH",
+                "name": "Chokshi Hotels",
+                "type": "HOSPITALITY",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.350Z",
+                "updatedAt": "2025-12-07T02:26:01.284Z",
+                "isTest": false
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 4,
+          "name": "CSR A",
+          "email": "csr1@sioxglobal.com",
+          "phone": "3333333333",
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": "SHIPPER_SALES",
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": false,
+          "ventureIds": [
+            1
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 13,
+              "userId": 4,
+              "ventureId": 1,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.385Z",
+              "venture": {
+                "id": 1,
+                "slug": "siox-logistics",
+                "code": "SX",
+                "name": "Siox Logistics",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.343Z",
+                "updatedAt": "2025-12-07T02:26:01.278Z",
+                "isTest": false
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 5,
+          "name": "Dispatcher A",
+          "email": "dispatch1@sioxglobal.com",
+          "phone": "4444444444",
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": "DISPATCH",
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": false,
+          "ventureIds": [
+            1
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 14,
+              "userId": 5,
+              "ventureId": 1,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.387Z",
+              "venture": {
+                "id": 1,
+                "slug": "siox-logistics",
+                "code": "SX",
+                "name": "Siox Logistics",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.343Z",
+                "updatedAt": "2025-12-07T02:26:01.278Z",
+                "isTest": false
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 9,
+          "name": "Hotel Manager",
+          "email": "manager.hotel@sioxglobal.com",
+          "phone": "8888888888",
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": "OPERATIONS",
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": false,
+          "ventureIds": [
+            6
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 12,
+              "userId": 9,
+              "ventureId": 6,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.384Z",
+              "venture": {
+                "id": 6,
+                "slug": "chokshi-hotels",
+                "code": "CH",
+                "name": "Chokshi Hotels",
+                "type": "HOSPITALITY",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.350Z",
+                "updatedAt": "2025-12-07T02:26:01.284Z",
+                "isTest": false
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 7,
+          "name": "MB Logistics Manager",
+          "email": "manager.mb@sioxglobal.com",
+          "phone": "6666666666",
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": "OPERATIONS",
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": false,
+          "ventureIds": [
+            2
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 10,
+              "userId": 7,
+              "ventureId": 2,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.381Z",
+              "venture": {
+                "id": 2,
+                "slug": "mb-logistics",
+                "code": "MB",
+                "name": "MB Logistics",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.345Z",
+                "updatedAt": "2025-12-07T02:26:01.280Z",
+                "isTest": false
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 8,
+          "name": "Rank Me Now Manager",
+          "email": "manager.rmn@sioxglobal.com",
+          "phone": "7777777777",
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": "OPERATIONS",
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": false,
+          "ventureIds": [
+            4
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 11,
+              "userId": 8,
+              "ventureId": 4,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.382Z",
+              "venture": {
+                "id": 4,
+                "slug": "rank-me-now",
+                "code": "RM",
+                "name": "Rank Me Now",
+                "type": "SAAS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.348Z",
+                "updatedAt": "2025-12-07T02:26:01.282Z",
+                "isTest": false
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 3,
+          "name": "Siox Logistics Manager",
+          "email": "manager.siox@sioxglobal.com",
+          "phone": "2222222222",
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": "OPERATIONS",
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": false,
+          "ventureIds": [
+            1
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 9,
+              "userId": 3,
+              "ventureId": 1,
+              "role": null,
+              "createdAt": "2025-12-07T02:00:23.380Z",
+              "venture": {
+                "id": 1,
+                "slug": "siox-logistics",
+                "code": "SX",
+                "name": "Siox Logistics",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:00:23.343Z",
+                "updatedAt": "2025-12-07T02:26:01.278Z",
+                "isTest": false
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 11,
+          "name": "Test Admin",
+          "email": "test.admin@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "ADMIN",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [],
+          "officeIds": [],
+          "ventures": [],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 10,
+          "name": "Test CEO",
+          "email": "test.ceo@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "CEO",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [],
+          "officeIds": [],
+          "ventures": [],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 48,
+          "name": "Anna Moore",
+          "email": "test.emp1.chd@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            14
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 52,
+              "userId": 48,
+              "ventureId": 14,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.457Z",
+              "venture": {
+                "id": 14,
+                "slug": null,
+                "code": "CHD",
+                "name": "Chokshi Holdings",
+                "type": "HOLDINGS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 41,
+          "name": "Brian Martinez",
+          "email": "test.emp1.css@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            18
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 45,
+              "userId": 41,
+              "ventureId": 18,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.439Z",
+              "venture": {
+                "id": 18,
+                "slug": null,
+                "code": "CSS",
+                "name": "CloudStack SaaS",
+                "type": "SAAS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 27,
+          "name": "Jessica Harris",
+          "email": "test.emp1.hhg@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            17
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 31,
+              "userId": 27,
+              "ventureId": 17,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.405Z",
+              "venture": {
+                "id": 17,
+                "slug": null,
+                "code": "HHG",
+                "name": "Harbor Hotels Group",
+                "type": "HOSPITALITY",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 20,
+          "name": "James Rodriguez",
+          "email": "test.emp1.mbt@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            13
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 24,
+              "userId": 20,
+              "ventureId": 13,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.388Z",
+              "venture": {
+                "id": 13,
+                "slug": null,
+                "code": "MBT",
+                "name": "MB Transport",
+                "type": "TRANSPORT",
+                "logisticsRole": "CARRIER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 34,
+          "name": "Michelle Thompson",
+          "email": "test.emp1.rvx@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "OFFICE_MANAGER",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            15
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 38,
+              "userId": 34,
+              "ventureId": 15,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.422Z",
+              "venture": {
+                "id": 15,
+                "slug": null,
+                "code": "RVX",
+                "name": "RevenelX BPO",
+                "type": "BPO",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 13,
+          "name": "Anna Taylor",
+          "email": "test.emp1.siox@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "OFFICE_MANAGER",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            16
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 17,
+              "userId": 13,
+              "ventureId": 16,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.370Z",
+              "venture": {
+                "id": 16,
+                "slug": null,
+                "code": "SIOX",
+                "name": "SIOX Freight Solutions",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 49,
+          "name": "William Garcia",
+          "email": "test.emp2.chd@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            14
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 53,
+              "userId": 49,
+              "ventureId": 14,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.460Z",
+              "venture": {
+                "id": 14,
+                "slug": null,
+                "code": "CHD",
+                "name": "Chokshi Holdings",
+                "type": "HOLDINGS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 42,
+          "name": "Jennifer Anderson",
+          "email": "test.emp2.css@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            18
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 46,
+              "userId": 42,
+              "ventureId": 18,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.442Z",
+              "venture": {
+                "id": 18,
+                "slug": null,
+                "code": "CSS",
+                "name": "CloudStack SaaS",
+                "type": "SAAS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 28,
+          "name": "Sarah Wilson",
+          "email": "test.emp2.hhg@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            17
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 32,
+              "userId": 28,
+              "ventureId": 17,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.408Z",
+              "venture": {
+                "id": 17,
+                "slug": null,
+                "code": "HHG",
+                "name": "Harbor Hotels Group",
+                "type": "HOSPITALITY",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 21,
+          "name": "Emily Moore",
+          "email": "test.emp2.mbt@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            13
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 25,
+              "userId": 21,
+              "ventureId": 13,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.391Z",
+              "venture": {
+                "id": 13,
+                "slug": null,
+                "code": "MBT",
+                "name": "MB Transport",
+                "type": "TRANSPORT",
+                "logisticsRole": "CARRIER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 35,
+          "name": "Amanda Brown",
+          "email": "test.emp2.rvx@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            15
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 39,
+              "userId": 35,
+              "ventureId": 15,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.424Z",
+              "venture": {
+                "id": 15,
+                "slug": null,
+                "code": "RVX",
+                "name": "RevenelX BPO",
+                "type": "BPO",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 14,
+          "name": "Thomas Thomas",
+          "email": "test.emp2.siox@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            16
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 18,
+              "userId": 14,
+              "ventureId": 16,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.373Z",
+              "venture": {
+                "id": 16,
+                "slug": null,
+                "code": "SIOX",
+                "name": "SIOX Freight Solutions",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 50,
+          "name": "Lauren Johnson",
+          "email": "test.emp3.chd@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            14
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 54,
+              "userId": 50,
+              "ventureId": 14,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.462Z",
+              "venture": {
+                "id": 14,
+                "slug": null,
+                "code": "CHD",
+                "name": "Chokshi Holdings",
+                "type": "HOLDINGS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 43,
+          "name": "Mike Williams",
+          "email": "test.emp3.css@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            18
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 47,
+              "userId": 43,
+              "ventureId": 18,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.445Z",
+              "venture": {
+                "id": 18,
+                "slug": null,
+                "code": "CSS",
+                "name": "CloudStack SaaS",
+                "type": "SAAS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 29,
+          "name": "Joseph Thomas",
+          "email": "test.emp3.hhg@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "OFFICE_MANAGER",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            17
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 33,
+              "userId": 29,
+              "ventureId": 17,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.410Z",
+              "venture": {
+                "id": 17,
+                "slug": null,
+                "code": "HHG",
+                "name": "Harbor Hotels Group",
+                "type": "HOSPITALITY",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 22,
+          "name": "Chris Taylor",
+          "email": "test.emp3.mbt@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            13
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 26,
+              "userId": 22,
+              "ventureId": 13,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.393Z",
+              "venture": {
+                "id": 13,
+                "slug": null,
+                "code": "MBT",
+                "name": "MB Transport",
+                "type": "TRANSPORT",
+                "logisticsRole": "CARRIER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 36,
+          "name": "Stephanie Moore",
+          "email": "test.emp3.rvx@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            15
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 40,
+              "userId": 36,
+              "ventureId": 15,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.427Z",
+              "venture": {
+                "id": 15,
+                "slug": null,
+                "code": "RVX",
+                "name": "RevenelX BPO",
+                "type": "BPO",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 15,
+          "name": "Anna Jones",
+          "email": "test.emp3.siox@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            16
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 19,
+              "userId": 15,
+              "ventureId": 16,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.375Z",
+              "venture": {
+                "id": 16,
+                "slug": null,
+                "code": "SIOX",
+                "name": "SIOX Freight Solutions",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 51,
+          "name": "Rachel Thomas",
+          "email": "test.emp4.chd@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "OFFICE_MANAGER",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            14
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 55,
+              "userId": 51,
+              "ventureId": 14,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.464Z",
+              "venture": {
+                "id": 14,
+                "slug": null,
+                "code": "CHD",
+                "name": "Chokshi Holdings",
+                "type": "HOLDINGS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 44,
+          "name": "Kevin Thomas",
+          "email": "test.emp4.css@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "OFFICE_MANAGER",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            18
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 48,
+              "userId": 44,
+              "ventureId": 18,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.447Z",
+              "venture": {
+                "id": 18,
+                "slug": null,
+                "code": "CSS",
+                "name": "CloudStack SaaS",
+                "type": "SAAS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 30,
+          "name": "Daniel Taylor",
+          "email": "test.emp4.hhg@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "OFFICE_MANAGER",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            17
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 34,
+              "userId": 30,
+              "ventureId": 17,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.413Z",
+              "venture": {
+                "id": 17,
+                "slug": null,
+                "code": "HHG",
+                "name": "Harbor Hotels Group",
+                "type": "HOSPITALITY",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 23,
+          "name": "Lauren Brown",
+          "email": "test.emp4.mbt@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            13
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 27,
+              "userId": 23,
+              "ventureId": 13,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.396Z",
+              "venture": {
+                "id": 13,
+                "slug": null,
+                "code": "MBT",
+                "name": "MB Transport",
+                "type": "TRANSPORT",
+                "logisticsRole": "CARRIER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 37,
+          "name": "Lisa Lee",
+          "email": "test.emp4.rvx@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            15
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 41,
+              "userId": 37,
+              "ventureId": 15,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.429Z",
+              "venture": {
+                "id": 15,
+                "slug": null,
+                "code": "RVX",
+                "name": "RevenelX BPO",
+                "type": "BPO",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 16,
+          "name": "Jennifer Robinson",
+          "email": "test.emp4.siox@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            16
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 20,
+              "userId": 16,
+              "ventureId": 16,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.378Z",
+              "venture": {
+                "id": 16,
+                "slug": null,
+                "code": "SIOX",
+                "name": "SIOX Freight Solutions",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 52,
+          "name": "Kevin Gonzalez",
+          "email": "test.emp5.chd@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            14
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 56,
+              "userId": 52,
+              "ventureId": 14,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.467Z",
+              "venture": {
+                "id": 14,
+                "slug": null,
+                "code": "CHD",
+                "name": "Chokshi Holdings",
+                "type": "HOLDINGS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 45,
+          "name": "Steven Brown",
+          "email": "test.emp5.css@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            18
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 49,
+              "userId": 45,
+              "ventureId": 18,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.450Z",
+              "venture": {
+                "id": 18,
+                "slug": null,
+                "code": "CSS",
+                "name": "CloudStack SaaS",
+                "type": "SAAS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 31,
+          "name": "David Harris",
+          "email": "test.emp5.hhg@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            17
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 35,
+              "userId": 31,
+              "ventureId": 17,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.415Z",
+              "venture": {
+                "id": 17,
+                "slug": null,
+                "code": "HHG",
+                "name": "Harbor Hotels Group",
+                "type": "HOSPITALITY",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 24,
+          "name": "Amanda Jackson",
+          "email": "test.emp5.mbt@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "OFFICE_MANAGER",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            13
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 28,
+              "userId": 24,
+              "ventureId": 13,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.398Z",
+              "venture": {
+                "id": 13,
+                "slug": null,
+                "code": "MBT",
+                "name": "MB Transport",
+                "type": "TRANSPORT",
+                "logisticsRole": "CARRIER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 38,
+          "name": "Lisa Martin",
+          "email": "test.emp5.rvx@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            15
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 42,
+              "userId": 38,
+              "ventureId": 15,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.431Z",
+              "venture": {
+                "id": 15,
+                "slug": null,
+                "code": "RVX",
+                "name": "RevenelX BPO",
+                "type": "BPO",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 17,
+          "name": "Rachel Thompson",
+          "email": "test.emp5.siox@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            16
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 21,
+              "userId": 17,
+              "ventureId": 16,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.381Z",
+              "venture": {
+                "id": 16,
+                "slug": null,
+                "code": "SIOX",
+                "name": "SIOX Freight Solutions",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 53,
+          "name": "William Johnson",
+          "email": "test.emp6.chd@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "OFFICE_MANAGER",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            14
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 57,
+              "userId": 53,
+              "ventureId": 14,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.469Z",
+              "venture": {
+                "id": 14,
+                "slug": null,
+                "code": "CHD",
+                "name": "Chokshi Holdings",
+                "type": "HOLDINGS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 46,
+          "name": "Steven Martinez",
+          "email": "test.emp6.css@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            18
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 50,
+              "userId": 46,
+              "ventureId": 18,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.452Z",
+              "venture": {
+                "id": 18,
+                "slug": null,
+                "code": "CSS",
+                "name": "CloudStack SaaS",
+                "type": "SAAS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 32,
+          "name": "Joseph Ramirez",
+          "email": "test.emp6.hhg@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            17
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 36,
+              "userId": 32,
+              "ventureId": 17,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.417Z",
+              "venture": {
+                "id": 17,
+                "slug": null,
+                "code": "HHG",
+                "name": "Harbor Hotels Group",
+                "type": "HOSPITALITY",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 25,
+          "name": "Christopher Clark",
+          "email": "test.emp6.mbt@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            13
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 29,
+              "userId": 25,
+              "ventureId": 13,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.400Z",
+              "venture": {
+                "id": 13,
+                "slug": null,
+                "code": "MBT",
+                "name": "MB Transport",
+                "type": "TRANSPORT",
+                "logisticsRole": "CARRIER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 39,
+          "name": "Megan Taylor",
+          "email": "test.emp6.rvx@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "EMPLOYEE",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            15
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 43,
+              "userId": 39,
+              "ventureId": 15,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.434Z",
+              "venture": {
+                "id": 15,
+                "slug": null,
+                "code": "RVX",
+                "name": "RevenelX BPO",
+                "type": "BPO",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 18,
+          "name": "Charles Brown",
+          "email": "test.emp6.siox@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "TEAM_LEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            16
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 22,
+              "userId": 18,
+              "ventureId": 16,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.384Z",
+              "venture": {
+                "id": 16,
+                "slug": null,
+                "code": "SIOX",
+                "name": "SIOX Freight Solutions",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 47,
+          "name": "Jessica White",
+          "email": "test.manager.chd@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            14
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 51,
+              "userId": 47,
+              "ventureId": 14,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.455Z",
+              "venture": {
+                "id": 14,
+                "slug": null,
+                "code": "CHD",
+                "name": "Chokshi Holdings",
+                "type": "HOLDINGS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 40,
+          "name": "Daniel Perez",
+          "email": "test.manager.css@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            18
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 44,
+              "userId": 40,
+              "ventureId": 18,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.436Z",
+              "venture": {
+                "id": 18,
+                "slug": null,
+                "code": "CSS",
+                "name": "CloudStack SaaS",
+                "type": "SAAS",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 26,
+          "name": "Anna Harris",
+          "email": "test.manager.hhg@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            17
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 30,
+              "userId": 26,
+              "ventureId": 17,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.403Z",
+              "venture": {
+                "id": 17,
+                "slug": null,
+                "code": "HHG",
+                "name": "Harbor Hotels Group",
+                "type": "HOSPITALITY",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 19,
+          "name": "David Thompson",
+          "email": "test.manager.mbt@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            13
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 23,
+              "userId": 19,
+              "ventureId": 13,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.386Z",
+              "venture": {
+                "id": 13,
+                "slug": null,
+                "code": "MBT",
+                "name": "MB Transport",
+                "type": "TRANSPORT",
+                "logisticsRole": "CARRIER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 33,
+          "name": "Jennifer Lewis",
+          "email": "test.manager.rvx@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            15
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 37,
+              "userId": 33,
+              "ventureId": 15,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.420Z",
+              "venture": {
+                "id": 15,
+                "slug": null,
+                "code": "RVX",
+                "name": "RevenelX BPO",
+                "type": "BPO",
+                "logisticsRole": null,
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.335Z",
+                "updatedAt": "2025-12-07T02:26:31.335Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        },
+        {
+          "id": 12,
+          "name": "Lisa Moore",
+          "email": "test.manager.siox@siox.com",
+          "phone": null,
+          "phoneUs": null,
+          "phoneIn": null,
+          "extension": null,
+          "alias": null,
+          "role": "VENTURE_HEAD",
+          "legacyDepartment": null,
+          "jobDepartmentId": null,
+          "jobDepartmentName": null,
+          "jobRoleId": null,
+          "jobRoleName": null,
+          "isActive": true,
+          "isTestUser": true,
+          "ventureIds": [
+            16
+          ],
+          "officeIds": [],
+          "ventures": [
+            {
+              "id": 16,
+              "userId": 12,
+              "ventureId": 16,
+              "role": null,
+              "createdAt": "2025-12-07T02:26:31.367Z",
+              "venture": {
+                "id": 16,
+                "slug": null,
+                "code": "SIOX",
+                "name": "SIOX Freight Solutions",
+                "type": "LOGISTICS",
+                "logisticsRole": "BROKER",
+                "isActive": true,
+                "createdAt": "2025-12-07T02:26:31.334Z",
+                "updatedAt": "2025-12-07T02:26:31.334Z",
+                "isTest": true
+              }
+            }
+          ],
+          "offices": [],
+          "reportsToId": null,
+          "reportsToName": null,
+          "reportsToEmail": null
+        }
+      ],
+      "page": 1,
+      "limit": 100,
+      "totalCount": 53,
+      "totalPages": 1
+    },
+    "test_description": "Verify User model access for incentive calculations",
+    "headers": {},
+    "request_body": null,
+    "timestamp": "2025-12-07T05:05:10.472565"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "GET",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Non-POST method GET should return 405",
+    "headers": {},
+    "request_body": null,
+    "timestamp": "2025-12-07T05:05:10.496673"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "PUT",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Non-POST method PUT should return 405",
+    "headers": {},
+    "request_body": null,
+    "timestamp": "2025-12-07T05:05:10.507499"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "DELETE",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Non-POST method DELETE should return 405",
+    "headers": {},
+    "request_body": null,
+    "timestamp": "2025-12-07T05:05:10.517328"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2025-12-06",
+      "scope": "both",
+      "rowsWritten": 0
+    },
+    "test_description": "Test with dev mode auto-auth (should work as CEO)",
+    "headers": {},
+    "request_body": {},
+    "timestamp": "2025-12-07T05:05:10.532853"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2025-12-06",
+      "scope": "both",
+      "rowsWritten": 0
+    },
+    "test_description": "No body - should default to yesterday, scope='both'",
+    "headers": {},
+    "request_body": {},
+    "timestamp": "2025-12-07T05:05:10.545763"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2025-12-06",
+      "scope": "freight",
+      "rowsWritten": 0
+    },
+    "test_description": "Explicit valid body - date: 2025-12-06, scope: freight",
+    "headers": {},
+    "request_body": {
+      "date": "2025-12-06",
+      "scope": "freight"
+    },
+    "timestamp": "2025-12-07T05:05:10.559909"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "Invalid date",
+      "detail": "date must be YYYY-MM-DD"
+    },
+    "test_description": "Invalid date format should return 400",
+    "headers": {},
+    "request_body": {
+      "date": "invalid-date"
+    },
+    "timestamp": "2025-12-07T05:05:10.572597"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2024-01-15",
+      "scope": "bpo",
+      "rowsWritten": 0
+    },
+    "test_description": "Valid date format: 2024-01-15",
+    "headers": {},
+    "request_body": {
+      "date": "2024-01-15",
+      "scope": "bpo"
+    },
+    "timestamp": "2025-12-07T05:05:10.586414"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2024-01-15",
+      "scope": "freight",
+      "rowsWritten": 0
+    },
+    "test_description": "Test scope: freight",
+    "headers": {},
+    "request_body": {
+      "date": "2024-01-15",
+      "scope": "freight"
+    },
+    "timestamp": "2025-12-07T05:05:10.597632"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2024-01-15",
+      "scope": "bpo",
+      "rowsWritten": 0
+    },
+    "test_description": "Test scope: bpo",
+    "headers": {},
+    "request_body": {
+      "date": "2024-01-15",
+      "scope": "bpo"
+    },
+    "timestamp": "2025-12-07T05:05:10.608743"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2024-01-15",
+      "scope": "both",
+      "rowsWritten": 0
+    },
+    "test_description": "Test scope: both",
+    "headers": {},
+    "request_body": {
+      "date": "2024-01-15",
+      "scope": "both"
+    },
+    "timestamp": "2025-12-07T05:05:10.621220"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2024-01-10",
+      "scope": "both",
+      "rowsWritten": 0
+    },
+    "test_description": "First run for 2024-01-10",
+    "headers": {},
+    "request_body": {
+      "date": "2024-01-10",
+      "scope": "both"
+    },
+    "timestamp": "2025-12-07T05:05:10.632729"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2024-01-10",
+      "scope": "both",
+      "rowsWritten": 0
+    },
+    "test_description": "Second run for 2024-01-10 (idempotency test)",
+    "headers": {},
+    "request_body": {
+      "date": "2024-01-10",
+      "scope": "both"
+    },
+    "timestamp": "2025-12-07T05:05:11.651488"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2024-01-05",
+      "scope": "freight",
+      "rowsWritten": 0
+    },
+    "test_description": "Verify response format",
+    "headers": {},
+    "request_body": {
+      "date": "2024-01-05",
+      "scope": "freight"
+    },
+    "timestamp": "2025-12-07T05:05:11.668894"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2024-01-08",
+      "scope": "both",
+      "rowsWritten": 0
+    },
+    "test_description": "Run incentives to generate audit log",
+    "headers": {},
+    "request_body": {
+      "date": "2024-01-08",
+      "scope": "both"
+    },
+    "timestamp": "2025-12-07T05:05:11.681448"
+  },
+  {
+    "endpoint": "/api/admin/audit-logs",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 20,
+          "createdAt": "2025-12-07T05:05:11.680Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2024-01-08",
+          "metadata": {
+            "date": "2024-01-08",
+            "scope": "both",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 19,
+          "createdAt": "2025-12-07T05:05:11.667Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2024-01-05",
+          "metadata": {
+            "date": "2024-01-05",
+            "scope": "freight",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 18,
+          "createdAt": "2025-12-07T05:05:11.649Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2024-01-10",
+          "metadata": {
+            "date": "2024-01-10",
+            "scope": "both",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 17,
+          "createdAt": "2025-12-07T05:05:10.631Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2024-01-10",
+          "metadata": {
+            "date": "2024-01-10",
+            "scope": "both",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 16,
+          "createdAt": "2025-12-07T05:05:10.620Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2024-01-15",
+          "metadata": {
+            "date": "2024-01-15",
+            "scope": "both",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 15,
+          "createdAt": "2025-12-07T05:05:10.607Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2024-01-15",
+          "metadata": {
+            "date": "2024-01-15",
+            "scope": "bpo",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 14,
+          "createdAt": "2025-12-07T05:05:10.596Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2024-01-15",
+          "metadata": {
+            "date": "2024-01-15",
+            "scope": "freight",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 13,
+          "createdAt": "2025-12-07T05:05:10.585Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2024-01-15",
+          "metadata": {
+            "date": "2024-01-15",
+            "scope": "bpo",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 12,
+          "createdAt": "2025-12-07T05:05:10.558Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2025-12-06",
+          "metadata": {
+            "date": "2025-12-06",
+            "scope": "freight",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 11,
+          "createdAt": "2025-12-07T05:05:10.544Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2025-12-06",
+          "metadata": {
+            "date": "2025-12-06",
+            "scope": "both",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 10,
+          "createdAt": "2025-12-07T05:05:10.531Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2025-12-06",
+          "metadata": {
+            "date": "2025-12-06",
+            "scope": "both",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 9,
+          "createdAt": "2025-12-07T05:05:05.777Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVES_RUN",
+          "entityType": "incentiveBatch",
+          "entityId": "2025-12-06",
+          "metadata": {
+            "date": "2025-12-06",
+            "scope": "both",
+            "rowsWritten": 0
+          }
+        },
+        {
+          "id": 8,
+          "createdAt": "2025-12-07T04:15:27.083Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "hotels",
+          "action": "NIGHT_AUDIT_UPLOAD",
+          "entityType": "hotelKpiBatch",
+          "entityId": "1",
+          "metadata": {
+            "source": "NIGHT_AUDIT",
+            "dateRange": {
+              "to": "2024-01-04T00:00:00.000Z",
+              "from": "2024-01-02T00:00:00.000Z"
+            },
+            "propertyId": 1,
+            "rowsImported": 3,
+            "changedFields": [
+              "roomsSold",
+              "roomsAvailable",
+              "occupancyPct",
+              "adr",
+              "revpar",
+              "roomRevenue"
+            ]
+          }
+        },
+        {
+          "id": 7,
+          "createdAt": "2025-12-07T04:15:27.013Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "hotels",
+          "action": "STR_UPLOAD",
+          "entityType": "hotelKpiBatch",
+          "entityId": "1",
+          "metadata": {
+            "source": "STR",
+            "dateRange": {
+              "to": "2024-01-03T00:00:00.000Z",
+              "from": "2024-01-01T00:00:00.000Z"
+            },
+            "propertyId": 1,
+            "rowsImported": 3,
+            "changedFields": [
+              "occupancyPct",
+              "adr",
+              "revpar"
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "createdAt": "2025-12-07T04:05:13.126Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "bpo",
+          "action": "BPO_KPI_UPSERT",
+          "entityType": "bpoDailyKpi",
+          "entityId": "1:2025-12-07",
+          "metadata": {
+            "date": "2025-12-07",
+            "isTest": false,
+            "campaignId": 1
+          }
+        },
+        {
+          "id": 5,
+          "createdAt": "2025-12-07T04:05:12.706Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "hotels",
+          "action": "DISPUTE_UPDATE",
+          "entityType": "hotelDispute",
+          "entityId": "4",
+          "metadata": {
+            "after": {
+              "status": "IN_PROGRESS",
+              "ownerId": null
+            },
+            "before": {
+              "status": "OPEN",
+              "ownerId": null
+            }
+          }
+        },
+        {
+          "id": 4,
+          "createdAt": "2025-12-07T04:04:27.221Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "bpo",
+          "action": "BPO_KPI_UPSERT",
+          "entityType": "bpoDailyKpi",
+          "entityId": "1:2025-12-07",
+          "metadata": {
+            "date": "2025-12-07",
+            "isTest": false,
+            "campaignId": 1
+          }
+        },
+        {
+          "id": 3,
+          "createdAt": "2025-12-07T03:55:12.483Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "bpo",
+          "action": "BPO_KPI_UPSERT",
+          "entityType": "bpoDailyKpi",
+          "entityId": "1:2025-12-07",
+          "metadata": {
+            "date": "2025-12-07",
+            "isTest": true,
+            "campaignId": 1
+          }
+        },
+        {
+          "id": 2,
+          "createdAt": "2025-12-07T03:55:12.330Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        },
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T03:54:58.729Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "freight",
+          "action": "LOAD_UPDATE",
+          "entityType": "load",
+          "entityId": "1",
+          "metadata": {
+            "ventureId": 1,
+            "changedFields": [
+              "notes"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 20,
+      "totalPages": 1
+    },
+    "test_description": "Check for incentives audit log",
+    "headers": {},
+    "request_body": null,
+    "timestamp": "2025-12-07T05:05:13.731815"
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "date": "2024-01-12",
+      "scope": "both",
+      "rowsWritten": 0
+    },
+    "test_description": "Test database integration",
+    "headers": {},
+    "request_body": {
+      "date": "2024-01-12",
+      "scope": "both"
+    },
+    "timestamp": "2025-12-07T05:05:13.755466"
+  }
+]

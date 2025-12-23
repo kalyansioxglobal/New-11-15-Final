@@ -1,0 +1,1004 @@
+[
+  {
+    "endpoint": "/api/hospitality/hotels",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 1,
+        "name": "Best Western Inn Miami",
+        "code": "MIA1",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 144,
+        "city": "Miami",
+        "state": "FL",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.164Z",
+        "updatedAt": "2025-12-07T02:26:39.164Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Best Western Suites New York",
+        "code": "NEW4",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 103,
+        "city": "New York",
+        "state": "NY",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.167Z",
+        "updatedAt": "2025-12-07T02:26:39.167Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 10,
+        "name": "Choice Express Seattle",
+        "code": "SEA10",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 90,
+        "city": "Seattle",
+        "state": "WA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.174Z",
+        "updatedAt": "2025-12-07T02:26:39.174Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 17,
+        "name": "Choice Hotel Nashville",
+        "code": "NAS17",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 238,
+        "city": "Nashville",
+        "state": "TN",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.181Z",
+        "updatedAt": "2025-12-07T02:26:39.181Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 12,
+        "name": "Choice Suites Boston",
+        "code": "BOS12",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 129,
+        "city": "Boston",
+        "state": "MA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.176Z",
+        "updatedAt": "2025-12-07T02:26:39.176Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 20,
+        "name": "Hilton Inn Tampa",
+        "code": "TAM20",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 228,
+        "city": "Tampa",
+        "state": "FL",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.184Z",
+        "updatedAt": "2025-12-07T02:26:39.184Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 7,
+        "name": "Hilton Lodge Dallas",
+        "code": "DAL7",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 121,
+        "city": "Dallas",
+        "state": "TX",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.170Z",
+        "updatedAt": "2025-12-07T02:26:39.170Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 13,
+        "name": "Hilton Resort Las Vegas",
+        "code": "LAS13",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 135,
+        "city": "Las Vegas",
+        "state": "NV",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.177Z",
+        "updatedAt": "2025-12-07T02:26:39.177Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 16,
+        "name": "Hyatt Inn Austin",
+        "code": "AUS16",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 157,
+        "city": "Austin",
+        "state": "TX",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.180Z",
+        "updatedAt": "2025-12-07T02:26:39.180Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Hyatt Lodge Denver",
+        "code": "DEN9",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 227,
+        "city": "Denver",
+        "state": "CO",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.172Z",
+        "updatedAt": "2025-12-07T02:26:39.172Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 18,
+        "name": "Hyatt Resort Portland",
+        "code": "POR18",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 233,
+        "city": "Portland",
+        "state": "OR",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.182Z",
+        "updatedAt": "2025-12-07T02:26:39.182Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Hyatt Resort San Diego",
+        "code": "SAN8",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 131,
+        "city": "San Diego",
+        "state": "CA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.171Z",
+        "updatedAt": "2025-12-07T02:26:39.171Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 19,
+        "name": "Hyatt Suites Charlotte",
+        "code": "CHA19",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 96,
+        "city": "Charlotte",
+        "state": "NC",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.183Z",
+        "updatedAt": "2025-12-07T02:26:39.183Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 11,
+        "name": "IHG Express Atlanta",
+        "code": "ATL11",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 100,
+        "city": "Atlanta",
+        "state": "GA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.175Z",
+        "updatedAt": "2025-12-07T02:26:39.175Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 3,
+        "name": "IHG Suites Chicago",
+        "code": "CHI3",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 110,
+        "city": "Chicago",
+        "state": "IL",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.166Z",
+        "updatedAt": "2025-12-07T02:26:39.166Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Marriott Hotel Houston",
+        "code": "HOU5",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 237,
+        "city": "Houston",
+        "state": "TX",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.168Z",
+        "updatedAt": "2025-12-07T02:26:39.168Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Marriott Hotel Phoenix",
+        "code": "PHO6",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 184,
+        "city": "Phoenix",
+        "state": "AZ",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.169Z",
+        "updatedAt": "2025-12-07T02:26:39.169Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 15,
+        "name": "Marriott Inn San Francisco",
+        "code": "SAN15",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 112,
+        "city": "San Francisco",
+        "state": "CA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.179Z",
+        "updatedAt": "2025-12-07T02:26:39.179Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 2,
+        "name": "Wyndham Inn Los Angeles",
+        "code": "LOS2",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 132,
+        "city": "Los Angeles",
+        "state": "CA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.165Z",
+        "updatedAt": "2025-12-07T02:26:39.165Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 14,
+        "name": "Wyndham Resort Orlando",
+        "code": "ORL14",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 225,
+        "city": "Orlando",
+        "state": "FL",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.178Z",
+        "updatedAt": "2025-12-07T02:26:39.178Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      }
+    ],
+    "test_description": "Get hotel properties for testing",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/hotels/str/upload",
+    "method": "GET",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - GET should return 405",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/hotels/str/upload",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "Invalid file",
+      "detail": "file is required"
+    },
+    "test_description": "Missing file should return 400",
+    "headers": {},
+    "request_body": "{'propertyId': '1'}"
+  },
+  {
+    "endpoint": "/api/hotels/str/upload",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "Invalid propertyId",
+      "detail": "propertyId is required"
+    },
+    "test_description": "Missing propertyId should return 400",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/hotels/str/upload",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "Invalid propertyId",
+      "detail": "Hotel property not found"
+    },
+    "test_description": "Invalid propertyId should return 400",
+    "headers": {},
+    "request_body": "{'propertyId': '99999'}"
+  },
+  {
+    "endpoint": "/api/hotels/str/upload",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "rowsImported": 3,
+      "propertyId": 1,
+      "source": "STR"
+    },
+    "test_description": "Valid STR upload should return 200",
+    "headers": {},
+    "request_body": "{'propertyId': '1'}"
+  },
+  {
+    "endpoint": "/api/hotels/night-audit/upload",
+    "method": "GET",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - GET should return 405",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/hotels/night-audit/upload",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "Invalid file",
+      "detail": "file is required"
+    },
+    "test_description": "Missing file should return 400",
+    "headers": {},
+    "request_body": "{'propertyId': '1'}"
+  },
+  {
+    "endpoint": "/api/hotels/night-audit/upload",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "Invalid propertyId",
+      "detail": "propertyId is required"
+    },
+    "test_description": "Missing propertyId should return 400",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/hotels/night-audit/upload",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "Invalid propertyId",
+      "detail": "Hotel property not found"
+    },
+    "test_description": "Invalid propertyId should return 400",
+    "headers": {},
+    "request_body": "{'propertyId': '99999'}"
+  },
+  {
+    "endpoint": "/api/hotels/night-audit/upload",
+    "method": "POST",
+    "status_code": 200,
+    "response": {
+      "success": true,
+      "rowsImported": 3,
+      "propertyId": 1,
+      "source": "NIGHT_AUDIT"
+    },
+    "test_description": "Valid Night Audit upload should return 200",
+    "headers": {},
+    "request_body": "{'propertyId': '1'}"
+  },
+  {
+    "endpoint": "/api/admin/audit-logs?domain=hotels&action=STR_UPLOAD",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 7,
+          "createdAt": "2025-12-07T04:15:27.013Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "hotels",
+          "action": "STR_UPLOAD",
+          "entityType": "hotelKpiBatch",
+          "entityId": "1",
+          "metadata": {
+            "source": "STR",
+            "dateRange": {
+              "to": "2024-01-03T00:00:00.000Z",
+              "from": "2024-01-01T00:00:00.000Z"
+            },
+            "propertyId": 1,
+            "rowsImported": 3,
+            "changedFields": [
+              "occupancyPct",
+              "adr",
+              "revpar"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Get STR upload audit logs",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/admin/audit-logs?domain=hotels&action=NIGHT_AUDIT_UPLOAD",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 8,
+          "createdAt": "2025-12-07T04:15:27.083Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "hotels",
+          "action": "NIGHT_AUDIT_UPLOAD",
+          "entityType": "hotelKpiBatch",
+          "entityId": "1",
+          "metadata": {
+            "source": "NIGHT_AUDIT",
+            "dateRange": {
+              "to": "2024-01-04T00:00:00.000Z",
+              "from": "2024-01-02T00:00:00.000Z"
+            },
+            "propertyId": 1,
+            "rowsImported": 3,
+            "changedFields": [
+              "roomsSold",
+              "roomsAvailable",
+              "occupancyPct",
+              "adr",
+              "revpar",
+              "roomRevenue"
+            ]
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Get Night Audit upload audit logs",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/hotels/kpi-upload",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "raw_response": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><title data-next-head=\"\">SIOX Command Center</title><meta name=\"description\" content=\"Multi-venture ops control for SIOX\" data-next-head=\"\"/><style data-next-hide-fouc=\"true\">body{display:none}</style><noscript data-next-hide-fouc=\"true\"><style>body{display:block}</style></noscript><noscript data-n-css=\"\"></noscript><script defer=\"\" noModule=\"\" src=\"/_next/static/chunks/polyfills.js\"></script><script src=\"/_next/static/chunks/webpack.js\" defer=\"\"></script><script src=\"/_next/static/chunks/main.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/_app.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/hotels/kpi-upload.js\" defer=\"\"></script><script src=\"/_next/static/development/_buildManifest.js\" defer=\"\"></script><script src=\"/_next/static/development/_ssgManifest.js\" defer=\"\"></script><noscript id=\"__next_css__DO_NOT_USE__\"></noscript></head><body><div id=\"__next\"><div class=\"min-h-screen flex bg-gray-100 text-gray-900\"><aside class=\"w-60 bg-gray-900 text-gray-100 flex flex-col\"><a class=\"block px-4 py-4 border-b border-gray-800 hover:bg-gray-800/50 transition\" href=\"/\"><div class=\"flex items-center gap-2\"><div class=\"h-8 w-8 rounded-xl bg-emerald-500 flex items-center justify-center text-xs font-bold text-slate-950\">SX</div><div class=\"flex flex-col\"><span class=\"text-sm font-semibold tracking-wide\">SIOX Command Center</span><span class=\"text-[11px] text-gray-400\">Multi-Venture Oversight</span></div></div></a><nav class=\"flex-1 overflow-y-auto px-2 py-3 space-y-1 text-sm\"><div class=\"flex items-center justify-between px-2 mb-2\"><span class=\"text-[10px] text-gray-500\">Navigation</span><div class=\"flex gap-1\"><button class=\"text-[10px] text-gray-500 hover:text-gray-300 px-1\" title=\"Expand all sections\">+</button><button class=\"text-[10px] text-gray-500 hover:text-gray-300 px-1\" title=\"Collapse all sections\">\u2212</button></div></div><div class=\"mb-2\"><button class=\"w-full flex items-center justify-between px-2 py-1.5 rounded-md text-[11px] uppercase tracking-wide transition text-gray-500 hover:text-gray-300 hover:bg-gray-800/30\"><span>Main</span><svg class=\"h-3 w-3 transition-transform duration-200 rotate-90\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 5l7 7-7 7\"></path></svg></button><ul class=\"space-y-0.5 mt-1 overflow-hidden transition-all duration-200 max-h-[1000px] opacity-100\"><li><a class=\"flex items-center gap-2 px-3 py-2 rounded-md transition text-gray-300 hover:bg-gray-800/60 hover:text-white\" href=\"/my-day\"><span>\u2600\ufe0f</span><span>My Day</span></a></li></ul></div><div class=\"mb-2\"><button class=\"w-full flex items-center justify-between px-2 py-1.5 rounded-md text-[11px] uppercase tracking-wide transition text-gray-500 hover:text-gray-300 hover:bg-gray-800/30\"><span>Operations</span><svg class=\"h-3 w-3 transition-transform duration-200 rotate-90\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 5l7 7-7 7\"></path></svg></button><ul class=\"space-y-0.5 mt-1 overflow-hidden transition-all duration-200 max-h-[1000px] opacity-100\"><li><a class=\"flex items-center gap-2 px-3 py-2 rounded-md transition text-gray-300 hover:bg-gray-800/60 hover:text-white\" href=\"/tasks\"><span>\u2705</span><span>Tasks</span></a></li><li><a class=\"flex items-center gap-2 px-3 py-2 rounded-md transition text-gray-300 hover:bg-gray-800/60 hover:text-white\" href=\"/eod-reports/submit\"><span>\ud83d\udcdd</span><span>EOD Reports</span></a></li></ul></div><div class=\"mb-2\"><button class=\"w-full flex items-center justify-between px-2 py-1.5 rounded-md text-[11px] uppercase tracking-wide transition text-gray-500 hover:text-gray-300 hover:bg-gray-800/30\"><span>Admin</span><svg class=\"h-3 w-3 transition-transform duration-200 rotate-90\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 5l7 7-7 7\"></path></svg></button><ul class=\"space-y-0.5 mt-1 overflow-hidden transition-all duration-200 max-h-[1000px] opacity-100\"><li><a class=\"flex items-center gap-2 px-3 py-2 rounded-md transition text-gray-300 hover:bg-gray-800/60 hover:text-white\" href=\"/settings/preferences\"><span>\u2699\ufe0f</span><span>Preferences</span></a></li></ul></div></nav><div class=\"px-3 py-3 border-t border-gray-800 space-y-2\"><button class=\"w-full px-3 py-2 rounded-md text-sm font-medium transition bg-gray-700 text-gray-200 hover:bg-gray-600 \">Test Mode: OFF</button></div><div class=\"px-3 py-3 border-t border-gray-800\"></div></aside><div class=\"flex-1 flex flex-col\"><header class=\"h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4\"><div class=\"flex items-center gap-2\"><span class=\"text-sm text-gray-500\">Page</span><span class=\"text-base font-semibold\">KPI Upload</span></div><div class=\"flex items-center gap-4 text-sm\"><div class=\"relative text-xs\"><button type=\"button\" class=\"relative px-2 py-1 rounded-full border border-gray-300 flex items-center gap-1 hover:bg-gray-100\"><span>\ud83d\udd14</span></button></div><span class=\"hidden md:inline text-gray-500 cursor-help\" title=\"Owner Timeline is coming soon. Live activity feed will appear here.\">Owner Timeline live</span><div class=\"relative\"><button type=\"button\" class=\"flex items-center gap-2 hover:bg-gray-50 rounded-lg px-2 py-1 transition\"><div class=\"h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden\"><span class=\"text-[11px] font-semibold text-gray-700\">U</span></div><div class=\"hidden sm:flex flex-col items-start\"><span class=\"text-[11px] font-semibold text-gray-800 max-w-[120px] truncate\">User</span><span class=\"text-[10px] text-gray-500\">EMPLOYEE</span></div><svg class=\"h-3 w-3 text-gray-500\" viewBox=\"0 0 20 20\" fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z\" clip-rule=\"evenodd\"></path></svg></button></div></div></header><main class=\"flex-1 p-4 lg:p-6\"><div class=\"p-4 md:p-6 space-y-4\"><div class=\"flex items-center justify-between\"><div><h1 class=\"text-xl font-semibold\">Hotel KPI Uploads</h1><p class=\"text-xs text-gray-500 mt-1\">Upload STR and Night Audit files to feed Occ / ADR / RevPAR into dashboards.</p></div></div><div class=\"rounded border border-gray-200 bg-white p-4 space-y-3\"><div class=\"space-y-1\"><div class=\"text-xs font-medium text-gray-700\">Property</div><select class=\"w-full rounded border border-gray-300 px-2 py-1 text-sm\"><option value=\"\" selected=\"\">Select property\u2026</option></select></div></div><div class=\"grid grid-cols-1 md:grid-cols-2 gap-4\"><div class=\"rounded border border-gray-200 bg-white p-4 space-y-3\"><h2 class=\"text-sm font-semibold text-gray-800\">STR Upload</h2><p class=\"text-xs text-gray-500\">CSV with columns: date, occ, adr, revpar, optional comp_occ/comp_adr/comp_revpar.</p><input type=\"file\" accept=\".csv\" class=\"text-xs\"/><button class=\"px-3 py-1.5 rounded bg-black text-white text-xs\">Upload STR</button></div><div class=\"rounded border border-gray-200 bg-white p-4 space-y-3\"><h2 class=\"text-sm font-semibold text-gray-800\">Night Audit Upload</h2><p class=\"text-xs text-gray-500\">CSV with columns: date, rooms_sold, rooms_available (optional), room_revenue.</p><input type=\"file\" accept=\".csv\" class=\"text-xs\"/><button class=\"px-3 py-1.5 rounded bg-black text-white text-xs\">Upload Night Audit</button></div></div><div class=\"rounded border border-gray-200 bg-white p-4\"><div class=\"flex items-center justify-between mb-2\"><div class=\"text-xs font-semibold text-gray-800 uppercase tracking-wide\">Recent KPI Uploads</div><button class=\"px-2 py-1 text-[11px] rounded border border-gray-300 text-gray-700\">Refresh</button></div><div class=\"overflow-auto\"><table class=\"min-w-full text-[11px] text-left\"><thead><tr class=\"bg-gray-50 text-gray-600\"><th class=\"py-1.5 px-2 border-b\">Time</th><th class=\"py-1.5 px-2 border-b\">Property ID</th><th class=\"py-1.5 px-2 border-b\">Source</th><th class=\"py-1.5 px-2 border-b\">Rows Imported</th><th class=\"py-1.5 px-2 border-b\">Date Range</th></tr></thead><tbody><tr><td colSpan=\"5\" class=\"py-3 text-center text-xs text-gray-500\">No recent KPI uploads found.</td></tr></tbody></table></div></div></div><div class=\"text-center text-[10px] text-zinc-500 mt-10 mb-4\">System Architecture \u2022 Designed by Herry Chokshi</div></main></div></div></div><script src=\"/_next/static/chunks/react-refresh.js\"></script><script id=\"__NEXT_DATA__\" type=\"application/json\">{\"props\":{\"pageProps\":{}},\"page\":\"/hotels/kpi-upload\",\"query\":{},\"buildId\":\"development\",\"nextExport\":true,\"autoExport\":true,\"isFallback\":false,\"scriptLoader\":[]}</script></body></html>"
+    },
+    "test_description": "Load KPI upload page",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/hospitality/hotels",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 1,
+        "name": "Best Western Inn Miami",
+        "code": "MIA1",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 144,
+        "city": "Miami",
+        "state": "FL",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.164Z",
+        "updatedAt": "2025-12-07T02:26:39.164Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Best Western Suites New York",
+        "code": "NEW4",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 103,
+        "city": "New York",
+        "state": "NY",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.167Z",
+        "updatedAt": "2025-12-07T02:26:39.167Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 10,
+        "name": "Choice Express Seattle",
+        "code": "SEA10",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 90,
+        "city": "Seattle",
+        "state": "WA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.174Z",
+        "updatedAt": "2025-12-07T02:26:39.174Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 17,
+        "name": "Choice Hotel Nashville",
+        "code": "NAS17",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 238,
+        "city": "Nashville",
+        "state": "TN",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.181Z",
+        "updatedAt": "2025-12-07T02:26:39.181Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 12,
+        "name": "Choice Suites Boston",
+        "code": "BOS12",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 129,
+        "city": "Boston",
+        "state": "MA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.176Z",
+        "updatedAt": "2025-12-07T02:26:39.176Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 20,
+        "name": "Hilton Inn Tampa",
+        "code": "TAM20",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 228,
+        "city": "Tampa",
+        "state": "FL",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.184Z",
+        "updatedAt": "2025-12-07T02:26:39.184Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 7,
+        "name": "Hilton Lodge Dallas",
+        "code": "DAL7",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 121,
+        "city": "Dallas",
+        "state": "TX",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.170Z",
+        "updatedAt": "2025-12-07T02:26:39.170Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 13,
+        "name": "Hilton Resort Las Vegas",
+        "code": "LAS13",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 135,
+        "city": "Las Vegas",
+        "state": "NV",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.177Z",
+        "updatedAt": "2025-12-07T02:26:39.177Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 16,
+        "name": "Hyatt Inn Austin",
+        "code": "AUS16",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 157,
+        "city": "Austin",
+        "state": "TX",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.180Z",
+        "updatedAt": "2025-12-07T02:26:39.180Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Hyatt Lodge Denver",
+        "code": "DEN9",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 227,
+        "city": "Denver",
+        "state": "CO",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.172Z",
+        "updatedAt": "2025-12-07T02:26:39.172Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 18,
+        "name": "Hyatt Resort Portland",
+        "code": "POR18",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 233,
+        "city": "Portland",
+        "state": "OR",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.182Z",
+        "updatedAt": "2025-12-07T02:26:39.182Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Hyatt Resort San Diego",
+        "code": "SAN8",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 131,
+        "city": "San Diego",
+        "state": "CA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.171Z",
+        "updatedAt": "2025-12-07T02:26:39.171Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 19,
+        "name": "Hyatt Suites Charlotte",
+        "code": "CHA19",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 96,
+        "city": "Charlotte",
+        "state": "NC",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.183Z",
+        "updatedAt": "2025-12-07T02:26:39.183Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 11,
+        "name": "IHG Express Atlanta",
+        "code": "ATL11",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 100,
+        "city": "Atlanta",
+        "state": "GA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.175Z",
+        "updatedAt": "2025-12-07T02:26:39.175Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 3,
+        "name": "IHG Suites Chicago",
+        "code": "CHI3",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 110,
+        "city": "Chicago",
+        "state": "IL",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.166Z",
+        "updatedAt": "2025-12-07T02:26:39.166Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Marriott Hotel Houston",
+        "code": "HOU5",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 237,
+        "city": "Houston",
+        "state": "TX",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.168Z",
+        "updatedAt": "2025-12-07T02:26:39.168Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Marriott Hotel Phoenix",
+        "code": "PHO6",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 184,
+        "city": "Phoenix",
+        "state": "AZ",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.169Z",
+        "updatedAt": "2025-12-07T02:26:39.169Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 15,
+        "name": "Marriott Inn San Francisco",
+        "code": "SAN15",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 112,
+        "city": "San Francisco",
+        "state": "CA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.179Z",
+        "updatedAt": "2025-12-07T02:26:39.179Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 2,
+        "name": "Wyndham Inn Los Angeles",
+        "code": "LOS2",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 132,
+        "city": "Los Angeles",
+        "state": "CA",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.165Z",
+        "updatedAt": "2025-12-07T02:26:39.165Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      },
+      {
+        "id": 14,
+        "name": "Wyndham Resort Orlando",
+        "code": "ORL14",
+        "ventureId": 17,
+        "brand": null,
+        "rooms": 225,
+        "city": "Orlando",
+        "state": "FL",
+        "country": null,
+        "status": "ACTIVE",
+        "isTest": false,
+        "createdAt": "2025-12-07T02:26:39.178Z",
+        "updatedAt": "2025-12-07T02:26:39.178Z",
+        "venture": {
+          "id": 17,
+          "name": "Harbor Hotels Group"
+        }
+      }
+    ],
+    "test_description": "Hotels API for frontend dropdown",
+    "headers": {},
+    "request_body": null
+  }
+]

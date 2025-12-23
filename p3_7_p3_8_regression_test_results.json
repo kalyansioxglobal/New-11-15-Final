@@ -1,0 +1,832 @@
+[
+  {
+    "endpoint": "/api/incentives/commit",
+    "method": "GET",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - GET should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/incentives/commit",
+    "method": "PUT",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - PUT should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/incentives/commit",
+    "method": "POST",
+    "status_code": 400,
+    "expected_status": null,
+    "response": {
+      "error": "planId is required and must be a positive number"
+    },
+    "test_description": "Unauthenticated request - dev mode should auto-auth as CEO",
+    "headers": {},
+    "request_body": {},
+    "passed": false
+  },
+  {
+    "endpoint": "/api/incentives/commit",
+    "method": "POST",
+    "status_code": 400,
+    "expected_status": 400,
+    "response": {
+      "error": "planId is required and must be a positive number"
+    },
+    "test_description": "Missing planId - should return 400",
+    "headers": {},
+    "request_body": {},
+    "passed": true
+  },
+  {
+    "endpoint": "/api/incentives/commit",
+    "method": "POST",
+    "status_code": 400,
+    "expected_status": 400,
+    "response": {
+      "error": "planId is required and must be a positive number"
+    },
+    "test_description": "Invalid planId type - should return 400",
+    "headers": {},
+    "request_body": {
+      "planId": "invalid"
+    },
+    "passed": true
+  },
+  {
+    "endpoint": "/api/incentives/commit",
+    "method": "POST",
+    "status_code": 400,
+    "expected_status": 400,
+    "response": {
+      "error": "planId is required and must be a positive number"
+    },
+    "test_description": "Zero planId - should return 400",
+    "headers": {},
+    "request_body": {
+      "planId": 0
+    },
+    "passed": true
+  },
+  {
+    "endpoint": "/api/incentives/commit",
+    "method": "POST",
+    "status_code": 400,
+    "expected_status": 400,
+    "response": {
+      "error": "planId is required and must be a positive number"
+    },
+    "test_description": "Negative planId - should return 400",
+    "headers": {},
+    "request_body": {
+      "planId": -1
+    },
+    "passed": true
+  },
+  {
+    "endpoint": "/api/incentives/commit",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [],
+      "inserted": 0,
+      "updated": 0,
+      "count": 0
+    },
+    "test_description": "Valid planId=1, default date - should process or return 404/500 if no plan",
+    "headers": {},
+    "request_body": {
+      "planId": 1
+    },
+    "passed": true
+  },
+  {
+    "endpoint": "/api/incentives/commit",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [],
+      "inserted": 0,
+      "updated": 0,
+      "count": 0
+    },
+    "test_description": "Valid planId=1 with specific date - should process or return 404/500 if no plan",
+    "headers": {},
+    "request_body": {
+      "planId": 1,
+      "date": "2025-12-06"
+    },
+    "passed": true
+  },
+  {
+    "endpoint": "/api/incentives/run",
+    "method": "POST",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [],
+      "count": 0
+    },
+    "test_description": "Preview run with planId=1 - should calculate without saving",
+    "headers": {},
+    "request_body": {
+      "planId": 1
+    },
+    "passed": true
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "POST",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - POST should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "PUT",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - PUT should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "DELETE",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - DELETE should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "from": "2025-11-30T17:45:47.506Z",
+      "to": "2025-12-07T17:45:47.506Z",
+      "agents": [],
+      "totals": {
+        "totalDials": 0,
+        "totalConnects": 0,
+        "totalTalkSeconds": 0,
+        "totalAppointments": 0,
+        "totalDeals": 0,
+        "totalRevenue": 0
+      }
+    },
+    "test_description": "Default behavior - should use last 7 days window",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/bpo/kpi?from=2025-09-07&to=2025-12-07",
+    "method": "GET",
+    "status_code": 400,
+    "expected_status": 400,
+    "response": {
+      "error": "Date range too large",
+      "detail": "Maximum allowed range is 90 days for BPO KPIs"
+    },
+    "test_description": "Range limit test - 91 days should return 400",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/bpo/kpi?from=2025-11-07&to=2025-12-07",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "from": "2025-11-07T00:00:00.000Z",
+      "to": "2025-12-07T00:00:00.000Z",
+      "agents": [],
+      "totals": {
+        "totalDials": 0,
+        "totalConnects": 0,
+        "totalTalkSeconds": 0,
+        "totalAppointments": 0,
+        "totalDeals": 0,
+        "totalRevenue": 0
+      }
+    },
+    "test_description": "Valid range - 30 days should return 200",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/bpo/kpi",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "from": "2025-11-30T17:45:47.547Z",
+      "to": "2025-12-07T17:45:47.547Z",
+      "agents": [],
+      "totals": {
+        "totalDials": 0,
+        "totalConnects": 0,
+        "totalTalkSeconds": 0,
+        "totalAppointments": 0,
+        "totalDeals": 0,
+        "totalRevenue": 0
+      }
+    },
+    "test_description": "Response structure validation",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/customers",
+    "method": "PUT",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - PUT should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/customers",
+    "method": "DELETE",
+    "status_code": 405,
+    "expected_status": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - DELETE should return 405",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/customers",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [
+        {
+          "id": 2,
+          "name": "Costco Distribution",
+          "email": "ship@costco.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.132Z",
+          "updatedAt": "2025-12-07T17:39:02.132Z",
+          "ventureId": 2,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 2,
+            "name": "MB Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 12
+          }
+        },
+        {
+          "id": 1,
+          "name": "Amazon Fulfillment",
+          "email": "ship@amazon.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.129Z",
+          "updatedAt": "2025-12-07T17:39:02.129Z",
+          "ventureId": 1,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 1,
+            "name": "Siox Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 13
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 2,
+      "totalPages": 1
+    },
+    "test_description": "Default pagination - should use page=1, pageSize=50",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/customers?page=1&pageSize=25",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [
+        {
+          "id": 2,
+          "name": "Costco Distribution",
+          "email": "ship@costco.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.132Z",
+          "updatedAt": "2025-12-07T17:39:02.132Z",
+          "ventureId": 2,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 2,
+            "name": "MB Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 12
+          }
+        },
+        {
+          "id": 1,
+          "name": "Amazon Fulfillment",
+          "email": "ship@amazon.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.129Z",
+          "updatedAt": "2025-12-07T17:39:02.129Z",
+          "ventureId": 1,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 1,
+            "name": "Siox Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 13
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 25,
+      "total": 2,
+      "totalPages": 1
+    },
+    "test_description": "Custom pagination - page=1, pageSize=25",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/customers?page=1&pageSize=500",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [
+        {
+          "id": 2,
+          "name": "Costco Distribution",
+          "email": "ship@costco.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.132Z",
+          "updatedAt": "2025-12-07T17:39:02.132Z",
+          "ventureId": 2,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 2,
+            "name": "MB Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 12
+          }
+        },
+        {
+          "id": 1,
+          "name": "Amazon Fulfillment",
+          "email": "ship@amazon.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.129Z",
+          "updatedAt": "2025-12-07T17:39:02.129Z",
+          "ventureId": 1,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 1,
+            "name": "Siox Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 13
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 2,
+      "totalPages": 1
+    },
+    "test_description": "PageSize limit - pageSize=500 should be capped at 200",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/customers?page=0&pageSize=25",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [
+        {
+          "id": 2,
+          "name": "Costco Distribution",
+          "email": "ship@costco.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.132Z",
+          "updatedAt": "2025-12-07T17:39:02.132Z",
+          "ventureId": 2,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 2,
+            "name": "MB Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 12
+          }
+        },
+        {
+          "id": 1,
+          "name": "Amazon Fulfillment",
+          "email": "ship@amazon.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.129Z",
+          "updatedAt": "2025-12-07T17:39:02.129Z",
+          "ventureId": 1,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 1,
+            "name": "Siox Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 13
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 25,
+      "total": 2,
+      "totalPages": 1
+    },
+    "test_description": "Invalid page=0 - should default to page=1",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/customers?page=-1&pageSize=25",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [
+        {
+          "id": 2,
+          "name": "Costco Distribution",
+          "email": "ship@costco.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.132Z",
+          "updatedAt": "2025-12-07T17:39:02.132Z",
+          "ventureId": 2,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 2,
+            "name": "MB Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 12
+          }
+        },
+        {
+          "id": 1,
+          "name": "Amazon Fulfillment",
+          "email": "ship@amazon.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.129Z",
+          "updatedAt": "2025-12-07T17:39:02.129Z",
+          "ventureId": 1,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 1,
+            "name": "Siox Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 13
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 25,
+      "total": 2,
+      "totalPages": 1
+    },
+    "test_description": "Invalid page=-1 - should default to page=1",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/customers?page=1&pageSize=0",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [
+        {
+          "id": 2,
+          "name": "Costco Distribution",
+          "email": "ship@costco.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.132Z",
+          "updatedAt": "2025-12-07T17:39:02.132Z",
+          "ventureId": 2,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 2,
+            "name": "MB Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 12
+          }
+        },
+        {
+          "id": 1,
+          "name": "Amazon Fulfillment",
+          "email": "ship@amazon.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.129Z",
+          "updatedAt": "2025-12-07T17:39:02.129Z",
+          "ventureId": 1,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 1,
+            "name": "Siox Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 13
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 2,
+      "totalPages": 1
+    },
+    "test_description": "Invalid pageSize=0 - should default to pageSize=50",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  },
+  {
+    "endpoint": "/api/logistics/customers",
+    "method": "GET",
+    "status_code": 200,
+    "expected_status": null,
+    "response": {
+      "items": [
+        {
+          "id": 2,
+          "name": "Costco Distribution",
+          "email": "ship@costco.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.132Z",
+          "updatedAt": "2025-12-07T17:39:02.132Z",
+          "ventureId": 2,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 2,
+            "name": "MB Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 12
+          }
+        },
+        {
+          "id": 1,
+          "name": "Amazon Fulfillment",
+          "email": "ship@amazon.com",
+          "phone": null,
+          "address": null,
+          "tmsCustomerCode": null,
+          "internalCode": null,
+          "assignedManagerName": null,
+          "assignedManagerUserId": null,
+          "vertical": null,
+          "isActive": true,
+          "createdAt": "2025-12-07T17:39:02.129Z",
+          "updatedAt": "2025-12-07T17:39:02.129Z",
+          "ventureId": 1,
+          "assignedSalesId": null,
+          "assignedCsrId": null,
+          "assignedDispatcherId": null,
+          "venture": {
+            "id": 1,
+            "name": "Siox Logistics"
+          },
+          "salesRep": null,
+          "csr": null,
+          "dispatcher": null,
+          "_count": {
+            "loads": 13
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 2,
+      "totalPages": 1
+    },
+    "test_description": "Response structure validation",
+    "headers": {},
+    "request_body": null,
+    "passed": true
+  }
+]

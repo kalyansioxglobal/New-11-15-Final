@@ -1,0 +1,2808 @@
+[
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 50,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Default pagination - should return page=1, pageSize=50",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 25,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Custom pagination - page=1, pageSize=25",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 1,
+      "pageSize": 25
+    }
+  },
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 50,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Page coercion - page=0 should become page=1",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 0,
+      "pageSize": 50
+    }
+  },
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 50,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "PageSize coercion - pageSize=300 should become pageSize=50",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 1,
+      "pageSize": 300
+    }
+  },
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 10,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Filtering with pagination - status=OPEN",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "status": "OPEN",
+      "page": 1,
+      "pageSize": 10
+    }
+  },
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 5,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Verify includes are preserved in response",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 1,
+      "pageSize": 5
+    }
+  },
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "PUT",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - PUT should return 405",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "DELETE",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Error format verification - DELETE should return 405 with proper error shape",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/saas/customers",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 6,
+          "ventureId": 11,
+          "name": "Acme Corp 6",
+          "email": "billing6@customer6.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.697Z",
+          "updatedAt": "2025-12-07T05:38:51.697Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 6,
+              "planName": "Enterprise",
+              "mrr": 1762.376083857926,
+              "startedAt": "2025-06-16T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1762.376083857926,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 25,
+          "ventureId": 11,
+          "name": "Acme Ventures 25",
+          "email": "billing25@customer25.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.720Z",
+          "updatedAt": "2025-12-07T05:38:51.720Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 25,
+              "planName": "Scale",
+              "mrr": 747.9075882951041,
+              "startedAt": "2025-02-07T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 747.9075882951041,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 21,
+          "ventureId": 11,
+          "name": "Apex Group 21",
+          "email": "billing21@customer21.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.716Z",
+          "updatedAt": "2025-12-07T05:38:51.716Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 21,
+              "planName": "Starter",
+              "mrr": 228.8327737544978,
+              "startedAt": "2024-11-13T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 228.8327737544978,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 7,
+          "ventureId": 11,
+          "name": "Apex Inc 7",
+          "email": "billing7@customer7.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.698Z",
+          "updatedAt": "2025-12-07T05:38:51.698Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 2,
+          "ventureId": 11,
+          "name": "Apex Labs 2",
+          "email": "billing2@customer2.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.690Z",
+          "updatedAt": "2025-12-07T05:38:51.690Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 2,
+              "planName": "Professional",
+              "mrr": 358.2006075241248,
+              "startedAt": "2025-04-30T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 358.2006075241248,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 10,
+          "ventureId": 11,
+          "name": "Apex Ltd 10",
+          "email": "billing10@customer10.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.702Z",
+          "updatedAt": "2025-12-07T05:38:51.702Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 10,
+              "planName": "Scale",
+              "mrr": 1817.946239745759,
+              "startedAt": "2025-04-30T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1817.946239745759,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 5,
+          "ventureId": 11,
+          "name": "Apex Ltd 5",
+          "email": "billing5@customer5.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.695Z",
+          "updatedAt": "2025-12-07T05:38:51.695Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 1,
+          "ventureId": 11,
+          "name": "Cloud Labs 1",
+          "email": "billing1@customer1.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.688Z",
+          "updatedAt": "2025-12-07T05:38:51.688Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 1,
+              "planName": "Scale",
+              "mrr": 600.6303699315966,
+              "startedAt": "2024-12-24T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 600.6303699315966,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 16,
+          "ventureId": 11,
+          "name": "Core Systems 16",
+          "email": "billing16@customer16.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.710Z",
+          "updatedAt": "2025-12-07T05:38:51.710Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 15,
+          "ventureId": 11,
+          "name": "Data Solutions 15",
+          "email": "billing15@customer15.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.708Z",
+          "updatedAt": "2025-12-07T05:38:51.708Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 15,
+              "planName": "Scale",
+              "mrr": 1492.068093087789,
+              "startedAt": "2025-02-17T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1492.068093087789,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 17,
+          "ventureId": 11,
+          "name": "Data Solutions 17",
+          "email": "billing17@customer17.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.711Z",
+          "updatedAt": "2025-12-07T05:38:51.711Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 17,
+              "planName": "Scale",
+              "mrr": 742.948708807282,
+              "startedAt": "2025-01-25T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 742.948708807282,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 23,
+          "ventureId": 11,
+          "name": "Data Solutions 23",
+          "email": "billing23@customer23.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.718Z",
+          "updatedAt": "2025-12-07T05:38:51.718Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 23,
+              "planName": "Professional",
+              "mrr": 1924.95452600383,
+              "startedAt": "2025-10-02T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1924.95452600383,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 22,
+          "ventureId": 11,
+          "name": "Global Group 22",
+          "email": "billing22@customer22.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.717Z",
+          "updatedAt": "2025-12-07T05:38:51.717Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 8,
+          "ventureId": 11,
+          "name": "Global Systems 8",
+          "email": "billing8@customer8.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.699Z",
+          "updatedAt": "2025-12-07T05:38:51.699Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 8,
+              "planName": "Professional",
+              "mrr": 85.47894778546687,
+              "startedAt": "2025-10-10T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 85.47894778546687,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 9,
+          "ventureId": 11,
+          "name": "Global Systems 9",
+          "email": "billing9@customer9.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.701Z",
+          "updatedAt": "2025-12-07T05:38:51.701Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 9,
+              "planName": "Professional",
+              "mrr": 1112.418952775809,
+              "startedAt": "2025-09-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1112.418952775809,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 20,
+          "ventureId": 11,
+          "name": "Next Corp 20",
+          "email": "billing20@customer20.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.714Z",
+          "updatedAt": "2025-12-07T05:38:51.714Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 20,
+              "planName": "Enterprise",
+              "mrr": 1317.070666546754,
+              "startedAt": "2025-08-10T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1317.070666546754,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 13,
+          "ventureId": 11,
+          "name": "Next Ventures 13",
+          "email": "billing13@customer13.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.705Z",
+          "updatedAt": "2025-12-07T05:38:51.705Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 4,
+          "ventureId": 11,
+          "name": "Next Ventures 4",
+          "email": "billing4@customer4.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.693Z",
+          "updatedAt": "2025-12-07T05:38:51.693Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 4,
+              "planName": "Growth",
+              "mrr": 376.6938804252019,
+              "startedAt": "2025-04-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 376.6938804252019,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 18,
+          "ventureId": 11,
+          "name": "Prime Corp 18",
+          "email": "billing18@customer18.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.712Z",
+          "updatedAt": "2025-12-07T05:38:51.712Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 18,
+              "planName": "Scale",
+              "mrr": 762.6504555076425,
+              "startedAt": "2025-03-05T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 762.6504555076425,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 3,
+          "ventureId": 11,
+          "name": "Prime Ltd 3",
+          "email": "billing3@customer3.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.692Z",
+          "updatedAt": "2025-12-07T05:38:51.692Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 11,
+          "ventureId": 11,
+          "name": "Prime Ventures 11",
+          "email": "billing11@customer11.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.703Z",
+          "updatedAt": "2025-12-07T05:38:51.703Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 11,
+              "planName": "Professional",
+              "mrr": 899.8817735928639,
+              "startedAt": "2025-05-06T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 899.8817735928639,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 12,
+          "ventureId": 11,
+          "name": "Smart Labs 12",
+          "email": "billing12@customer12.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.704Z",
+          "updatedAt": "2025-12-07T05:38:51.704Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 12,
+              "planName": "Scale",
+              "mrr": 1836.16142423301,
+              "startedAt": "2025-03-06T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1836.16142423301,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 19,
+          "ventureId": 11,
+          "name": "Tech Corp 19",
+          "email": "billing19@customer19.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.713Z",
+          "updatedAt": "2025-12-07T05:38:51.713Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 19,
+              "planName": "Growth",
+              "mrr": 1768.717433189671,
+              "startedAt": "2025-03-17T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1768.717433189671,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 24,
+          "ventureId": 11,
+          "name": "Tech Ltd 24",
+          "email": "billing24@customer24.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.719Z",
+          "updatedAt": "2025-12-07T05:38:51.719Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 24,
+              "planName": "Scale",
+              "mrr": 706.2230247340276,
+              "startedAt": "2024-12-08T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 706.2230247340276,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 14,
+          "ventureId": 11,
+          "name": "Tech Solutions 14",
+          "email": "billing14@customer14.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.707Z",
+          "updatedAt": "2025-12-07T05:38:51.707Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 14,
+              "planName": "Professional",
+              "mrr": 1624.641872711107,
+              "startedAt": "2024-12-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1624.641872711107,
+          "activeSubscriptions": 1
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 25,
+      "totalPages": 1
+    },
+    "test_description": "Default pagination - should return page=1, pageSize=50",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/saas/customers",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 6,
+          "ventureId": 11,
+          "name": "Acme Corp 6",
+          "email": "billing6@customer6.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.697Z",
+          "updatedAt": "2025-12-07T05:38:51.697Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 6,
+              "planName": "Enterprise",
+              "mrr": 1762.376083857926,
+              "startedAt": "2025-06-16T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1762.376083857926,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 25,
+          "ventureId": 11,
+          "name": "Acme Ventures 25",
+          "email": "billing25@customer25.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.720Z",
+          "updatedAt": "2025-12-07T05:38:51.720Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 25,
+              "planName": "Scale",
+              "mrr": 747.9075882951041,
+              "startedAt": "2025-02-07T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 747.9075882951041,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 21,
+          "ventureId": 11,
+          "name": "Apex Group 21",
+          "email": "billing21@customer21.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.716Z",
+          "updatedAt": "2025-12-07T05:38:51.716Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 21,
+              "planName": "Starter",
+              "mrr": 228.8327737544978,
+              "startedAt": "2024-11-13T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 228.8327737544978,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 7,
+          "ventureId": 11,
+          "name": "Apex Inc 7",
+          "email": "billing7@customer7.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.698Z",
+          "updatedAt": "2025-12-07T05:38:51.698Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 2,
+          "ventureId": 11,
+          "name": "Apex Labs 2",
+          "email": "billing2@customer2.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.690Z",
+          "updatedAt": "2025-12-07T05:38:51.690Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 2,
+              "planName": "Professional",
+              "mrr": 358.2006075241248,
+              "startedAt": "2025-04-30T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 358.2006075241248,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 10,
+          "ventureId": 11,
+          "name": "Apex Ltd 10",
+          "email": "billing10@customer10.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.702Z",
+          "updatedAt": "2025-12-07T05:38:51.702Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 10,
+              "planName": "Scale",
+              "mrr": 1817.946239745759,
+              "startedAt": "2025-04-30T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1817.946239745759,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 5,
+          "ventureId": 11,
+          "name": "Apex Ltd 5",
+          "email": "billing5@customer5.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.695Z",
+          "updatedAt": "2025-12-07T05:38:51.695Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 1,
+          "ventureId": 11,
+          "name": "Cloud Labs 1",
+          "email": "billing1@customer1.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.688Z",
+          "updatedAt": "2025-12-07T05:38:51.688Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 1,
+              "planName": "Scale",
+              "mrr": 600.6303699315966,
+              "startedAt": "2024-12-24T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 600.6303699315966,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 16,
+          "ventureId": 11,
+          "name": "Core Systems 16",
+          "email": "billing16@customer16.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.710Z",
+          "updatedAt": "2025-12-07T05:38:51.710Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 15,
+          "ventureId": 11,
+          "name": "Data Solutions 15",
+          "email": "billing15@customer15.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.708Z",
+          "updatedAt": "2025-12-07T05:38:51.708Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 15,
+              "planName": "Scale",
+              "mrr": 1492.068093087789,
+              "startedAt": "2025-02-17T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1492.068093087789,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 17,
+          "ventureId": 11,
+          "name": "Data Solutions 17",
+          "email": "billing17@customer17.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.711Z",
+          "updatedAt": "2025-12-07T05:38:51.711Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 17,
+              "planName": "Scale",
+              "mrr": 742.948708807282,
+              "startedAt": "2025-01-25T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 742.948708807282,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 23,
+          "ventureId": 11,
+          "name": "Data Solutions 23",
+          "email": "billing23@customer23.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.718Z",
+          "updatedAt": "2025-12-07T05:38:51.718Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 23,
+              "planName": "Professional",
+              "mrr": 1924.95452600383,
+              "startedAt": "2025-10-02T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1924.95452600383,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 22,
+          "ventureId": 11,
+          "name": "Global Group 22",
+          "email": "billing22@customer22.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.717Z",
+          "updatedAt": "2025-12-07T05:38:51.717Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 8,
+          "ventureId": 11,
+          "name": "Global Systems 8",
+          "email": "billing8@customer8.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.699Z",
+          "updatedAt": "2025-12-07T05:38:51.699Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 8,
+              "planName": "Professional",
+              "mrr": 85.47894778546687,
+              "startedAt": "2025-10-10T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 85.47894778546687,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 9,
+          "ventureId": 11,
+          "name": "Global Systems 9",
+          "email": "billing9@customer9.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.701Z",
+          "updatedAt": "2025-12-07T05:38:51.701Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 9,
+              "planName": "Professional",
+              "mrr": 1112.418952775809,
+              "startedAt": "2025-09-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1112.418952775809,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 20,
+          "ventureId": 11,
+          "name": "Next Corp 20",
+          "email": "billing20@customer20.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.714Z",
+          "updatedAt": "2025-12-07T05:38:51.714Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 20,
+              "planName": "Enterprise",
+              "mrr": 1317.070666546754,
+              "startedAt": "2025-08-10T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1317.070666546754,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 13,
+          "ventureId": 11,
+          "name": "Next Ventures 13",
+          "email": "billing13@customer13.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.705Z",
+          "updatedAt": "2025-12-07T05:38:51.705Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 4,
+          "ventureId": 11,
+          "name": "Next Ventures 4",
+          "email": "billing4@customer4.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.693Z",
+          "updatedAt": "2025-12-07T05:38:51.693Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 4,
+              "planName": "Growth",
+              "mrr": 376.6938804252019,
+              "startedAt": "2025-04-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 376.6938804252019,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 18,
+          "ventureId": 11,
+          "name": "Prime Corp 18",
+          "email": "billing18@customer18.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.712Z",
+          "updatedAt": "2025-12-07T05:38:51.712Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 18,
+              "planName": "Scale",
+              "mrr": 762.6504555076425,
+              "startedAt": "2025-03-05T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 762.6504555076425,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 3,
+          "ventureId": 11,
+          "name": "Prime Ltd 3",
+          "email": "billing3@customer3.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.692Z",
+          "updatedAt": "2025-12-07T05:38:51.692Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 11,
+          "ventureId": 11,
+          "name": "Prime Ventures 11",
+          "email": "billing11@customer11.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.703Z",
+          "updatedAt": "2025-12-07T05:38:51.703Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 11,
+              "planName": "Professional",
+              "mrr": 899.8817735928639,
+              "startedAt": "2025-05-06T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 899.8817735928639,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 12,
+          "ventureId": 11,
+          "name": "Smart Labs 12",
+          "email": "billing12@customer12.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.704Z",
+          "updatedAt": "2025-12-07T05:38:51.704Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 12,
+              "planName": "Scale",
+              "mrr": 1836.16142423301,
+              "startedAt": "2025-03-06T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1836.16142423301,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 19,
+          "ventureId": 11,
+          "name": "Tech Corp 19",
+          "email": "billing19@customer19.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.713Z",
+          "updatedAt": "2025-12-07T05:38:51.713Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 19,
+              "planName": "Growth",
+              "mrr": 1768.717433189671,
+              "startedAt": "2025-03-17T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1768.717433189671,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 24,
+          "ventureId": 11,
+          "name": "Tech Ltd 24",
+          "email": "billing24@customer24.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.719Z",
+          "updatedAt": "2025-12-07T05:38:51.719Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 24,
+              "planName": "Scale",
+              "mrr": 706.2230247340276,
+              "startedAt": "2024-12-08T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 706.2230247340276,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 14,
+          "ventureId": 11,
+          "name": "Tech Solutions 14",
+          "email": "billing14@customer14.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.707Z",
+          "updatedAt": "2025-12-07T05:38:51.707Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 14,
+              "planName": "Professional",
+              "mrr": 1624.641872711107,
+              "startedAt": "2024-12-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1624.641872711107,
+          "activeSubscriptions": 1
+        }
+      ],
+      "page": 1,
+      "pageSize": 25,
+      "total": 25,
+      "totalPages": 1
+    },
+    "test_description": "Custom pagination - page=1, pageSize=25",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 1,
+      "pageSize": 25
+    }
+  },
+  {
+    "endpoint": "/api/saas/customers",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 6,
+          "ventureId": 11,
+          "name": "Acme Corp 6",
+          "email": "billing6@customer6.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.697Z",
+          "updatedAt": "2025-12-07T05:38:51.697Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 6,
+              "planName": "Enterprise",
+              "mrr": 1762.376083857926,
+              "startedAt": "2025-06-16T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1762.376083857926,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 25,
+          "ventureId": 11,
+          "name": "Acme Ventures 25",
+          "email": "billing25@customer25.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.720Z",
+          "updatedAt": "2025-12-07T05:38:51.720Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 25,
+              "planName": "Scale",
+              "mrr": 747.9075882951041,
+              "startedAt": "2025-02-07T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 747.9075882951041,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 21,
+          "ventureId": 11,
+          "name": "Apex Group 21",
+          "email": "billing21@customer21.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.716Z",
+          "updatedAt": "2025-12-07T05:38:51.716Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 21,
+              "planName": "Starter",
+              "mrr": 228.8327737544978,
+              "startedAt": "2024-11-13T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 228.8327737544978,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 7,
+          "ventureId": 11,
+          "name": "Apex Inc 7",
+          "email": "billing7@customer7.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.698Z",
+          "updatedAt": "2025-12-07T05:38:51.698Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 2,
+          "ventureId": 11,
+          "name": "Apex Labs 2",
+          "email": "billing2@customer2.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.690Z",
+          "updatedAt": "2025-12-07T05:38:51.690Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 2,
+              "planName": "Professional",
+              "mrr": 358.2006075241248,
+              "startedAt": "2025-04-30T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 358.2006075241248,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 10,
+          "ventureId": 11,
+          "name": "Apex Ltd 10",
+          "email": "billing10@customer10.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.702Z",
+          "updatedAt": "2025-12-07T05:38:51.702Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 10,
+              "planName": "Scale",
+              "mrr": 1817.946239745759,
+              "startedAt": "2025-04-30T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1817.946239745759,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 5,
+          "ventureId": 11,
+          "name": "Apex Ltd 5",
+          "email": "billing5@customer5.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.695Z",
+          "updatedAt": "2025-12-07T05:38:51.695Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 1,
+          "ventureId": 11,
+          "name": "Cloud Labs 1",
+          "email": "billing1@customer1.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.688Z",
+          "updatedAt": "2025-12-07T05:38:51.688Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 1,
+              "planName": "Scale",
+              "mrr": 600.6303699315966,
+              "startedAt": "2024-12-24T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 600.6303699315966,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 16,
+          "ventureId": 11,
+          "name": "Core Systems 16",
+          "email": "billing16@customer16.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.710Z",
+          "updatedAt": "2025-12-07T05:38:51.710Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 15,
+          "ventureId": 11,
+          "name": "Data Solutions 15",
+          "email": "billing15@customer15.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.708Z",
+          "updatedAt": "2025-12-07T05:38:51.708Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 15,
+              "planName": "Scale",
+              "mrr": 1492.068093087789,
+              "startedAt": "2025-02-17T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1492.068093087789,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 17,
+          "ventureId": 11,
+          "name": "Data Solutions 17",
+          "email": "billing17@customer17.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.711Z",
+          "updatedAt": "2025-12-07T05:38:51.711Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 17,
+              "planName": "Scale",
+              "mrr": 742.948708807282,
+              "startedAt": "2025-01-25T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 742.948708807282,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 23,
+          "ventureId": 11,
+          "name": "Data Solutions 23",
+          "email": "billing23@customer23.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.718Z",
+          "updatedAt": "2025-12-07T05:38:51.718Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 23,
+              "planName": "Professional",
+              "mrr": 1924.95452600383,
+              "startedAt": "2025-10-02T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1924.95452600383,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 22,
+          "ventureId": 11,
+          "name": "Global Group 22",
+          "email": "billing22@customer22.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.717Z",
+          "updatedAt": "2025-12-07T05:38:51.717Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 8,
+          "ventureId": 11,
+          "name": "Global Systems 8",
+          "email": "billing8@customer8.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.699Z",
+          "updatedAt": "2025-12-07T05:38:51.699Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 8,
+              "planName": "Professional",
+              "mrr": 85.47894778546687,
+              "startedAt": "2025-10-10T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 85.47894778546687,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 9,
+          "ventureId": 11,
+          "name": "Global Systems 9",
+          "email": "billing9@customer9.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.701Z",
+          "updatedAt": "2025-12-07T05:38:51.701Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 9,
+              "planName": "Professional",
+              "mrr": 1112.418952775809,
+              "startedAt": "2025-09-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1112.418952775809,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 20,
+          "ventureId": 11,
+          "name": "Next Corp 20",
+          "email": "billing20@customer20.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.714Z",
+          "updatedAt": "2025-12-07T05:38:51.714Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 20,
+              "planName": "Enterprise",
+              "mrr": 1317.070666546754,
+              "startedAt": "2025-08-10T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1317.070666546754,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 13,
+          "ventureId": 11,
+          "name": "Next Ventures 13",
+          "email": "billing13@customer13.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.705Z",
+          "updatedAt": "2025-12-07T05:38:51.705Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 4,
+          "ventureId": 11,
+          "name": "Next Ventures 4",
+          "email": "billing4@customer4.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.693Z",
+          "updatedAt": "2025-12-07T05:38:51.693Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 4,
+              "planName": "Growth",
+              "mrr": 376.6938804252019,
+              "startedAt": "2025-04-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 376.6938804252019,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 18,
+          "ventureId": 11,
+          "name": "Prime Corp 18",
+          "email": "billing18@customer18.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.712Z",
+          "updatedAt": "2025-12-07T05:38:51.712Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 18,
+              "planName": "Scale",
+              "mrr": 762.6504555076425,
+              "startedAt": "2025-03-05T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 762.6504555076425,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 3,
+          "ventureId": 11,
+          "name": "Prime Ltd 3",
+          "email": "billing3@customer3.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.692Z",
+          "updatedAt": "2025-12-07T05:38:51.692Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 11,
+          "ventureId": 11,
+          "name": "Prime Ventures 11",
+          "email": "billing11@customer11.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.703Z",
+          "updatedAt": "2025-12-07T05:38:51.703Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 11,
+              "planName": "Professional",
+              "mrr": 899.8817735928639,
+              "startedAt": "2025-05-06T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 899.8817735928639,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 12,
+          "ventureId": 11,
+          "name": "Smart Labs 12",
+          "email": "billing12@customer12.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.704Z",
+          "updatedAt": "2025-12-07T05:38:51.704Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 12,
+              "planName": "Scale",
+              "mrr": 1836.16142423301,
+              "startedAt": "2025-03-06T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1836.16142423301,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 19,
+          "ventureId": 11,
+          "name": "Tech Corp 19",
+          "email": "billing19@customer19.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.713Z",
+          "updatedAt": "2025-12-07T05:38:51.713Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 19,
+              "planName": "Growth",
+              "mrr": 1768.717433189671,
+              "startedAt": "2025-03-17T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1768.717433189671,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 24,
+          "ventureId": 11,
+          "name": "Tech Ltd 24",
+          "email": "billing24@customer24.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.719Z",
+          "updatedAt": "2025-12-07T05:38:51.719Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 24,
+              "planName": "Scale",
+              "mrr": 706.2230247340276,
+              "startedAt": "2024-12-08T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 706.2230247340276,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 14,
+          "ventureId": 11,
+          "name": "Tech Solutions 14",
+          "email": "billing14@customer14.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.707Z",
+          "updatedAt": "2025-12-07T05:38:51.707Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 14,
+              "planName": "Professional",
+              "mrr": 1624.641872711107,
+              "startedAt": "2024-12-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1624.641872711107,
+          "activeSubscriptions": 1
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 25,
+      "totalPages": 1
+    },
+    "test_description": "Page coercion - page=-1 should become page=1",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": -1,
+      "pageSize": 50
+    }
+  },
+  {
+    "endpoint": "/api/saas/customers",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 6,
+          "ventureId": 11,
+          "name": "Acme Corp 6",
+          "email": "billing6@customer6.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.697Z",
+          "updatedAt": "2025-12-07T05:38:51.697Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 6,
+              "planName": "Enterprise",
+              "mrr": 1762.376083857926,
+              "startedAt": "2025-06-16T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1762.376083857926,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 25,
+          "ventureId": 11,
+          "name": "Acme Ventures 25",
+          "email": "billing25@customer25.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.720Z",
+          "updatedAt": "2025-12-07T05:38:51.720Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 25,
+              "planName": "Scale",
+              "mrr": 747.9075882951041,
+              "startedAt": "2025-02-07T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 747.9075882951041,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 21,
+          "ventureId": 11,
+          "name": "Apex Group 21",
+          "email": "billing21@customer21.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.716Z",
+          "updatedAt": "2025-12-07T05:38:51.716Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 21,
+              "planName": "Starter",
+              "mrr": 228.8327737544978,
+              "startedAt": "2024-11-13T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 228.8327737544978,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 7,
+          "ventureId": 11,
+          "name": "Apex Inc 7",
+          "email": "billing7@customer7.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.698Z",
+          "updatedAt": "2025-12-07T05:38:51.698Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 2,
+          "ventureId": 11,
+          "name": "Apex Labs 2",
+          "email": "billing2@customer2.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.690Z",
+          "updatedAt": "2025-12-07T05:38:51.690Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 2,
+              "planName": "Professional",
+              "mrr": 358.2006075241248,
+              "startedAt": "2025-04-30T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 358.2006075241248,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 10,
+          "ventureId": 11,
+          "name": "Apex Ltd 10",
+          "email": "billing10@customer10.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.702Z",
+          "updatedAt": "2025-12-07T05:38:51.702Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 10,
+              "planName": "Scale",
+              "mrr": 1817.946239745759,
+              "startedAt": "2025-04-30T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1817.946239745759,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 5,
+          "ventureId": 11,
+          "name": "Apex Ltd 5",
+          "email": "billing5@customer5.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.695Z",
+          "updatedAt": "2025-12-07T05:38:51.695Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 1,
+          "ventureId": 11,
+          "name": "Cloud Labs 1",
+          "email": "billing1@customer1.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.688Z",
+          "updatedAt": "2025-12-07T05:38:51.688Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 1,
+              "planName": "Scale",
+              "mrr": 600.6303699315966,
+              "startedAt": "2024-12-24T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 600.6303699315966,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 16,
+          "ventureId": 11,
+          "name": "Core Systems 16",
+          "email": "billing16@customer16.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.710Z",
+          "updatedAt": "2025-12-07T05:38:51.710Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 15,
+          "ventureId": 11,
+          "name": "Data Solutions 15",
+          "email": "billing15@customer15.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.708Z",
+          "updatedAt": "2025-12-07T05:38:51.708Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 15,
+              "planName": "Scale",
+              "mrr": 1492.068093087789,
+              "startedAt": "2025-02-17T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1492.068093087789,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 17,
+          "ventureId": 11,
+          "name": "Data Solutions 17",
+          "email": "billing17@customer17.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.711Z",
+          "updatedAt": "2025-12-07T05:38:51.711Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 17,
+              "planName": "Scale",
+              "mrr": 742.948708807282,
+              "startedAt": "2025-01-25T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 742.948708807282,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 23,
+          "ventureId": 11,
+          "name": "Data Solutions 23",
+          "email": "billing23@customer23.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.718Z",
+          "updatedAt": "2025-12-07T05:38:51.718Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 23,
+              "planName": "Professional",
+              "mrr": 1924.95452600383,
+              "startedAt": "2025-10-02T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1924.95452600383,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 22,
+          "ventureId": 11,
+          "name": "Global Group 22",
+          "email": "billing22@customer22.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.717Z",
+          "updatedAt": "2025-12-07T05:38:51.717Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 8,
+          "ventureId": 11,
+          "name": "Global Systems 8",
+          "email": "billing8@customer8.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.699Z",
+          "updatedAt": "2025-12-07T05:38:51.699Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 8,
+              "planName": "Professional",
+              "mrr": 85.47894778546687,
+              "startedAt": "2025-10-10T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 85.47894778546687,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 9,
+          "ventureId": 11,
+          "name": "Global Systems 9",
+          "email": "billing9@customer9.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.701Z",
+          "updatedAt": "2025-12-07T05:38:51.701Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 9,
+              "planName": "Professional",
+              "mrr": 1112.418952775809,
+              "startedAt": "2025-09-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1112.418952775809,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 20,
+          "ventureId": 11,
+          "name": "Next Corp 20",
+          "email": "billing20@customer20.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.714Z",
+          "updatedAt": "2025-12-07T05:38:51.714Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 20,
+              "planName": "Enterprise",
+              "mrr": 1317.070666546754,
+              "startedAt": "2025-08-10T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1317.070666546754,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 13,
+          "ventureId": 11,
+          "name": "Next Ventures 13",
+          "email": "billing13@customer13.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.705Z",
+          "updatedAt": "2025-12-07T05:38:51.705Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 4,
+          "ventureId": 11,
+          "name": "Next Ventures 4",
+          "email": "billing4@customer4.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.693Z",
+          "updatedAt": "2025-12-07T05:38:51.693Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 4,
+              "planName": "Growth",
+              "mrr": 376.6938804252019,
+              "startedAt": "2025-04-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 376.6938804252019,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 18,
+          "ventureId": 11,
+          "name": "Prime Corp 18",
+          "email": "billing18@customer18.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.712Z",
+          "updatedAt": "2025-12-07T05:38:51.712Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 18,
+              "planName": "Scale",
+              "mrr": 762.6504555076425,
+              "startedAt": "2025-03-05T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 762.6504555076425,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 3,
+          "ventureId": 11,
+          "name": "Prime Ltd 3",
+          "email": "billing3@customer3.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.692Z",
+          "updatedAt": "2025-12-07T05:38:51.692Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 11,
+          "ventureId": 11,
+          "name": "Prime Ventures 11",
+          "email": "billing11@customer11.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.703Z",
+          "updatedAt": "2025-12-07T05:38:51.703Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 11,
+              "planName": "Professional",
+              "mrr": 899.8817735928639,
+              "startedAt": "2025-05-06T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 899.8817735928639,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 12,
+          "ventureId": 11,
+          "name": "Smart Labs 12",
+          "email": "billing12@customer12.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.704Z",
+          "updatedAt": "2025-12-07T05:38:51.704Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 12,
+              "planName": "Scale",
+              "mrr": 1836.16142423301,
+              "startedAt": "2025-03-06T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1836.16142423301,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 19,
+          "ventureId": 11,
+          "name": "Tech Corp 19",
+          "email": "billing19@customer19.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.713Z",
+          "updatedAt": "2025-12-07T05:38:51.713Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 19,
+              "planName": "Growth",
+              "mrr": 1768.717433189671,
+              "startedAt": "2025-03-17T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1768.717433189671,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 24,
+          "ventureId": 11,
+          "name": "Tech Ltd 24",
+          "email": "billing24@customer24.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.719Z",
+          "updatedAt": "2025-12-07T05:38:51.719Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 24,
+              "planName": "Scale",
+              "mrr": 706.2230247340276,
+              "startedAt": "2024-12-08T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 706.2230247340276,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 14,
+          "ventureId": 11,
+          "name": "Tech Solutions 14",
+          "email": "billing14@customer14.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.707Z",
+          "updatedAt": "2025-12-07T05:38:51.707Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 14,
+              "planName": "Professional",
+              "mrr": 1624.641872711107,
+              "startedAt": "2024-12-19T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1624.641872711107,
+          "activeSubscriptions": 1
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 25,
+      "totalPages": 1
+    },
+    "test_description": "PageSize coercion - pageSize=500 should become pageSize=50",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 1,
+      "pageSize": 500
+    }
+  },
+  {
+    "endpoint": "/api/saas/customers",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 10,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Filtering with pagination - q=test",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "q": "test",
+      "page": 1,
+      "pageSize": 10
+    }
+  },
+  {
+    "endpoint": "/api/saas/customers",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 6,
+          "ventureId": 11,
+          "name": "Acme Corp 6",
+          "email": "billing6@customer6.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.697Z",
+          "updatedAt": "2025-12-07T05:38:51.697Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 6,
+              "planName": "Enterprise",
+              "mrr": 1762.376083857926,
+              "startedAt": "2025-06-16T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 1762.376083857926,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 25,
+          "ventureId": 11,
+          "name": "Acme Ventures 25",
+          "email": "billing25@customer25.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.720Z",
+          "updatedAt": "2025-12-07T05:38:51.720Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 25,
+              "planName": "Scale",
+              "mrr": 747.9075882951041,
+              "startedAt": "2025-02-07T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 747.9075882951041,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 21,
+          "ventureId": 11,
+          "name": "Apex Group 21",
+          "email": "billing21@customer21.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.716Z",
+          "updatedAt": "2025-12-07T05:38:51.716Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 21,
+              "planName": "Starter",
+              "mrr": 228.8327737544978,
+              "startedAt": "2024-11-13T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 228.8327737544978,
+          "activeSubscriptions": 1
+        },
+        {
+          "id": 7,
+          "ventureId": 11,
+          "name": "Apex Inc 7",
+          "email": "billing7@customer7.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.698Z",
+          "updatedAt": "2025-12-07T05:38:51.698Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [],
+          "totalMrr": 0,
+          "activeSubscriptions": 0
+        },
+        {
+          "id": 2,
+          "ventureId": 11,
+          "name": "Apex Labs 2",
+          "email": "billing2@customer2.com",
+          "domain": null,
+          "notes": null,
+          "createdAt": "2025-12-07T05:38:51.690Z",
+          "updatedAt": "2025-12-07T05:38:51.690Z",
+          "venture": {
+            "id": 11,
+            "name": "CloudStack SaaS"
+          },
+          "subscriptions": [
+            {
+              "id": 2,
+              "planName": "Professional",
+              "mrr": 358.2006075241248,
+              "startedAt": "2025-04-30T05:38:32.077Z"
+            }
+          ],
+          "totalMrr": 358.2006075241248,
+          "activeSubscriptions": 1
+        }
+      ],
+      "page": 1,
+      "pageSize": 5,
+      "total": 25,
+      "totalPages": 5
+    },
+    "test_description": "Verify SaaSCustomerWithMrr structure",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 1,
+      "pageSize": 5
+    }
+  },
+  {
+    "endpoint": "/api/saas/customers",
+    "method": "PUT",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "Method validation - PUT should return 405",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/hospitality/reviews",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 50,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Default pagination - should return page=1, pageSize=50",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/hospitality/reviews",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 25,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Custom pagination - page=1, pageSize=25",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 1,
+      "pageSize": 25
+    }
+  },
+  {
+    "endpoint": "/api/hospitality/reviews",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 50,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Page coercion - page=0 should become page=1",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 0,
+      "pageSize": 50
+    }
+  },
+  {
+    "endpoint": "/api/hospitality/reviews",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 50,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "PageSize coercion - pageSize=250 should become pageSize=50",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 1,
+      "pageSize": 250
+    }
+  },
+  {
+    "endpoint": "/api/hospitality/reviews",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 10,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Filtering with pagination - unresponded=true",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "unresponded": "true",
+      "page": 1,
+      "pageSize": 10
+    }
+  },
+  {
+    "endpoint": "/api/hospitality/reviews",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 5,
+      "total": 0,
+      "totalPages": 1
+    },
+    "test_description": "Verify includes are preserved in response",
+    "headers": {},
+    "request_body": null,
+    "query_params": {
+      "page": 1,
+      "pageSize": 5
+    }
+  },
+  {
+    "endpoint": "/api/hospitality/reviews",
+    "method": "PATCH",
+    "status_code": 0,
+    "response": {
+      "error": "Unsupported method: PATCH"
+    },
+    "test_description": "Connection error: Method validation - PATCH should return 405",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "PATCH",
+    "status_code": 0,
+    "response": {
+      "error": "Unsupported method: PATCH"
+    },
+    "test_description": "Connection error: 405 Method validation for /api/freight/loads",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/freight/loads",
+    "method": "DELETE",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "405 Method validation (DELETE) for /api/freight/loads",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/saas/customers",
+    "method": "PATCH",
+    "status_code": 0,
+    "response": {
+      "error": "Unsupported method: PATCH"
+    },
+    "test_description": "Connection error: 405 Method validation for /api/saas/customers",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/saas/customers",
+    "method": "DELETE",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "405 Method validation (DELETE) for /api/saas/customers",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/hospitality/reviews",
+    "method": "PATCH",
+    "status_code": 0,
+    "response": {
+      "error": "Unsupported method: PATCH"
+    },
+    "test_description": "Connection error: 405 Method validation for /api/hospitality/reviews",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  },
+  {
+    "endpoint": "/api/hospitality/reviews",
+    "method": "DELETE",
+    "status_code": 405,
+    "response": {
+      "error": "Method not allowed"
+    },
+    "test_description": "405 Method validation (DELETE) for /api/hospitality/reviews",
+    "headers": {},
+    "request_body": null,
+    "query_params": null
+  }
+]

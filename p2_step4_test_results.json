@@ -1,0 +1,173 @@
+[
+  {
+    "endpoint": "/logistics/freight-pnl",
+    "method": "POST",
+    "status_code": 405,
+    "expected": 405,
+    "passed": true,
+    "details": "Should reject POST method",
+    "timestamp": "2025-12-07T02:06:27.083466"
+  },
+  {
+    "endpoint": "/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 400,
+    "expected": 400,
+    "passed": true,
+    "details": "Should reject invalid from date",
+    "timestamp": "2025-12-07T02:06:27.105068"
+  },
+  {
+    "endpoint": "/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 400,
+    "expected": 400,
+    "passed": true,
+    "details": "Should reject invalid to date",
+    "timestamp": "2025-12-07T02:06:27.118218"
+  },
+  {
+    "endpoint": "/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 400,
+    "expected": 400,
+    "passed": true,
+    "details": "Should reject date range > 365 days",
+    "timestamp": "2025-12-07T02:06:27.130751"
+  },
+  {
+    "endpoint": "/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Default 30-day window should work",
+    "timestamp": "2025-12-07T02:06:27.146546"
+  },
+  {
+    "endpoint": "/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Valid 30-day range should work",
+    "timestamp": "2025-12-07T02:06:27.160756"
+  },
+  {
+    "endpoint": "/hospitality/dashboard",
+    "method": "POST",
+    "status_code": 405,
+    "expected": 405,
+    "passed": true,
+    "details": "Should reject POST method",
+    "timestamp": "2025-12-07T02:06:27.305257"
+  },
+  {
+    "endpoint": "/hospitality/dashboard",
+    "method": "GET",
+    "status_code": 200,
+    "expected": 401,
+    "passed": false,
+    "details": "Should require authentication",
+    "timestamp": "2025-12-07T02:06:27.324128"
+  },
+  {
+    "endpoint": "/bpo/kpi",
+    "method": "POST",
+    "status_code": 405,
+    "expected": 405,
+    "passed": true,
+    "details": "Should reject POST method",
+    "timestamp": "2025-12-07T02:06:27.408044"
+  },
+  {
+    "endpoint": "/bpo/kpi",
+    "method": "GET",
+    "status_code": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Default 30-day window",
+    "timestamp": "2025-12-07T02:06:27.421232"
+  },
+  {
+    "endpoint": "/bpo/kpi",
+    "method": "GET",
+    "status_code": 400,
+    "expected": 400,
+    "passed": true,
+    "details": "Should reject date range > 90 days",
+    "timestamp": "2025-12-07T02:06:27.433075"
+  },
+  {
+    "endpoint": "/bpo/kpi",
+    "method": "GET",
+    "status_code": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Valid 30-day range should work",
+    "timestamp": "2025-12-07T02:06:27.444166"
+  },
+  {
+    "endpoint": "/ventures",
+    "method": "POST",
+    "status_code": 405,
+    "expected": 405,
+    "passed": true,
+    "details": "Should reject POST method",
+    "timestamp": "2025-12-07T02:06:27.506163"
+  },
+  {
+    "endpoint": "/ventures",
+    "method": "GET",
+    "status_code": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Default limit should be 50",
+    "timestamp": "2025-12-07T02:06:27.521460"
+  },
+  {
+    "endpoint": "/ventures",
+    "method": "GET",
+    "status_code": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Limit > 200 should cap at 200",
+    "timestamp": "2025-12-07T02:06:27.533541"
+  },
+  {
+    "endpoint": "/ventures",
+    "method": "GET",
+    "status_code": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Get by ID should return venture object",
+    "timestamp": "2025-12-07T02:06:27.551708"
+  },
+  {
+    "endpoint": "/saas/metrics",
+    "method": "POST",
+    "status_code": 405,
+    "expected": 405,
+    "passed": true,
+    "details": "Should reject POST method",
+    "timestamp": "2025-12-07T02:06:27.615768"
+  },
+  {
+    "endpoint": "/saas/metrics",
+    "method": "GET",
+    "status_code": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Should require portfolio-view role",
+    "timestamp": "2025-12-07T02:06:27.634111"
+  },
+  {
+    "endpoint": "/logistics/freight-pnl",
+    "method": "GET",
+    "status_code": 400,
+    "expected": 400,
+    "passed": true,
+    "details": "Error format validation",
+    "timestamp": "2025-12-07T02:06:27.647271"
+  }
+]

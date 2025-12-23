@@ -1,0 +1,483 @@
+[
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 1,
+        "planId": 1,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 3,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.770Z",
+        "updatedAt": "2025-12-07T05:38:52.770Z"
+      },
+      {
+        "id": 2,
+        "planId": 2,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 4,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.773Z",
+        "updatedAt": "2025-12-07T05:38:52.773Z"
+      },
+      {
+        "id": 3,
+        "planId": 3,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 5,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.776Z",
+        "updatedAt": "2025-12-07T05:38:52.776Z"
+      }
+    ],
+    "test_description": "Should work with auto-auth as CEO in dev mode",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 1,
+        "planId": 1,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 3,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.770Z",
+        "updatedAt": "2025-12-07T05:38:52.770Z"
+      },
+      {
+        "id": 2,
+        "planId": 2,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 4,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.773Z",
+        "updatedAt": "2025-12-07T05:38:52.773Z"
+      },
+      {
+        "id": 3,
+        "planId": 3,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 5,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.776Z",
+        "updatedAt": "2025-12-07T05:38:52.776Z"
+      }
+    ],
+    "test_description": "Get all incentive rules",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/incentives/rules?planId=1",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 1,
+        "planId": 1,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 3,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.770Z",
+        "updatedAt": "2025-12-07T05:38:52.770Z"
+      }
+    ],
+    "test_description": "Get rules for planId=1",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "planId is required and must be a number"
+    },
+    "test_description": "Missing planId - should return 400",
+    "headers": {},
+    "request_body": {}
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "metricKey is required"
+    },
+    "test_description": "Missing metricKey - should return 400",
+    "headers": {},
+    "request_body": {
+      "planId": 1
+    }
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "calcType is required"
+    },
+    "test_description": "Missing calcType - should return 400",
+    "headers": {},
+    "request_body": {
+      "planId": 1,
+      "metricKey": "test_metric"
+    }
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "POST",
+    "status_code": 201,
+    "response": {
+      "id": 4,
+      "planId": 1,
+      "roleKey": "SALES",
+      "metricKey": "test_metric_created",
+      "calcType": "FLAT_PER_UNIT",
+      "rate": 5,
+      "currency": "USD",
+      "qualificationId": null,
+      "config": null,
+      "isEnabled": true,
+      "createdAt": "2025-12-07T05:44:24.518Z",
+      "updatedAt": "2025-12-07T05:44:24.518Z"
+    },
+    "test_description": "Create new incentive rule",
+    "headers": {},
+    "request_body": {
+      "planId": 1,
+      "roleKey": "SALES",
+      "metricKey": "test_metric_created",
+      "calcType": "FLAT_PER_UNIT",
+      "rate": 5.0,
+      "currency": "USD",
+      "isEnabled": true
+    }
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "GET",
+    "status_code": 200,
+    "response": [
+      {
+        "id": 1,
+        "planId": 1,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 3,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.770Z",
+        "updatedAt": "2025-12-07T05:38:52.770Z"
+      },
+      {
+        "id": 2,
+        "planId": 2,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 4,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.773Z",
+        "updatedAt": "2025-12-07T05:38:52.773Z"
+      },
+      {
+        "id": 3,
+        "planId": 3,
+        "roleKey": "SALES",
+        "metricKey": "freight_margin_usd",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 5,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:38:52.776Z",
+        "updatedAt": "2025-12-07T05:38:52.776Z"
+      },
+      {
+        "id": 4,
+        "planId": 1,
+        "roleKey": "SALES",
+        "metricKey": "test_metric_created",
+        "calcType": "FLAT_PER_UNIT",
+        "rate": 5,
+        "currency": "USD",
+        "qualificationId": null,
+        "config": null,
+        "isEnabled": true,
+        "createdAt": "2025-12-07T05:44:24.518Z",
+        "updatedAt": "2025-12-07T05:44:24.518Z"
+      }
+    ],
+    "test_description": "Verify created rule is visible",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "PUT",
+    "status_code": 404,
+    "response": {
+      "error": "Rule not found"
+    },
+    "test_description": "Update non-existent rule - should return 404",
+    "headers": {},
+    "request_body": {
+      "id": 99999,
+      "rate": 10.0
+    }
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "PUT",
+    "status_code": 200,
+    "response": {
+      "id": 4,
+      "planId": 1,
+      "roleKey": "SALES",
+      "metricKey": "test_metric_created",
+      "calcType": "FLAT_PER_UNIT",
+      "rate": 7.5,
+      "currency": "EUR",
+      "qualificationId": null,
+      "config": null,
+      "isEnabled": false,
+      "createdAt": "2025-12-07T05:44:24.518Z",
+      "updatedAt": "2025-12-07T05:44:24.593Z"
+    },
+    "test_description": "Update existing rule",
+    "headers": {},
+    "request_body": {
+      "id": 4,
+      "rate": 7.5,
+      "currency": "EUR",
+      "isEnabled": false
+    }
+  },
+  {
+    "endpoint": "/api/incentives/rules?action=delete",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "planId is required and must be a number"
+    },
+    "test_description": "Soft delete non-existent rule - should return 404",
+    "headers": {},
+    "request_body": {
+      "id": 99999
+    }
+  },
+  {
+    "endpoint": "/api/incentives/rules?action=delete",
+    "method": "POST",
+    "status_code": 400,
+    "response": {
+      "error": "planId is required and must be a number"
+    },
+    "test_description": "Soft delete rule (set isEnabled=false)",
+    "headers": {},
+    "request_body": {
+      "id": 4
+    }
+  },
+  {
+    "endpoint": "/api/admin/audit-logs?domain=admin&action=INCENTIVE_RULE_CREATE",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 1,
+          "createdAt": "2025-12-07T05:44:24.522Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVE_RULE_CREATE",
+          "entityType": "incentiveRule",
+          "entityId": "4",
+          "metadata": {
+            "rule": {
+              "id": 4,
+              "rate": 5,
+              "config": null,
+              "planId": 1,
+              "roleKey": "SALES",
+              "calcType": "FLAT_PER_UNIT",
+              "currency": "USD",
+              "createdAt": "2025-12-07T05:44:24.518Z",
+              "isEnabled": true,
+              "metricKey": "test_metric_created",
+              "updatedAt": "2025-12-07T05:44:24.518Z",
+              "qualificationId": null
+            }
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Check for INCENTIVE_RULE_CREATE audit events",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/admin/audit-logs?domain=admin&action=INCENTIVE_RULE_UPDATE",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [
+        {
+          "id": 2,
+          "createdAt": "2025-12-07T05:44:24.595Z",
+          "requestId": null,
+          "userId": 1,
+          "userRole": "CEO",
+          "ventureId": null,
+          "officeId": null,
+          "domain": "admin",
+          "action": "INCENTIVE_RULE_UPDATE",
+          "entityType": "incentiveRule",
+          "entityId": "4",
+          "metadata": {
+            "after": {
+              "id": 4,
+              "rate": 7.5,
+              "config": null,
+              "planId": 1,
+              "roleKey": "SALES",
+              "calcType": "FLAT_PER_UNIT",
+              "currency": "EUR",
+              "createdAt": "2025-12-07T05:44:24.518Z",
+              "isEnabled": false,
+              "metricKey": "test_metric_created",
+              "updatedAt": "2025-12-07T05:44:24.593Z",
+              "qualificationId": null
+            },
+            "before": {
+              "id": 4,
+              "rate": 5,
+              "config": null,
+              "planId": 1,
+              "roleKey": "SALES",
+              "calcType": "FLAT_PER_UNIT",
+              "currency": "USD",
+              "createdAt": "2025-12-07T05:44:24.518Z",
+              "isEnabled": true,
+              "metricKey": "test_metric_created",
+              "updatedAt": "2025-12-07T05:44:24.518Z",
+              "qualificationId": null
+            }
+          }
+        }
+      ],
+      "page": 1,
+      "pageSize": 50,
+      "total": 1,
+      "totalPages": 1
+    },
+    "test_description": "Check for INCENTIVE_RULE_UPDATE audit events",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/admin/audit-logs?domain=admin&action=INCENTIVE_RULE_DELETE",
+    "method": "GET",
+    "status_code": 200,
+    "response": {
+      "items": [],
+      "page": 1,
+      "pageSize": 50,
+      "total": 0,
+      "totalPages": 0
+    },
+    "test_description": "Check for INCENTIVE_RULE_DELETE audit events",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "PATCH",
+    "status_code": 405,
+    "response": {
+      "raw_response": "{\"error\":\"Method not allowed\"}"
+    },
+    "test_description": "Unsupported method PATCH - should return 405",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "HEAD",
+    "status_code": 405,
+    "response": {
+      "raw_response": ""
+    },
+    "test_description": "Unsupported method HEAD - should return 405",
+    "headers": {},
+    "request_body": null
+  },
+  {
+    "endpoint": "/api/incentives/rules",
+    "method": "OPTIONS",
+    "status_code": 405,
+    "response": {
+      "raw_response": "{\"error\":\"Method not allowed\"}"
+    },
+    "test_description": "Unsupported method OPTIONS - should return 405",
+    "headers": {},
+    "request_body": null
+  }
+]

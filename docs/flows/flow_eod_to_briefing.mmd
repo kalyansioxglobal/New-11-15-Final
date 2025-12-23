@@ -1,0 +1,57 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f3e5f5', 'primaryBorderColor': '#7b1fa2'}}}%%
+flowchart TD
+    subgraph USER["User Action"]
+        U1["User submits EOD Report<br/>POST /api/eod-reports"]
+    end
+
+    subgraph IMMEDIATE["Immediate Reactions"]
+        I1["EodReport.create/update<br/>userId, ventureId, officeId, date"]
+        I2["Gamification: 10 points<br/>awardPointsForEvent('EOD_REPORT_SUBMITTED')"]
+        I3["GamificationEvent.create<br/>idempotencyKey: eod-{id}"]
+        I4["GamificationPointsBalance.upsert<br/>increment points"]
+    end
+
+    subgraph BRIEFING["Briefing Layer (On-Demand)"]
+        B1["User requests briefing<br/>GET /api/briefing"]
+        B2["buildDailyBriefing(user)"]
+        B3["Reads EOD Reports<br/>For user's accessible ventures"]
+        B4["Checks for missed reports<br/>Missed EOD explanations"]
+        B5["Generates briefing sections:<br/>Firefront, Stormfront, Watch, Wins"]
+    end
+
+    subgraph MISSING["Missing Triggers"]
+        M1["No immediate briefing update<br/>when EOD submitted"]
+        M2["No notification to manager<br/>when EOD missed"]
+        M3["No streak tracking update<br/>in briefing"]
+    end
+
+    U1 --> I1
+    I1 --> I2
+    I2 --> I3
+    I3 --> I4
+
+    I1 -.->|"On-demand only"| B1
+    B1 --> B2
+    B2 --> B3
+    B3 --> B4
+    B4 --> B5
+
+    I1 -.->|"Should trigger"| M1
+    I1 -.->|"Should trigger"| M2
+    I1 -.->|"Should trigger"| M3
+
+    style I2 fill:#c8e6c9
+    style B5 fill:#fff9c4
+    style M1 fill:#ffccbc
+    style M2 fill:#ffccbc
+    style M3 fill:#ffccbc
+
+    classDef immediate fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef ondemand fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef missing fill:#ffccbc,stroke:#d84315,stroke-width:2px,stroke-dasharray: 5 5
+
+    class I1,I2,I3,I4 immediate
+    class B1,B2,B3,B4,B5 ondemand
+    class M1,M2,M3 missing
+
+
