@@ -24,6 +24,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
+    // Check if user exists before sending OTP
+    const user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+      select: { id: true, email: true },
+    });
+
+    if (!user) {
+      console.log(`[OTP] User not found: ${normalizedEmail}`);
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    console.log(`[OTP] User verified: ${normalizedEmail} (ID: ${user.id})`);
+
     // Generate secure random 6-digit code (always exactly 6 digits)
     const code = Math.floor(100000 + Math.random() * 900000).toString().padStart(6, '0');
 
@@ -43,6 +56,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           email: normalizedEmail,
           code,
           expiresAt,
+          failedAttempts: 0,
+          lockedUntil: null,
         },
       });
 

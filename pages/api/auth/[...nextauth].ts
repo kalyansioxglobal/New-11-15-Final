@@ -76,26 +76,69 @@ export const authOptions: NextAuthOptions = {
         // Normalize code: convert to string, trim, remove all whitespace
         const normalizedCode = String(credentials.code).trim().replace(/\s+/g, '');
 
-        // Verify OTP from database
-        const validOtp = await prisma.emailOtp.findFirst({
+        // Validate code format (must be 6 digits)
+        if (!/^\d{6}$/.test(normalizedCode)) {
+          console.log(`[AUTH] Invalid code format for ${normalizedEmail}`);
+          return null;
+        }
+
+        // Find the OTP record (not just valid ones, need to check lockout)
+        const otp = await prisma.emailOtp.findFirst({
           where: {
             email: normalizedEmail,
-            code: normalizedCode,
-            used: false,
             expiresAt: { gt: new Date() },
           },
           orderBy: { createdAt: "desc" },
         });
 
-        if (!validOtp) {
-          console.log(`[AUTH] OTP rejected for ${normalizedEmail}: no valid OTP found`);
+        if (!otp) {
+          console.log(`[AUTH] No OTP found for ${normalizedEmail}`);
           return null;
         }
-        
-        // Mark OTP as used
+
+        // Check if locked
+        if (otp.lockedUntil && otp.lockedUntil > new Date()) {
+          const remainingSeconds = Math.ceil((otp.lockedUntil.getTime() - Date.now()) / 1000);
+          console.log(`[AUTH] Account locked for ${normalizedEmail}, ${remainingSeconds}s remaining`);
+          throw new Error(`Account locked. Try again in ${remainingSeconds} seconds.`);
+        }
+
+        // Check if OTP matches
+        if (otp.code !== normalizedCode || otp.used) {
+          // Increment failed attempts
+          const newFailedAttempts = otp.failedAttempts + 1;
+          
+          if (newFailedAttempts >= 3) {
+            // Lock account for 5 minutes
+            const lockedUntil = new Date(Date.now() + 5 * 60 * 1000);
+            await prisma.emailOtp.update({
+              where: { id: otp.id },
+              data: {
+                failedAttempts: newFailedAttempts,
+                lockedUntil: lockedUntil,
+              },
+            });
+            console.log(`[AUTH] Account locked for ${normalizedEmail} until ${lockedUntil.toISOString()}`);
+            throw new Error(`Too many failed attempts. Account locked for 5 minutes.`);
+          } else {
+            // Just increment failed attempts
+            await prisma.emailOtp.update({
+              where: { id: otp.id },
+              data: { failedAttempts: newFailedAttempts },
+            });
+            console.log(`[AUTH] Failed attempt ${newFailedAttempts}/3 for ${normalizedEmail}`);
+            return null;
+          }
+        }
+
+        // Valid OTP - mark as used and reset failed attempts
         await prisma.emailOtp.update({
-          where: { id: validOtp.id },
-          data: { used: true },
+          where: { id: otp.id },
+          data: {
+            used: true,
+            failedAttempts: 0,
+            lockedUntil: null,
+          },
         });
         
         console.log(`[AUTH] OTP verified for ${normalizedEmail}, looking up user...`);
