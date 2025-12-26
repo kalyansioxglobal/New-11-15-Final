@@ -406,6 +406,7 @@ model Policy {
   status    PolicyStatus @default(ACTIVE)
   notes     String?
   isTest    Boolean      @default(false)
+  isDeleted Boolean      @default(false)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   createdBy Int?

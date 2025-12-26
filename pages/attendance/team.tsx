@@ -80,23 +80,35 @@ function TeamAttendancePage() {
 
   async function updateMemberStatus(userId: number, status: AttendanceStatus) {
     setSaving(true);
+    setError(null);
     try {
       const res = await fetch("/api/attendance/team", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, date: selectedDate, status }),
       });
-      if (!res.ok) throw new Error("Failed to update");
+      
+      const json = await res.json();
+      
+      if (!res.ok) {
+        // Show the specific error message from the API
+        const errorMessage = json?.error?.message || "Failed to update attendance";
+        setError(errorMessage);
+        return;
+      }
+      
       await fetchTeamAttendance();
       setEditingMember(null);
-    } catch (err) {
-      alert("Failed to update attendance");
+    } catch (err: any) {
+      console.error("Failed to update attendance:", err);
+      setError(err?.message || "An unexpected error occurred. Please try again.");
     } finally {
       setSaving(false);
     }
   }
 
-  if (error) {
+  // Show full-page error only for access/permission errors
+  if (error && (error.includes("permission") || error.includes("Access Denied") || error.includes("FORBIDDEN"))) {
     return (
       <div className="rounded-xl border border-red-200 bg-red-50 p-6">
         <h2 className="text-lg font-semibold text-red-800 mb-2">Access Denied</h2>
@@ -107,6 +119,20 @@ function TeamAttendancePage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="flex items-center justify-between">
+            <p className="text-red-800">{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="text-red-600 hover:text-red-800"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+      
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Team Attendance</h1>

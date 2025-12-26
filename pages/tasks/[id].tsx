@@ -2,9 +2,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useEffectiveUser } from '@/hooks/useEffectiveUser';
-import { canEditTasks } from '@/lib/permissions';
+import { canEditTasks, type UserRole } from '@/lib/permissions';
 import { Attachments } from '@/components/Attachments';
-import type { UserRole } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -49,7 +48,6 @@ function TaskDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -90,7 +88,6 @@ function TaskDetailsPage() {
     if (!canEdit || !id) return;
     setSaving(true);
     setError(null);
-    setSaveSuccess(false);
     try {
       const res = await fetch(`/api/tasks/${id}`, {
         method: 'PATCH',
@@ -109,8 +106,7 @@ function TaskDetailsPage() {
       }
 
       setSaving(false);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 2000);
+      router.push('/tasks');
     } catch (e: any) {
       setError(e.message || 'Save failed');
       setSaving(false);
@@ -201,9 +197,6 @@ function TaskDetailsPage() {
         </div>
 
         {error && <div className="text-xs text-red-500">{error}</div>}
-        {saveSuccess && (
-          <div className="text-xs text-green-600">Changes saved!</div>
-        )}
 
         {!canEdit && (
           <div className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded">

@@ -58,6 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       officeName: policy.office?.name ?? null,
       createdByName: policy.creator?.fullName ?? null,
       isTest: policy.isTest,
+      isDeleted: policy.isDeleted,
     });
   }
 
@@ -104,6 +105,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }),
         ...(fileUrl !== undefined && { fileUrl }),
         ...(notes !== undefined && { notes }),
+        // Allow restoring deleted policies by setting isDeleted to false
+        ...(req.body.isDeleted !== undefined && { isDeleted: req.body.isDeleted }),
       },
     });
 

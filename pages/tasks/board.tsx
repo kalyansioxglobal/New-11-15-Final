@@ -148,7 +148,7 @@ export default function TaskBoardPage() {
           {allowCreate && (
             <Link
               href="/tasks/new"
-              className="px-3 py-1.5 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+              className="px-3 py-1.5 rounded bg-blue-600 !text-white text-sm font-medium hover:bg-blue-700"
             >
               + New Task
             </Link>

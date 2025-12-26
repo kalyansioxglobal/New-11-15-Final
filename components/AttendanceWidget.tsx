@@ -56,12 +56,21 @@ export default function AttendanceWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
-      if (!res.ok) throw new Error("Failed to save");
+      
       const json = await res.json();
+      
+      if (!res.ok) {
+        // Show the specific error message from the API
+        const errorMessage = json?.error?.message || "Failed to save attendance";
+        setError(errorMessage);
+        return;
+      }
+      
       setData((prev) => prev ? { ...prev, today: json.data } : null);
       setIsOpen(false);
-    } catch (err) {
-      setError("Could not save attendance");
+    } catch (err: any) {
+      console.error("Failed to mark attendance:", err);
+      setError(err?.message || "Could not save attendance. Please try again.");
     } finally {
       setSaving(false);
     }

@@ -37,6 +37,7 @@ type EmployeeDashboardProps = {
 export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
   const [attendanceStatus, setAttendanceStatus] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
+  const [attendanceError, setAttendanceError] = useState<string | null>(null);
   const [tasksError, setTasksError] = useState<string | null>(null);
 
   const { data: tasksData, isLoading: tasksLoading, error: tasksApiError } = useSWR<{ tasks: Task[] }>(
@@ -71,18 +72,29 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
 
   const handleMarkAttendance = async (status: string) => {
     setSubmitting(true);
+    setAttendanceError(null);
     try {
       const res = await fetch("/api/attendance/my", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
+      
+      const data = await res.json();
+      
       if (res.ok) {
         mutateAttendance();
         setAttendanceStatus("");
+        setAttendanceError(null);
+      } else {
+        // Show error message to user
+        const errorMessage = data?.error?.message || "Failed to mark attendance";
+        setAttendanceError(errorMessage);
+        console.error("Failed to mark attendance:", errorMessage);
       }
     } catch (err) {
       console.error("Failed to mark attendance:", err);
+      setAttendanceError("An unexpected error occurred. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -173,6 +185,11 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
           ) : (
             <div>
               <p className="text-sm text-gray-500 mb-4">Mark your attendance for today:</p>
+              {attendanceError && (
+                <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-800">{attendanceError}</p>
+                </div>
+              )}
               <div className="grid grid-cols-3 gap-2">
                 {["PRESENT", "REMOTE", "PTO", "HALF_DAY", "SICK", "LATE"].map((status) => (
                   <button
