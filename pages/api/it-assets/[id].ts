@@ -37,6 +37,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       if (!asset) return res.status(404).json({ error: "Not found" });
 
+      // Don't return deleted assets
+      // if (asset.isDeleted) {
+      //   return res.status(404).json({ error: "Not found" });
+      // }
+
       // Enforce scope: user must have access to this venture/office unless global
       if (
         (!scope.allVentures && asset.ventureId && !scope.ventureIds.includes(asset.ventureId)) ||
@@ -76,6 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         assignedToUserId,
         assignedSince,
         notes,
+        isDeleted,
       } = req.body;
 
       const data: any = {};
@@ -92,6 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         data.warrantyExpiry = warrantyExpiry ? new Date(warrantyExpiry) : null;
       }
       if (notes !== undefined) data.notes = notes || null;
+      if (isDeleted !== undefined) data.isDeleted = Boolean(isDeleted);
 
       if (assignedToUserId !== undefined) {
         data.assignedToUserId = assignedToUserId ? Number(assignedToUserId) : null;
@@ -105,7 +112,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       await logAuditEvent(req, user, {
         domain: "admin",
-        action: "IT_ASSET_UPDATE",
+        action: isDeleted ? "IT_ASSET_DELETE" : "IT_ASSET_UPDATE",
         entityType: "IT_ASSET",
         entityId: updated.id,
         metadata: { before: existing, after: updated },
@@ -120,40 +127,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
-  if (req.method === "DELETE") {
-    try {
-      const existing = await prisma.iTAsset.findUnique({ where: { id } });
-      if (!existing) return res.status(404).json({ error: "Not found" });
-
-      if (
-        (!scope.allVentures && existing.ventureId && !scope.ventureIds.includes(existing.ventureId)) ||
-        (!scope.allOffices && existing.officeId && !scope.officeIds.includes(existing.officeId))
-      ) {
-        return res.status(403).json({ error: "FORBIDDEN" });
-      }
-
-      const updated = await prisma.iTAsset.update({
-        where: { id },
-        data: { status: "RETIRED" },
-      });
-
-      await logAuditEvent(req, user, {
-        domain: "admin",
-        action: "IT_ASSET_RETIRE",
-        entityType: "IT_ASSET",
-        entityId: updated.id,
-        metadata: { before: existing, after: updated },
-      });
-
-      return res.json(updated);
-    } catch (err: any) {
-      console.error("IT asset retire error", err);
-      return res
-        .status(500)
-        .json({ error: "Internal server error", detail: err.message || String(err) });
-    }
-  }
-
-  res.setHeader("Allow", ["GET", "PATCH", "DELETE"]);
+  res.setHeader("Allow", ["GET", "PATCH"]);
   return res.status(405).json({ error: "Method not allowed" });
 }

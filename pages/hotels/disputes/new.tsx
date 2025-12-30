@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -106,8 +107,8 @@ function NewHotelDisputePage() {
       </div>
 
       {loading ? (
-        <div className="text-sm text-gray-500">Loading hotel list...</div>
-      ) : (
+    <Skeleton className="w-full h-[85vh]" />  
+    ) : (
         <form className="space-y-4 max-w-3xl" onSubmit={handleSubmit}>
           {error && (
             <div className="text-sm text-red-600 border border-red-300 bg-red-50 p-2 rounded">

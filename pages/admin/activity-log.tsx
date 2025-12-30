@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next';
 import { useState, useEffect, useCallback } from 'react';
 import { getEffectiveUser } from '@/lib/effectiveUser';
 import type { PageWithLayout } from '@/types/page';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 type LogEntry = {
   id: number;
@@ -197,7 +198,7 @@ function ActivityLogPage() {
         </div>
       </div>
 
-      {loading && <div className="text-center py-12 text-gray-500">Loading activity log...</div>}
+      {loading && <Skeleton className="w-full h-[85vh]" />}
 
       {!loading && logs.length === 0 && (
         <div className="text-center py-12 bg-gray-50 rounded-xl border">

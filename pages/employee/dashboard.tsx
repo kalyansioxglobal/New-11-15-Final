@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getEffectiveUser } from "@/lib/effectiveUser";
 import useSWR from "swr";
 import Layout from "@/components/Layout";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -268,7 +269,8 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
         </div>
         
         {tasksLoading ? (
-          <div className="p-8 text-center text-gray-500">Loading tasks...</div>
+          // <div className="p-8 text-center text-gray-500">Loading tasks...</div>
+          <Skeleton className="w-full h-[85vh]" />
         ) : myTasks.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
             <div className="text-4xl mb-2">🎉</div>

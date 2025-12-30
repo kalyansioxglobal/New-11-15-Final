@@ -118,18 +118,18 @@ export default function LossNightsTab() {
   }, [selectedVentureId, daysBack, testMode]);
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-slate-100">Loss Nights</h2>
-          <p className="text-sm text-slate-400">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Loss Nights</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Shows nights where Lost Dues exceeded thresholds (absolute or % of
             total), so you can drill into leakage.
           </p>
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           <select
-            className="border border-slate-600 rounded-lg px-3 py-1.5 text-sm bg-slate-800 text-slate-200"
+            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             value={selectedVentureId}
             onChange={(e) =>
               setSelectedVentureId(
@@ -145,7 +145,7 @@ export default function LossNightsTab() {
             ))}
           </select>
           <select
-            className="border border-slate-600 rounded-lg px-3 py-1.5 text-sm bg-slate-800 text-slate-200"
+            className="border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             value={daysBack}
             onChange={(e) => setDaysBack(e.target.value)}
           >
@@ -163,101 +163,106 @@ export default function LossNightsTab() {
       )}
 
       {error && (
-        <div className="mb-4 text-sm text-red-400 bg-red-900/30 border border-red-700 rounded-lg px-3 py-2">
+        <div className="text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg px-4 py-3">
           {error}
         </div>
       )}
 
       {!loading && items.length === 0 && (
-        <div className="border border-slate-700 rounded-xl bg-slate-800 p-6 text-sm text-slate-400">
-          No high-loss nights found for this period.
+        <div className="border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 p-8 text-center">
+          <svg className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">No high-loss nights found for this period.</p>
         </div>
       )}
 
       {items.length > 0 && (
-        <div className="border border-slate-700 rounded-xl bg-slate-800 overflow-x-auto">
-          <table className="min-w-full text-xs">
-            <thead className="bg-slate-700">
-              <tr>
-                <th className="px-3 py-2 text-left text-slate-200">Date</th>
-                <th className="px-3 py-2 text-left text-slate-200">Hotel</th>
-                <th className="px-3 py-2 text-left text-slate-200">Venture</th>
-                <th className="px-3 py-2 text-right text-slate-200">Rooms</th>
-                <th className="px-3 py-2 text-right text-slate-200">Sold</th>
-                <th className="px-3 py-2 text-right text-slate-200">Total</th>
-                <th className="px-3 py-2 text-right text-red-400">
-                  Lost Dues
-                </th>
-                <th className="px-3 py-2 text-right text-red-400">
-                  Lost Dues %
-                </th>
-                <th className="px-3 py-2 text-right text-slate-200">Occ%</th>
-                <th className="px-3 py-2 text-right text-slate-200">ADR</th>
-                <th className="px-3 py-2 text-right text-slate-200">RevPAR</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((n) => {
-                const lossPct =
-                  n.lossRatio !== null && n.lossRatio !== undefined
-                    ? n.lossRatio
-                    : n.total && n.total > 0
-                    ? (n.lostDues || 0) / n.total
-                    : null;
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs">
+              <thead className="bg-gray-50 dark:bg-slate-700/50">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-slate-600">Date</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-slate-600">Hotel</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-slate-600">Venture</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-slate-600">Rooms</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-slate-600">Sold</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-slate-600">Total</th>
+                  <th className="px-4 py-3 text-right font-semibold text-red-600 dark:text-red-400 border-b border-gray-200 dark:border-slate-600">
+                    Lost Dues
+                  </th>
+                  <th className="px-4 py-3 text-right font-semibold text-red-600 dark:text-red-400 border-b border-gray-200 dark:border-slate-600">
+                    Lost Dues %
+                  </th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-slate-600">Occ%</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-slate-600">ADR</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-slate-600">RevPAR</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
+                {items.map((n) => {
+                  const lossPct =
+                    n.lossRatio !== null && n.lossRatio !== undefined
+                      ? n.lossRatio
+                      : n.total && n.total > 0
+                      ? (n.lostDues || 0) / n.total
+                      : null;
 
-                const lossClass =
-                  lossPct !== null && lossPct >= 0.05
-                    ? "text-red-400 font-semibold"
-                    : "text-amber-400";
+                  const lossClass =
+                    lossPct !== null && lossPct >= 0.05
+                      ? "text-red-600 dark:text-red-400 font-semibold"
+                      : "text-amber-600 dark:text-amber-400";
 
-                return (
-                  <tr key={n.id} className="border-t border-slate-700">
-                    <td className="px-3 py-2 whitespace-nowrap text-slate-300">
-                      {formatDate(n.date)}
-                    </td>
-                    <td className="px-3 py-2">
-                      <div className="font-medium text-slate-200">
-                        {n.hotelName}
-                        {n.hotelCode ? ` (${n.hotelCode})` : ""}
-                      </div>
-                      <div className="text-[11px] text-slate-500">
-                        {[n.city, n.state].filter(Boolean).join(", ")}
-                      </div>
-                    </td>
-                    <td className="px-3 py-2 text-[11px] text-slate-400">
-                      {n.ventureName || "-"}
-                    </td>
-                    <td className="px-3 py-2 text-right text-slate-300">
-                      {n.totalRoom ?? "-"}
-                    </td>
-                    <td className="px-3 py-2 text-right text-slate-300">
-                      {n.roomSold ?? "-"}
-                    </td>
-                    <td className="px-3 py-2 text-right text-slate-300">
-                      {formatMoney(n.total)}
-                    </td>
-                    <td className={`px-3 py-2 text-right ${lossClass}`}>
-                      {formatMoney(n.lostDues)}
-                    </td>
-                    <td className={`px-3 py-2 text-right ${lossClass}`}>
-                      {lossPct !== null ? formatPct(lossPct) : "-"}
-                    </td>
-                    <td className="px-3 py-2 text-right text-slate-300">
-                      {n.occupancy !== null && n.occupancy !== undefined
-                        ? `${n.occupancy.toFixed(1)}%`
-                        : "-"}
-                    </td>
-                    <td className="px-3 py-2 text-right text-slate-300">
-                      {formatMoney(n.adr)}
-                    </td>
-                    <td className="px-3 py-2 text-right text-slate-300">
-                      {formatMoney(n.revpar)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                  return (
+                    <tr key={n.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-900 dark:text-white font-medium">
+                        {formatDate(n.date)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-gray-900 dark:text-white">
+                          {n.hotelName}
+                          {n.hotelCode ? ` (${n.hotelCode})` : ""}
+                        </div>
+                        <div className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                          {[n.city, n.state].filter(Boolean).join(", ")}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-[11px] text-gray-600 dark:text-gray-400">
+                        {n.ventureName || "-"}
+                      </td>
+                      <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
+                        {n.totalRoom ?? "-"}
+                      </td>
+                      <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
+                        {n.roomSold ?? "-"}
+                      </td>
+                      <td className="px-4 py-3 text-right text-gray-900 dark:text-white font-medium">
+                        {formatMoney(n.total)}
+                      </td>
+                      <td className={`px-4 py-3 text-right ${lossClass}`}>
+                        {formatMoney(n.lostDues)}
+                      </td>
+                      <td className={`px-4 py-3 text-right ${lossClass}`}>
+                        {lossPct !== null ? formatPct(lossPct) : "-"}
+                      </td>
+                      <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
+                        {n.occupancy !== null && n.occupancy !== undefined
+                          ? `${n.occupancy.toFixed(1)}%`
+                          : "-"}
+                      </td>
+                      <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
+                        {formatMoney(n.adr)}
+                      </td>
+                      <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">
+                        {formatMoney(n.revpar)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

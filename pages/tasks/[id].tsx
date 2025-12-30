@@ -5,6 +5,7 @@ import { useEffectiveUser } from '@/hooks/useEffectiveUser';
 import { canEditTasks, type UserRole } from '@/lib/permissions';
 import { Attachments } from '@/components/Attachments';
 import { GetServerSideProps } from 'next';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -114,7 +115,7 @@ function TaskDetailsPage() {
   }
 
   if (loading) {
-    return <div className="p-6 text-sm text-gray-400">Loading task...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
 
   if (error && !task) {

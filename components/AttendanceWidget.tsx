@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Skeleton } from "./ui/Skeleton";
 
 type AttendanceStatus = "PRESENT" | "PTO" | "HALF_DAY" | "SICK" | "REMOTE" | "LATE";
 
@@ -79,7 +80,8 @@ export default function AttendanceWidget() {
   if (loading) {
     return (
       <div className="rounded-lg border border-gray-200 p-4 bg-white shadow-sm">
-        <div className="text-sm text-gray-500">Loading attendance...</div>
+        {/* <div className="text-sm text-gray-500">Loading attendance...</div> */}
+        <Skeleton className="w-full h-[40px]" />
       </div>
     );
   }

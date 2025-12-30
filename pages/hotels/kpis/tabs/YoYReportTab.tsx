@@ -137,14 +137,14 @@ function MetricCard({
       : lyValue.toLocaleString();
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-      <p className="text-xs text-slate-400 uppercase tracking-wide">{title}</p>
-      <p className="text-2xl font-bold text-white mt-1">{formattedCurrent}</p>
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4 shadow-sm">
+      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{title}</p>
+      <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{formattedCurrent}</p>
       <div className="flex items-center justify-between mt-2">
-        <span className="text-xs text-slate-500">LY: {formattedLy}</span>
+        <span className="text-xs text-gray-600 dark:text-gray-500">LY: {formattedLy}</span>
         <ChangeIndicator value={change} isPoints={isPoints} />
       </div>
-      <p className="text-xs text-slate-500 mt-1">{changeLabel}</p>
+      <p className="text-xs text-gray-600 dark:text-gray-500 mt-1">{changeLabel}</p>
     </div>
   );
 }
@@ -172,13 +172,13 @@ export default function YoYReportTab() {
 
   if (status === "loading") {
     return (
-      <div className="p-6 text-slate-300">Loading...</div>
+      <div className="p-6 text-gray-600 dark:text-gray-300">Loading...</div>
     );
   }
 
   if (status === "unauthenticated") {
     return (
-      <div className="p-6 text-slate-300">Please sign in to view hotel KPI reports.</div>
+      <div className="p-6 text-gray-600 dark:text-gray-300">Please sign in to view hotel KPI reports.</div>
     );
   }
 
@@ -189,15 +189,15 @@ export default function YoYReportTab() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-white">Year-over-Year Report</h2>
-          <p className="text-slate-400 text-sm mt-1">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Year-over-Year Report</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
             LYMTD and LYYTD comparison metrics
           </p>
         </div>
         <select
           value={selectedHotelId}
           onChange={(e) => setSelectedHotelId(e.target.value)}
-          className="px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-slate-200"
+          className="px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         >
           <option value="">Select a hotel...</option>
           {hotels?.map((h) => (
@@ -209,8 +209,8 @@ export default function YoYReportTab() {
       </div>
 
       {!selectedHotelId && (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-8 text-center">
-          <p className="text-slate-400">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-8 text-center">
+          <p className="text-gray-500 dark:text-gray-400">
             Select a hotel to view KPI comparison report
           </p>
         </div>
@@ -222,7 +222,7 @@ export default function YoYReportTab() {
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="h-28 bg-slate-700 rounded-lg"
+                className="h-28 bg-gray-200 dark:bg-slate-700 rounded-lg"
               ></div>
             ))}
           </div>
@@ -230,14 +230,14 @@ export default function YoYReportTab() {
       )}
 
       {selectedHotelId && error && (
-        <div className="bg-red-900/30 border border-red-700 rounded-lg p-4 text-red-300">
+        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg p-4 text-red-700 dark:text-red-300">
           Error loading KPI data
         </div>
       )}
 
       {selectedHotelId && data && (
         <>
-          <div className="border-b border-slate-700">
+          <div className="border-b border-gray-200 dark:border-slate-700">
             <nav className="flex gap-4">
               {(["MTD", "YTD"] as ActiveTab[]).map((tab) => (
                 <button
@@ -245,8 +245,8 @@ export default function YoYReportTab() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === tab
-                      ? "border-blue-500 text-blue-400"
-                      : "border-transparent text-slate-400 hover:text-slate-200"
+                      ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400"
+                      : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                   }`}
                 >
                   {tab === "MTD"
@@ -306,21 +306,21 @@ export default function YoYReportTab() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                  <p className="text-xs text-slate-400 mb-1">Rooms Sold</p>
+                <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rooms Sold</p>
                   <p className="text-xl font-bold text-white">
                     {data.mtd.roomsSold.toLocaleString()}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-gray-600 dark:text-gray-500">
                     LY: {data.lyMtd.roomsSold.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                  <p className="text-xs text-slate-400 mb-1">Rooms Available</p>
+                <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rooms Available</p>
                   <p className="text-xl font-bold text-white">
                     {data.mtd.roomsAvailable.toLocaleString()}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-gray-600 dark:text-gray-500">
                     LY: {data.lyMtd.roomsAvailable.toLocaleString()}
                   </p>
                 </div>
@@ -377,21 +377,21 @@ export default function YoYReportTab() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                  <p className="text-xs text-slate-400 mb-1">Rooms Sold</p>
+                <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rooms Sold</p>
                   <p className="text-xl font-bold text-white">
                     {data.ytd.roomsSold.toLocaleString()}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-gray-600 dark:text-gray-500">
                     LY: {data.lyYtd.roomsSold.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                  <p className="text-xs text-slate-400 mb-1">Rooms Available</p>
+                <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rooms Available</p>
                   <p className="text-xl font-bold text-white">
                     {data.ytd.roomsAvailable.toLocaleString()}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-gray-600 dark:text-gray-500">
                     LY: {data.lyYtd.roomsAvailable.toLocaleString()}
                   </p>
                 </div>
@@ -405,8 +405,8 @@ export default function YoYReportTab() {
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-slate-300 mb-4">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                   Occupancy Comparison
                 </h4>
                 <ResponsiveContainer width="100%" height={250}>
@@ -458,8 +458,8 @@ export default function YoYReportTab() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-slate-300 mb-4">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                   Revenue Comparison
                 </h4>
                 <ResponsiveContainer width="100%" height={250}>
@@ -506,8 +506,8 @@ export default function YoYReportTab() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-slate-300 mb-4">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                   ADR Comparison
                 </h4>
                 <ResponsiveContainer width="100%" height={250}>
@@ -559,8 +559,8 @@ export default function YoYReportTab() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-slate-300 mb-4">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                   RevPAR Comparison
                 </h4>
                 <ResponsiveContainer width="100%" height={250}>

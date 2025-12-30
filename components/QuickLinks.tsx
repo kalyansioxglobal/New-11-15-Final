@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Skeleton } from "./ui/Skeleton";
 
 type QuickLink = {
   id: string;
@@ -68,18 +69,18 @@ export default function QuickLinks() {
 
   async function handleAdd() {
     if (!newName.trim() || !newUrl.trim()) return;
-    
+
     let url = newUrl.trim();
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
       url = "https://" + url;
     }
-    
+
     const newLink: QuickLink = {
       id: Date.now().toString(),
       name: newName.trim(),
       url,
     };
-    
+
     const success = await saveLinks([...links, newLink]);
     if (success) {
       setNewName("");
@@ -97,16 +98,16 @@ export default function QuickLinks() {
 
   async function handleSaveEdit() {
     if (!newName.trim() || !newUrl.trim() || !editingId) return;
-    
+
     let url = newUrl.trim();
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
       url = "https://" + url;
     }
-    
+
     const updatedLinks = links.map((l) =>
       l.id === editingId ? { ...l, name: newName.trim(), url } : l
     );
-    
+
     const success = await saveLinks(updatedLinks);
     if (success) {
       setEditingId(null);
@@ -122,7 +123,7 @@ export default function QuickLinks() {
 
   async function handleConfirmDelete() {
     if (!deleteConfirmId) return;
-    
+
     setDeleting(true);
     setError(null);
     try {
@@ -154,7 +155,7 @@ export default function QuickLinks() {
   if (loading) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        <div className="text-sm text-gray-500">Loading quick links...</div>
+        <Skeleton className="w-full h-[40px]" />
       </div>
     );
   }

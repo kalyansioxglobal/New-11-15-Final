@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -131,8 +132,8 @@ function FreightKpiPage() {
       )}
 
       {rows.length === 0 && summary === null && (
-        <p className="text-gray-500 text-sm">Loading...</p>
-      )}
+       <Skeleton className="w-full h-[85vh]" />
+       )}
 
       {rows.length === 0 && summary && (
         <p className="text-gray-500 text-sm">No KPI data found for this date range.</p>

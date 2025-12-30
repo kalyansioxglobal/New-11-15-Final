@@ -363,6 +363,7 @@ export const ROUTE_REGISTRY: RouteConfig[] = [
   {
     id: "dispatch_loads",
     path: "/dispatch/loads",
+    apiPath: "/api/dispatch/loads",
     module: "dispatch",
     roles: ["CEO", "ADMIN", "COO", "VENTURE_HEAD", "OFFICE_MANAGER", "TEAM_LEAD", "DISPATCHER"],
     label: "Dispatch Loads",

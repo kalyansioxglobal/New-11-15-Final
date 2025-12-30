@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { requireUser } from '@/lib/apiAuth';
 import { can } from "@/lib/permissions";
-import { validateLoadStatusTransition } from "@/lib/freight/loadStatus";
+import { validateLoadStatusTransition, getValidNextStatuses } from "@/lib/freight/loadStatus";
 import { logAuditEvent } from "@/lib/audit";
 
 export default async function handler(
@@ -45,7 +45,12 @@ export default async function handler(
   }
 
   if (req.method === "GET") {
-    return res.json({ load });
+    // Map loadStatus to status for backward compatibility
+    const response = {
+      ...load,
+      status: load.loadStatus || load.status || 'OPEN', // Ensure status field exists
+    };
+    return res.json({ load: response });
   }
 
   if (req.method === "PATCH") {
@@ -81,16 +86,20 @@ export default async function handler(
     const data: any = {};
 
     if (status !== undefined) {
-      // Validate status transition
-      if (!validateLoadStatusTransition(load.status, status)) {
+      // Validate status transition - use loadStatus from schema (primary field)
+      const currentStatus = load.loadStatus || load.status || 'OPEN';
+      if (!validateLoadStatusTransition(currentStatus, status)) {
         return res.status(400).json({
           error: 'Invalid status transition',
-          detail: `Cannot transition from ${load.status} to ${status}`,
-          currentStatus: load.status,
+          detail: `Cannot transition from ${currentStatus} to ${status}`,
+          currentStatus: currentStatus,
           requestedStatus: status,
+          validNextStatuses: getValidNextStatuses(currentStatus),
         });
       }
-      data.status = status;
+      // Update loadStatus (primary field) and status (legacy field for backward compatibility)
+      data.loadStatus = status;
+      data.status = status; // Legacy field - keep in sync
     }
     if (status === "LOST") {
       if (lostReason !== undefined) data.lostReason = lostReason;
@@ -212,7 +221,15 @@ export default async function handler(
       include: {
         venture: { select: { id: true, name: true } },
         office: { select: { id: true, name: true } },
-        carrier: { select: { id: true, name: true, mcNumber: true } },
+        carrier: { select: { id: true, name: true, mcNumber: true, email: true, phone: true } },
+        createdBy: { select: { id: true, fullName: true } },
+        contacts: {
+          include: {
+            carrier: { select: { id: true, name: true } },
+            madeBy: { select: { id: true, fullName: true } },
+          },
+          orderBy: { createdAt: "desc" },
+        },
       },
     });
 
@@ -225,12 +242,18 @@ export default async function handler(
       metadata: {
         ventureId: load.ventureId,
         updatedFields: Object.keys(data),
-        statusChanged: data.status !== undefined ? { from: load.status, to: data.status } : undefined,
+        statusChanged: data.loadStatus !== undefined ? { from: load.loadStatus || load.status, to: data.loadStatus } : undefined,
         carrierChanged: data.carrierId !== undefined ? { from: load.carrierId, to: data.carrierId } : undefined,
       },
     });
 
-    return res.json({ load: updated });
+    // Map loadStatus to status for backward compatibility
+    const response = {
+      ...updated,
+      status: updated.loadStatus || updated.status || 'OPEN',
+    };
+
+    return res.json({ load: response });
   }
 
   if (req.method === "DELETE") {

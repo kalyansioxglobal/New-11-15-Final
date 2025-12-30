@@ -9,6 +9,7 @@ import QuickLinks from "../components/QuickLinks";
 import { VenturesHealthTable } from "@/components/Overview/VenturesHealthTable";
 import type { VentureSummaryWithAggregates, VentureHealth } from "@/types/ventures";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type SummaryStats = {
   openTasks: number;
@@ -77,9 +78,7 @@ function OverviewPage() {
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-500">
-        Loading ventures…
-      </div>
+     <Skeleton className="w-full h-[85vh]" />
     );
   }
 

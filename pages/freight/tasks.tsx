@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -227,7 +228,7 @@ function TasksPage() {
         </div>
       </div>
 
-      {loading && <div className="text-gray-500">Loading...</div>}
+      {loading && <Skeleton className="w-full h-[85vh]" />}
       {error && <div className="text-red-500 mb-2">{error}</div>}
 
       {!loading && !error && (

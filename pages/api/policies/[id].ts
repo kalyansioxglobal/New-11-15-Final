@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { requireUser } from '@/lib/apiAuth';
 import { getUserScope } from '@/lib/scope';
 import { canEditPolicies } from '@/lib/permissions';
+import { storageClient } from '@/lib/storage';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const user = await requireUser(req, res);
@@ -18,6 +19,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       venture: true,
       office: true,
       creator: true,
+      files: {
+        where: { deletedAt: null },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          uploadedBy: {
+            select: { id: true, fullName: true, email: true },
+          },
+        },
+      },
     },
   });
 
@@ -41,6 +51,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'GET') {
+    // Generate signed URLs for all files
+    const filesWithUrls = await Promise.all(
+      policy.files.map(async (file) => {
+        try {
+          const url = await storageClient.signedUrl(
+            file.bucket,
+            file.path,
+            60 * 60 // 1 hour expiry
+          );
+          return {
+            id: file.id,
+            fileName: file.fileName,
+            mimeType: file.mimeType,
+            sizeBytes: file.sizeBytes,
+            url,
+            createdAt: file.createdAt,
+            uploadedBy: file.uploadedBy,
+          };
+        } catch (err) {
+          console.error(`Failed to generate URL for file ${file.id}:`, err);
+          return {
+            id: file.id,
+            fileName: file.fileName,
+            mimeType: file.mimeType,
+            sizeBytes: file.sizeBytes,
+            url: null,
+            error: 'Failed to generate URL',
+            createdAt: file.createdAt,
+            uploadedBy: file.uploadedBy,
+          };
+        }
+      })
+    );
+
     return res.status(200).json({
       id: policy.id,
       name: policy.name,
@@ -50,7 +94,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       status: policy.status,
       startDate: policy.startDate,
       endDate: policy.endDate,
-      fileUrl: policy.fileUrl,
+      fileUrl: policy.fileUrl, // Keep for backward compatibility
+      files: filesWithUrls, // Array of files with signed URLs
       notes: policy.notes,
       ventureId: policy.ventureId,
       ventureName: policy.venture?.name ?? null,

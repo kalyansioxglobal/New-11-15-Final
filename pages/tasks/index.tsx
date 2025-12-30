@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { canCreateTasks, type UserRole } from "@/lib/permissions";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 // TaskRow type (unchanged)
 type TaskRow = {
@@ -151,11 +152,10 @@ function TasksPage() {
                 <button
                   key={s}
                   onClick={() => setStatusFilter(s)}
-                  className={`px-3 py-1.5 text-sm rounded-md font-medium transition-colors ${
-                    statusFilter === s
+                  className={`px-3 py-1.5 text-sm rounded-md font-medium transition-colors ${statusFilter === s
                       ? "bg-gray-900 text-white shadow-sm"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   {s === "all" ? "All" : s.replaceAll("_", " ")}
                 </button>
@@ -244,9 +244,7 @@ function TasksPage() {
       </div>
 
       {loading && (
-        <div className="text-center py-12">
-          <div className="text-sm text-gray-400">Loading tasks...</div>
-        </div>
+        <Skeleton className="w-full h-[85vh]" />
       )}
       {error && (
         <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200">
@@ -301,75 +299,72 @@ function TasksPage() {
                   }
                   const isOverdue = t.status === "OPEN" && dueDate && dueDate < today;
                   return (
-                  <tr
-                    key={t.id}
-                    className={`hover:bg-gray-50 transition-colors ${
-                      isOverdue ? "bg-red-50/30 border-l-2 border-l-red-500" : ""
-                    }`}
-                  >
-                    <td className="px-4 py-3 font-medium text-gray-900">{t.title}</td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {t.ventureName ?? <span className="text-gray-400">-</span>}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {t.officeName ?? <span className="text-gray-400">-</span>}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span
-                        className={`inline-block px-2.5 py-1 rounded-md text-xs font-medium ${
-                          statusColors[t.status] || "bg-gray-100 text-gray-700"
+                    <tr
+                      key={t.id}
+                      className={`hover:bg-gray-50 transition-colors ${isOverdue ? "bg-red-50/30 border-l-2 border-l-red-500" : ""
                         }`}
-                      >
-                        {t.status ? t.status.replaceAll("_", " ") : "-"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span
-                        className={`text-xs font-medium ${
-                          priorityColors[t.priority] || "text-gray-600"
-                        }`}
-                      >
-                        {t.priority || "-"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-600 text-xs">
-                      {t.dueDate ? (
-                        <div className="flex items-center justify-center gap-1.5">
-                          {isOverdue && (
-                            <svg
-                              className="w-4 h-4 text-red-500 flex-shrink-0"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                              xmlns="http://www.w3.org/2000/svg"
-                              aria-label="Warning: Overdue task"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
-                          <span className={isOverdue ? "text-red-400 font-medium" : ""}>
-                            {new Date(t.dueDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-600 text-xs">
-                      {t.assignedToName || <span className="text-gray-400">-</span>}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link
-                        href={`/tasks/${t.id}`}
-                        className="inline-block px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
-                      >
-                        View
-                      </Link>
-                    </td>
-                  </tr>
+                    >
+                      <td className="px-4 py-3 font-medium text-gray-900">{t.title}</td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {t.ventureName ?? <span className="text-gray-400">-</span>}
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {t.officeName ?? <span className="text-gray-400">-</span>}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span
+                          className={`inline-block px-2.5 py-1 rounded-md text-xs font-medium ${statusColors[t.status] || "bg-gray-100 text-gray-700"
+                            }`}
+                        >
+                          {t.status ? t.status.replaceAll("_", " ") : "-"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span
+                          className={`text-xs font-medium ${priorityColors[t.priority] || "text-gray-600"
+                            }`}
+                        >
+                          {t.priority || "-"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center text-gray-600 text-xs">
+                        {t.dueDate ? (
+                          <div className="flex items-center justify-center gap-1.5">
+                            {isOverdue && (
+                              <svg
+                                className="w-4 h-4 text-red-500 flex-shrink-0"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-label="Warning: Overdue task"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            )}
+                            <span className={isOverdue ? "text-red-400 font-medium" : ""}>
+                              {new Date(t.dueDate).toLocaleDateString()}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center text-gray-600 text-xs">
+                        {t.assignedToName || <span className="text-gray-400">-</span>}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Link
+                          href={`/tasks/${t.id}`}
+                          className="inline-block px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
+                        >
+                          View
+                        </Link>
+                      </td>
+                    </tr>
                   );
                 })}
               </tbody>

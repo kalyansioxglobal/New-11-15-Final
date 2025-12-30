@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Match = {
   carrierId: number;
@@ -146,7 +147,7 @@ export default function FindCarriersPage() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
         <div className="max-w-6xl mx-auto">
-          <p className="text-gray-600 dark:text-gray-400">Loading carrier matches...</p>
+          <Skeleton className="w-full h-[85vh]" />
         </div>
       </div>
     );

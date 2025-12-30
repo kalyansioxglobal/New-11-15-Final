@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useState, useEffect } from "react";
 
 type AttendanceStatus = "PRESENT" | "PTO" | "HALF_DAY" | "SICK" | "REMOTE" | "LATE";
@@ -53,6 +54,9 @@ function TeamAttendancePage() {
   });
   const [editingMember, setEditingMember] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<AttendanceStatus | null>(null);
+  const [reason, setReason] = useState<string>("");
 
   useEffect(() => {
     fetchTeamAttendance();
@@ -78,14 +82,41 @@ function TeamAttendancePage() {
     }
   }
 
-  async function updateMemberStatus(userId: number, status: AttendanceStatus) {
+  const handleEditClick = (memberId: number) => {
+    const member = data?.team.find((m) => m.id === memberId);
+    if (member) {
+      setEditingMember(memberId);
+      setSelectedStatus(member.attendance?.status || null);
+      setReason(member.attendance?.notes || "");
+      setShowEditModal(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowEditModal(false);
+    setEditingMember(null);
+    setSelectedStatus(null);
+    setReason("");
+  };
+
+  async function updateMemberStatus() {
+    if (!editingMember || !selectedStatus) {
+      setError("Please select a status");
+      return;
+    }
+
     setSaving(true);
     setError(null);
     try {
       const res = await fetch("/api/attendance/team", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, date: selectedDate, status }),
+        body: JSON.stringify({ 
+          userId: editingMember, 
+          date: selectedDate, 
+          status: selectedStatus,
+          notes: reason.trim() || null,
+        }),
       });
       
       const json = await res.json();
@@ -98,7 +129,7 @@ function TeamAttendancePage() {
       }
       
       await fetchTeamAttendance();
-      setEditingMember(null);
+      handleCloseModal();
     } catch (err: any) {
       console.error("Failed to update attendance:", err);
       setError(err?.message || "An unexpected error occurred. Please try again.");
@@ -150,9 +181,7 @@ function TeamAttendancePage() {
       </header>
 
       {loading ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-6">
-          <p className="text-gray-500">Loading team attendance...</p>
-        </div>
+       <Skeleton className="w-full h-[85vh]" />
       ) : data ? (
         <>
           <section className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
@@ -211,46 +240,28 @@ function TeamAttendancePage() {
                           {member.ventures.map((v) => v.name).join(", ") || "-"}
                         </td>
                         <td className="px-4 py-3">
-                          {isEditing ? (
-                            <div className="flex flex-wrap gap-1">
-                              {ALL_STATUSES.map((status) => {
-                                const info = STATUS_CONFIG[status];
-                                return (
-                                  <button
-                                    key={status}
-                                    onClick={() => updateMemberStatus(member.id, status)}
-                                    disabled={saving}
-                                    className={`px-2 py-1 rounded text-xs font-medium transition-colors ${info.bgColor} ${info.textColor} hover:opacity-80 disabled:opacity-50`}
-                                  >
-                                    {info.emoji} {info.label}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          ) : member.attendance?.status && statusInfo ? (
-                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.textColor}`}>
-                              {statusInfo.emoji} {statusInfo.label}
-                            </span>
-                          ) : (
-                            <span className="text-sm text-gray-400 italic">Not marked</span>
-                          )}
+                          <div className="space-y-1">
+                            {member.attendance?.status && statusInfo ? (
+                              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.textColor}`}>
+                                {statusInfo.emoji} {statusInfo.label}
+                              </span>
+                            ) : (
+                              <span className="text-sm text-gray-400 italic">Not marked</span>
+                            )}
+                            {member.attendance?.notes && (
+                              <div className="text-xs text-gray-500 mt-1 italic">
+                                Reason: {member.attendance.notes}
+                              </div>
+                            )}
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          {isEditing ? (
-                            <button
-                              onClick={() => setEditingMember(null)}
-                              className="text-sm text-gray-500 hover:text-gray-700"
-                            >
-                              Cancel
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setEditingMember(member.id)}
-                              className="text-sm text-blue-600 hover:text-blue-800"
-                            >
-                              {member.hasMarkedToday ? "Edit" : "Set Status"}
-                            </button>
-                          )}
+                          <button
+                            onClick={() => handleEditClick(member.id)}
+                            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                          >
+                            {member.hasMarkedToday ? "Edit" : "Set Status"}
+                          </button>
                         </td>
                       </tr>
                     );
@@ -267,6 +278,127 @@ function TeamAttendancePage() {
           </section>
         </>
       ) : null}
+
+      {/* Edit Attendance Modal */}
+      {showEditModal && editingMember && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md mx-4 shadow-2xl border border-gray-200 dark:border-slate-700">
+            <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-2xl flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold">Update Attendance</h2>
+                <p className="text-sm text-blue-100 mt-1">
+                  {data?.team.find((m) => m.id === editingMember)?.fullName}
+                </p>
+              </div>
+              <button
+                onClick={handleCloseModal}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                updateMemberStatus();
+              }}
+              className="p-6 space-y-5"
+            >
+              {/* Status Selection */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-3">
+                  Attendance Status <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {ALL_STATUSES.map((status) => {
+                    const info = STATUS_CONFIG[status];
+                    const isSelected = selectedStatus === status;
+                    return (
+                      <button
+                        key={status}
+                        type="button"
+                        onClick={() => setSelectedStatus(status)}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-all border-2 ${
+                          isSelected
+                            ? `${info.bgColor} ${info.textColor} border-blue-500 shadow-md`
+                            : "bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-blue-300"
+                        }`}
+                      >
+                        <span className="text-lg mr-2">{info.emoji}</span>
+                        {info.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Reason Input */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2">
+                  Reason for Change
+                </label>
+                <textarea
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder="Enter reason for this attendance change (optional)"
+                  rows={4}
+                  className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 resize-none"
+                />
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
+                  This reason will be stored with the attendance record
+                </p>
+              </div>
+
+              {/* Error Display */}
+              {error && (
+                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-300 text-sm flex items-start gap-3">
+                  <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-slate-700">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  disabled={saving}
+                  className="px-5 py-2.5 text-sm font-semibold text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving || !selectedStatus}
+                  className="px-6 py-2.5 text-sm font-semibold rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 disabled:opacity-60 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+                >
+                  {saving ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Update Attendance
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

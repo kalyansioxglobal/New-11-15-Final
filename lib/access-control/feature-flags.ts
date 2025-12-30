@@ -12,6 +12,7 @@ const FEATURE_FLAGS: FeatureFlag[] = [
   { id: "operations", module: "operations", enabled: true, description: "Tasks, EOD reports, and insurance" },
   { id: "it", module: "it", enabled: true, description: "IT asset management" },
   { id: "freight", module: "freight", enabled: true, description: "Freight/logistics operations" },
+  { id: "dispatch", module: "dispatch", enabled: true, description: "Dispatch and driver management" },
   { id: "hospitality", module: "hospitality", enabled: true, description: "Hotel management" },
   { id: "bpo", module: "bpo", enabled: true, description: "BPO call center operations" },
   { id: "saas", module: "saas", enabled: true, description: "SaaS customer and subscription management" },

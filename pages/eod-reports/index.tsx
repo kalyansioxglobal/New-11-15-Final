@@ -2,6 +2,7 @@ import { useState } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 import { useTestMode } from '@/contexts/TestModeContext';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -89,7 +90,8 @@ function EodReportsIndexPage() {
             {isLoading ? (
               <tr>
                 <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
-                  Loading reports...
+                  {/* Loading reports... */}
+                  <Skeleton className="w-full h-10" />
                 </td>
               </tr>
             ) : !reports?.length ? (

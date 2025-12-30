@@ -4,6 +4,7 @@ import { useEffectiveUser } from '@/hooks/useEffectiveUser';
 import { canEditPolicies } from '@/lib/permissions';
 import type { UserRole } from '@prisma/client';
 import PolicyDetailModal from './PolicyDetailModal';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 type PolicyRow = {
   id: number;
@@ -152,103 +153,140 @@ function PoliciesPage() {
     CANCELLED: 'bg-gray-100 text-gray-800',
   };
 
+  const getTypeIcon = (type: string) => {
+    const icons: Record<string, string> = {
+      INSURANCE: '🛡️',
+      LEASE: '📋',
+      CONTRACT: '📄',
+      LICENSE: '📜',
+      PERMIT: '✅',
+      WARRANTY: '🔧',
+      OTHER: '📌',
+    };
+    return icons[type] || '📌';
+  };
+
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-semibold">Policies</h1>
+    <div className="p-6 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">Policies</h1>
+          <p className="text-sm text-gray-500">
+            Manage insurance policies, leases, contracts, and licenses
+          </p>
+        </div>
         {allowCreate && !viewDeleted && (
           <Link
             href="/policies/new"
-            className="px-3 py-1.5 rounded bg-blue-600 !text-white text-sm font-medium hover:bg-blue-700"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
           >
-            + New Policy
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            New Policy
           </Link>
         )}
       </div>
 
       {/* View Toggle Tabs */}
-      <div className="flex gap-2 mb-4 border-b border-gray-200">
+      <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg w-fit">
         <button
           onClick={() => handleViewToggle(false)}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+          className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
             !viewDeleted
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           Active Policies
         </button>
         <button
           onClick={() => handleViewToggle(true)}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+          className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
             viewDeleted
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          View Deleted Policies
+          Deleted Policies
         </button>
       </div>
 
-      {loading && <div className="text-sm text-gray-400">Loading policies...</div>}
+      {loading && <Skeleton className="w-full h-[85vh]" />}
       {error && <div className="text-sm text-red-500 mb-2">{error}</div>}
 
       {!loading && policies.length === 0 && (
-        <div className="text-center py-12 border rounded-xl bg-gray-50">
-          <div className="text-gray-400 text-3xl mb-3">📄</div>
-          <h3 className="text-gray-700 font-medium mb-1">No Policies Found</h3>
-          <p className="text-sm text-gray-500 max-w-sm mx-auto">
+        <div className="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl bg-gradient-to-br from-gray-50 to-white">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
+            <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No Policies Found</h3>
+          <p className="text-sm text-gray-500 max-w-sm mx-auto mb-6">
             {viewDeleted
               ? 'No deleted policies found.'
-              : 'No insurance policies, leases, or contracts have been added yet.'}
+              : 'Get started by creating your first policy document.'}
           </p>
           {allowCreate && !viewDeleted && (
             <Link
               href="/policies/new"
-              className="inline-block mt-4 px-4 py-2 bg-blue-600 !text-white rounded text-sm hover:bg-blue-700"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              + New Policy
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Create Your First Policy
             </Link>
           )}
         </div>
       )}
 
       {!loading && policies.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border border-gray-200 bg-white rounded">
-            <thead className="bg-gray-50 text-gray-600">
+        <div className="overflow-x-auto bg-white rounded-xl border border-gray-200 shadow-sm">
+          <table className="w-full text-sm">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
               <tr>
-                <th className="px-3 py-2 text-left font-medium">Name</th>
-                <th className="px-3 py-2 text-left font-medium">Type</th>
-                <th className="px-3 py-2 text-left font-medium">Provider</th>
-                <th className="px-3 py-2 text-left font-medium">Venture</th>
-                <th className="px-3 py-2 text-center font-medium">Status</th>
-                <th className="px-3 py-2 text-center font-medium">End Date</th>
-                <th className="px-3 py-2"></th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Name</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Type</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Provider</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Venture</th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700">Status</th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700">End Date</th>
+                <th className="px-4 py-3 text-right font-semibold text-gray-700">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-100">
               {policies.map((p) => (
                 <tr
                   key={p.id}
-                  className={`border-t border-gray-100 hover:bg-gray-50 ${
-                    p.isExpired ? 'bg-red-50' : p.isExpiringSoon ? 'bg-amber-50' : ''
+                  className={`hover:bg-blue-50/50 transition-colors ${
+                    p.isExpired
+                      ? 'bg-red-50/30'
+                      : p.isExpiringSoon
+                      ? 'bg-amber-50/30'
+                      : ''
                   }`}
                 >
-                  <td className="px-3 py-2 font-medium">{p.name}</td>
-                  <td className="px-3 py-2 text-gray-600">{p.type}</td>
-                  <td className="px-3 py-2 text-gray-600">{p.provider || '-'}</td>
-                  <td className="px-3 py-2 text-gray-600">{p.ventureName || '-'}</td>
-                  <td className="px-3 py-2 text-center">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{getTypeIcon(p.type)}</span>
+                      <span className="font-semibold text-gray-900">{p.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">{p.type}</td>
+                  <td className="px-4 py-3 text-gray-600">{p.provider || '-'}</td>
+                  <td className="px-4 py-3 text-gray-600">{p.ventureName || '-'}</td>
+                  <td className="px-4 py-3 text-center">
                     <span
-                      className={`px-2 py-0.5 rounded text-xs ${
-                        statusColors[p.status] || 'bg-gray-100'
+                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
+                        statusColors[p.status] || 'bg-gray-100 text-gray-800'
                       }`}
                     >
                       {p.status}
                     </span>
                   </td>
-                  <td className="px-3 py-2 text-center text-gray-600 text-xs">
+                  <td className="px-4 py-3 text-center">
                     {p.endDate ? (
                       <div className="flex items-center justify-center gap-1.5">
                         {(p.isExpired || p.isExpiringSoon) && (
@@ -268,7 +306,15 @@ function PoliciesPage() {
                             />
                           </svg>
                         )}
-                        <span className={p.isExpired ? 'text-red-600 font-medium' : p.isExpiringSoon ? 'text-amber-600' : ''}>
+                        <span
+                          className={`text-sm ${
+                            p.isExpired
+                              ? 'text-red-700 font-semibold'
+                              : p.isExpiringSoon
+                              ? 'text-amber-700 font-medium'
+                              : 'text-gray-600'
+                          }`}
+                        >
                           {new Date(p.endDate).toLocaleDateString()}
                           {p.daysToExpiry !== null && p.daysToExpiry > 0 && (
                             <span className="text-gray-400 ml-1">({p.daysToExpiry}d)</span>
@@ -276,21 +322,21 @@ function PoliciesPage() {
                         </span>
                       </div>
                     ) : (
-                      '-'
+                      <span className="text-gray-400">-</span>
                     )}
                   </td>
-                  <td className="px-3 py-2 text-right">
+                  <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => setSelectedPolicyId(p.id)}
-                        className="text-xs text-blue-600 hover:underline"
+                        className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                         View
                       </button>
                       {!viewDeleted && allowDelete && (
                         <button
                           onClick={() => setDeletePolicyId(p.id)}
-                          className="text-red-600 hover:text-red-800 transition-colors"
+                          className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete policy"
                           aria-label="Delete policy"
                         >
@@ -321,24 +367,26 @@ function PoliciesPage() {
 
       {/* Pagination Controls */}
       {!loading && pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
           <div className="text-sm text-gray-600">
-            Showing {(pagination.page - 1) * pagination.pageSize + 1} to{' '}
-            {Math.min(pagination.page * pagination.pageSize, pagination.total)} of{' '}
-            {pagination.total} policies
+            Showing <span className="font-semibold text-gray-900">{(pagination.page - 1) * pagination.pageSize + 1}</span> to{' '}
+            <span className="font-semibold text-gray-900">{Math.min(pagination.page * pagination.pageSize, pagination.total)}</span> of{' '}
+            <span className="font-semibold text-gray-900">{pagination.total}</span> policies
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
             >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
               Previous
             </button>
             <div className="flex items-center gap-1">
               {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
                 .filter((page) => {
-                  // Show first page, last page, current page, and pages around current
                   if (page === 1 || page === pagination.totalPages) return true;
                   if (Math.abs(page - currentPage) <= 1) return true;
                   return false;
@@ -351,10 +399,10 @@ function PoliciesPage() {
                       {showEllipsis && <span className="px-2 text-gray-400">...</span>}
                       <button
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-1.5 text-sm border rounded ${
+                        className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-all ${
                           currentPage === page
-                            ? 'bg-blue-600 text-white border-blue-600'
-                            : 'border-gray-300 hover:bg-gray-50'
+                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md'
+                            : 'border border-gray-300 hover:bg-gray-50 text-gray-700'
                         }`}
                       >
                         {page}
@@ -366,9 +414,12 @@ function PoliciesPage() {
             <button
               onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))}
               disabled={currentPage === pagination.totalPages}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
             >
               Next
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </button>
           </div>
         </div>

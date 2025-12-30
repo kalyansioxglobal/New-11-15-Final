@@ -210,18 +210,18 @@ function HotelKpiPage() {
   };
 
   const renderStars = (rating: number | null) => {
-    if (!rating) return <span className="text-slate-500">No rating</span>;
+    if (!rating) return <span className="text-gray-500 dark:text-gray-400">No rating</span>;
     return (
       <div className="flex items-center gap-0.5">
         {[1, 2, 3, 4, 5].map((star) => (
           <span
             key={star}
-            className={star <= rating ? "text-yellow-400" : "text-slate-600"}
+            className={star <= rating ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"}
           >
             ★
           </span>
         ))}
-        <span className="ml-1 text-slate-400">({rating.toFixed(1)})</span>
+        <span className="ml-1 text-gray-500 dark:text-gray-400">({rating.toFixed(1)})</span>
       </div>
     );
   };
@@ -232,13 +232,13 @@ function HotelKpiPage() {
         <h1 className="text-2xl font-bold">Hotel Details</h1>
       </div>
 
-      <div className="flex gap-2 border-b border-slate-700">
+      <div className="flex gap-2 border-b border-gray-200 dark:border-gray-200 dark:border-slate-700">
         <button
           onClick={() => setActiveTab("kpi")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition ${
             activeTab === "kpi"
-              ? "border-indigo-500 text-indigo-400"
-              : "border-transparent text-slate-400 hover:text-slate-300"
+              ? "border-indigo-600 dark:border-indigo-500 text-indigo-600 dark:text-indigo-400"
+              : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
           KPIs & Daily Reports
@@ -247,8 +247,8 @@ function HotelKpiPage() {
           onClick={() => setActiveTab("reviews")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition ${
             activeTab === "reviews"
-              ? "border-indigo-500 text-indigo-400"
-              : "border-transparent text-slate-400 hover:text-slate-300"
+              ? "border-indigo-600 dark:border-indigo-500 text-indigo-600 dark:text-indigo-400"
+              : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
           Reviews {reviewSummary?.total > 0 && `(${reviewSummary.total})`}
@@ -267,7 +267,7 @@ function HotelKpiPage() {
           </div>
 
           {showKpiForm && (
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-6">
               <h2 className="text-lg font-semibold mb-4">Manual Daily Report Entry</h2>
               
               {message && (
@@ -285,7 +285,7 @@ function HotelKpiPage() {
               <form onSubmit={handleKpiSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                       Date <span className="text-red-400">*</span>
                     </label>
                     <input
@@ -293,38 +293,38 @@ function HotelKpiPage() {
                       required
                       value={formData.date}
                       onChange={(e) => handleInputChange("date", e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Rooms Sold</label>
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Rooms Sold</label>
                     <input
                       type="number"
                       min="0"
                       value={formData.roomsSold}
                       onChange={(e) => handleInputChange("roomsSold", e.target.value)}
                       placeholder="0"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Rooms Available</label>
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Rooms Available</label>
                     <input
                       type="number"
                       min="0"
                       value={formData.roomsAvailable}
                       onChange={(e) => handleInputChange("roomsAvailable", e.target.value)}
                       placeholder="Uses hotel default if empty"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     />
                   </div>
                 </div>
 
-                <div className="border-t border-slate-700 pt-4">
-                  <h3 className="text-sm font-medium text-slate-300 mb-3">Revenue</h3>
+                <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Revenue</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Room Revenue ($)</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Room Revenue ($)</label>
                       <input
                         type="number"
                         min="0"
@@ -332,11 +332,11 @@ function HotelKpiPage() {
                         value={formData.roomRevenue}
                         onChange={(e) => handleInputChange("roomRevenue", e.target.value)}
                         placeholder="0.00"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Other Revenue ($)</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Other Revenue ($)</label>
                       <input
                         type="number"
                         min="0"
@@ -344,17 +344,17 @@ function HotelKpiPage() {
                         value={formData.otherRevenue}
                         onChange={(e) => handleInputChange("otherRevenue", e.target.value)}
                         placeholder="0.00"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-700 pt-4">
-                  <h3 className="text-sm font-medium text-slate-300 mb-3">Payment Breakdown</h3>
+                <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Payment Breakdown</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Cash ($)</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Cash ($)</label>
                       <input
                         type="number"
                         min="0"
@@ -362,11 +362,11 @@ function HotelKpiPage() {
                         value={formData.cash}
                         onChange={(e) => handleInputChange("cash", e.target.value)}
                         placeholder="0.00"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Credit ($)</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Credit ($)</label>
                       <input
                         type="number"
                         min="0"
@@ -374,11 +374,11 @@ function HotelKpiPage() {
                         value={formData.credit}
                         onChange={(e) => handleInputChange("credit", e.target.value)}
                         placeholder="0.00"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Online ($)</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Online ($)</label>
                       <input
                         type="number"
                         min="0"
@@ -386,11 +386,11 @@ function HotelKpiPage() {
                         value={formData.online}
                         onChange={(e) => handleInputChange("online", e.target.value)}
                         placeholder="0.00"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Refund ($)</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Refund ($)</label>
                       <input
                         type="number"
                         min="0"
@@ -398,17 +398,17 @@ function HotelKpiPage() {
                         value={formData.refund}
                         onChange={(e) => handleInputChange("refund", e.target.value)}
                         placeholder="0.00"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-700 pt-4">
-                  <h3 className="text-sm font-medium text-slate-300 mb-3">Dues & Losses</h3>
+                <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Dues & Losses</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Dues ($)</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Dues ($)</label>
                       <input
                         type="number"
                         min="0"
@@ -416,11 +416,11 @@ function HotelKpiPage() {
                         value={formData.dues}
                         onChange={(e) => handleInputChange("dues", e.target.value)}
                         placeholder="0.00"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-400 mb-1">Lost Dues ($)</label>
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Lost Dues ($)</label>
                       <input
                         type="number"
                         min="0"
@@ -428,17 +428,17 @@ function HotelKpiPage() {
                         value={formData.lostDues}
                         onChange={(e) => handleInputChange("lostDues", e.target.value)}
                         placeholder="0.00"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-slate-700">
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-slate-700">
                   <button
                     type="button"
                     onClick={() => setShowKpiForm(false)}
-                    className="px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition text-sm"
+                    className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition text-sm"
                   >
                     Cancel
                   </button>
@@ -456,7 +456,7 @@ function HotelKpiPage() {
 
           <div className="flex gap-4 items-end">
             <div>
-              <label className="block text-xs font-medium mb-1 text-slate-400">From</label>
+              <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">From</label>
               <input
                 type="date"
                 className="bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm"
@@ -465,7 +465,7 @@ function HotelKpiPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1 text-slate-400">To</label>
+              <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">To</label>
               <input
                 type="date"
                 className="bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm"
@@ -477,26 +477,26 @@ function HotelKpiPage() {
 
           {summary && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                <div className="text-xs text-slate-400">Occupancy</div>
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                <div className="text-xs text-gray-500 dark:text-gray-400">Occupancy</div>
                 <div className={`text-2xl font-semibold ${summary.lowOcc ? "text-red-400" : "text-white"}`}>
                   {summary.occupancyPct.toFixed(1)}%
                 </div>
               </div>
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                <div className="text-xs text-slate-400">ADR</div>
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                <div className="text-xs text-gray-500 dark:text-gray-400">ADR</div>
                 <div className="text-2xl font-semibold text-white">
                   ${summary.adr.toFixed(0)}
                 </div>
               </div>
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                <div className="text-xs text-slate-400">RevPAR</div>
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                <div className="text-xs text-gray-500 dark:text-gray-400">RevPAR</div>
                 <div className={`text-2xl font-semibold ${summary.lowRevpar ? "text-red-400" : "text-white"}`}>
                   ${summary.revpar.toFixed(0)}
                 </div>
               </div>
-              <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                <div className="text-xs text-slate-400">Total Room Rev</div>
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                <div className="text-xs text-gray-500 dark:text-gray-400">Total Room Rev</div>
                 <div className="text-2xl font-semibold text-white">
                   ${summary.totalRoomRevenue.toLocaleString()}
                 </div>
@@ -505,30 +505,30 @@ function HotelKpiPage() {
           )}
 
           {rows.length > 0 && (
-            <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-slate-900/50 border-b border-slate-700">
-                    <th className="p-3 text-left text-slate-400 font-medium">Date</th>
-                    <th className="p-3 text-center text-slate-400 font-medium">Rooms Avail</th>
-                    <th className="p-3 text-center text-slate-400 font-medium">Rooms Sold</th>
-                    <th className="p-3 text-center text-slate-400 font-medium">Occ %</th>
-                    <th className="p-3 text-center text-slate-400 font-medium">ADR</th>
-                    <th className="p-3 text-center text-slate-400 font-medium">RevPAR</th>
-                    <th className="p-3 text-center text-slate-400 font-medium">Room Rev</th>
+                  <tr className="bg-slate-900/50 border-b border-gray-200 dark:border-slate-700">
+                    <th className="p-3 text-left text-gray-500 dark:text-gray-400 font-medium">Date</th>
+                    <th className="p-3 text-center text-gray-500 dark:text-gray-400 font-medium">Rooms Avail</th>
+                    <th className="p-3 text-center text-gray-500 dark:text-gray-400 font-medium">Rooms Sold</th>
+                    <th className="p-3 text-center text-gray-500 dark:text-gray-400 font-medium">Occ %</th>
+                    <th className="p-3 text-center text-gray-500 dark:text-gray-400 font-medium">ADR</th>
+                    <th className="p-3 text-center text-gray-500 dark:text-gray-400 font-medium">RevPAR</th>
+                    <th className="p-3 text-center text-gray-500 dark:text-gray-400 font-medium">Room Rev</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rows.map((r) => (
-                    <tr key={r.id} className="border-b border-slate-700/50 hover:bg-slate-700/30">
-                      <td className="p-3 text-left text-slate-200">
+                    <tr key={r.id} className="border-b border-gray-200 dark:border-slate-700/50 hover:bg-gray-200 dark:bg-slate-700/30">
+                      <td className="p-3 text-left text-gray-900 dark:text-gray-200">
                         {new Date(r.date).toLocaleDateString()}
                       </td>
-                      <td className="p-3 text-center text-slate-200">{r.roomsAvailable}</td>
-                      <td className="p-3 text-center text-slate-200">{r.roomsSold}</td>
-                      <td className="p-3 text-center text-slate-200">{r.occupancyPct.toFixed(1)}%</td>
-                      <td className="p-3 text-center text-slate-200">${r.adr.toFixed(0)}</td>
-                      <td className="p-3 text-center text-slate-200">${r.revpar.toFixed(0)}</td>
+                      <td className="p-3 text-center text-gray-900 dark:text-gray-200">{r.roomsAvailable}</td>
+                      <td className="p-3 text-center text-gray-900 dark:text-gray-200">{r.roomsSold}</td>
+                      <td className="p-3 text-center text-gray-900 dark:text-gray-200">{r.occupancyPct.toFixed(1)}%</td>
+                      <td className="p-3 text-center text-gray-900 dark:text-gray-200">${r.adr.toFixed(0)}</td>
+                      <td className="p-3 text-center text-gray-900 dark:text-gray-200">${r.revpar.toFixed(0)}</td>
                       <td className="p-3 text-center text-green-400 font-medium">${r.roomRevenue.toLocaleString()}</td>
                     </tr>
                   ))}
@@ -538,9 +538,9 @@ function HotelKpiPage() {
           )}
 
           {rows.length === 0 && !summary && (
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-8 text-center">
-              <p className="text-slate-400">No KPI data available for this hotel.</p>
-              <p className="text-sm text-slate-500 mt-2">Click &quot;Add Daily Report&quot; above to enter data manually.</p>
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-8 text-center">
+              <p className="text-gray-500 dark:text-gray-400">No KPI data available for this hotel.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Click &quot;Add Daily Report&quot; above to enter data manually.</p>
             </div>
           )}
         </div>
@@ -552,18 +552,18 @@ function HotelKpiPage() {
             {reviewSummary && (
               <div className="flex items-center gap-6">
                 <div>
-                  <span className="text-slate-400 text-sm">Average Rating:</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-sm">Average Rating:</span>
                   <span className="ml-2 text-xl font-semibold text-yellow-400">
                     {reviewSummary.avgRating > 0 ? `${reviewSummary.avgRating.toFixed(1)} ★` : "N/A"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 text-sm">Total Reviews:</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-sm">Total Reviews:</span>
                   <span className="ml-2 text-xl font-semibold text-white">{reviewSummary.total}</span>
                 </div>
                 {reviewSummary.unrespondedCount > 0 && (
                   <div>
-                    <span className="text-slate-400 text-sm">Needs Response:</span>
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">Needs Response:</span>
                     <span className="ml-2 text-xl font-semibold text-orange-400">{reviewSummary.unrespondedCount}</span>
                   </div>
                 )}
@@ -578,7 +578,7 @@ function HotelKpiPage() {
           </div>
 
           {showReviewForm && (
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-6">
               <h2 className="text-lg font-semibold mb-4">Add Guest Review</h2>
               
               {reviewMessage && (
@@ -596,14 +596,14 @@ function HotelKpiPage() {
               <form onSubmit={handleReviewSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                       Source <span className="text-red-400">*</span>
                     </label>
                     <select
                       required
                       value={reviewFormData.source}
                       onChange={(e) => handleReviewInputChange("source", e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     >
                       {REVIEW_SOURCES.map((src) => (
                         <option key={src} value={src}>
@@ -613,7 +613,7 @@ function HotelKpiPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                       Rating (1-5)
                     </label>
                     <input
@@ -624,47 +624,47 @@ function HotelKpiPage() {
                       value={reviewFormData.rating}
                       onChange={(e) => handleReviewInputChange("rating", e.target.value)}
                       placeholder="e.g. 4.5"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                       Review Date
                     </label>
                     <input
                       type="date"
                       value={reviewFormData.reviewDate}
                       onChange={(e) => handleReviewInputChange("reviewDate", e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Reviewer Name</label>
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Reviewer Name</label>
                     <input
                       type="text"
                       value={reviewFormData.reviewerName}
                       onChange={(e) => handleReviewInputChange("reviewerName", e.target.value)}
                       placeholder="Guest name (optional)"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Review Title</label>
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Review Title</label>
                     <input
                       type="text"
                       value={reviewFormData.title}
                       onChange={(e) => handleReviewInputChange("title", e.target.value)}
                       placeholder="Brief summary (optional)"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                  <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                     Review Comment <span className="text-red-400">*</span>
                   </label>
                   <textarea
@@ -673,15 +673,15 @@ function HotelKpiPage() {
                     value={reviewFormData.comment}
                     onChange={(e) => handleReviewInputChange("comment", e.target.value)}
                     placeholder="Enter the guest's review..."
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-slate-700">
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-slate-700">
                   <button
                     type="button"
                     onClick={() => setShowReviewForm(false)}
-                    className="px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition text-sm"
+                    className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-slate-600 transition text-sm"
                   >
                     Cancel
                   </button>
@@ -700,42 +700,42 @@ function HotelKpiPage() {
           {reviews.length > 0 ? (
             <div className="space-y-4">
               {reviews.map((review) => (
-                <div key={review.id} className="bg-slate-800 border border-slate-700 rounded-lg p-4">
+                <div key={review.id} className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <div className="flex items-center gap-3">
-                        <span className="px-2 py-0.5 bg-slate-700 rounded text-xs font-medium text-slate-300">
+                        <span className="px-2 py-0.5 bg-gray-200 dark:bg-slate-700 rounded text-xs font-medium text-gray-700 dark:text-gray-300">
                           {review.source === "TRIPADVISOR" ? "TripAdvisor" : review.source}
                         </span>
                         {renderStars(review.rating)}
                       </div>
                       {review.reviewerName && (
-                        <p className="text-sm text-slate-400 mt-1">by {review.reviewerName}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">by {review.reviewerName}</p>
                       )}
                     </div>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-500">
                       {review.reviewDate ? new Date(review.reviewDate).toLocaleDateString() : "No date"}
                     </span>
                   </div>
                   {review.title && (
                     <h4 className="font-medium text-white mb-1">{review.title}</h4>
                   )}
-                  <p className="text-sm text-slate-300">{review.comment}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{review.comment}</p>
                   {review.responseText && (
                     <div className="mt-3 pl-4 border-l-2 border-indigo-500">
-                      <p className="text-xs text-slate-400 mb-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                         Response by {review.respondedBy?.fullName || "Staff"}
                       </p>
-                      <p className="text-sm text-slate-300">{review.responseText}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">{review.responseText}</p>
                     </div>
                   )}
                 </div>
               ))}
             </div>
           ) : (
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-8 text-center">
-              <p className="text-slate-400">No reviews yet for this hotel.</p>
-              <p className="text-sm text-slate-500 mt-2">Click &quot;Add Review&quot; above to enter guest reviews manually.</p>
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-8 text-center">
+              <p className="text-gray-500 dark:text-gray-400">No reviews yet for this hotel.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Click &quot;Add Review&quot; above to enter guest reviews manually.</p>
             </div>
           )}
         </div>

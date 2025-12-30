@@ -4,6 +4,7 @@ import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { canCreateTasks } from "@/lib/permissions";
 import type { UserRole } from "@prisma/client";
 import { GetServerSideProps } from "next";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -189,7 +190,8 @@ export default function TaskBoardPage() {
       </div>
 
       {loading && (
-        <div className="text-sm text-gray-400">Loading tasks...</div>
+        // <div className="text-sm text-gray-400">Loading tasks...</div>
+        <Skeleton className="w-full h-[85vh]" />
       )}
       {error && <div className="text-sm text-red-500 mb-2">{error}</div>}
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { canCreateTasks } from "@/lib/permissions";
 import type { UserRole } from "@prisma/client";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Load = {
   id: number;
@@ -193,7 +194,7 @@ export default function LoadsListPage() {
         </select>
       </div>
 
-      {loading && <div className="text-sm text-gray-400 dark:text-gray-300">Loading loads...</div>}
+      {loading && <Skeleton className="w-full h-[85vh]" />}
       {error && <div className="text-sm text-red-500 dark:text-red-400">{error}</div>}
 
       {!loading && (

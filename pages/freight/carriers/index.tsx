@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import CarrierFmcsaImportForm from "@/components/CarrierFmcsaImportForm";
 import type { PageWithLayout } from "@/types/page";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type CarrierDispatcher = {
   userId: number;
@@ -466,7 +467,7 @@ function CarrierListTab() {
         </select>
       </div>
 
-      {loading && <div className="text-sm text-gray-400 dark:text-gray-300">Loading carriers...</div>}
+      {loading && <Skeleton className="w-full h-[85vh]" />}
 
       {!loading && (
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">

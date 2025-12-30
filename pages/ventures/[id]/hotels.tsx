@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface HotelProperty {
   id: number;
@@ -143,7 +144,7 @@ function VentureHotelsPage() {
   }, [id]);
 
   if (loading) {
-    return <div className="p-4">Loading...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
 
   const ventureId = id ? Number(id) : 0;

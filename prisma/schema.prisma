@@ -1804,6 +1804,7 @@ model ITAsset {
   files            ITAssetFile[]
   history          ITAssetHistory[]
   incidents        ITIncident[]
+  isDeleted        Boolean          @default(false)
 
   @@unique([ventureId, tag])
   @@index([ventureId])

@@ -28,7 +28,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         : 50;
     const skip = (pageNum - 1) * take;
 
-    const where: any = {};
+    const where: any = {
+      isDeleted: false, // Only show non-deleted assets
+    };
 
     const employeeRoles: UserRole[] = ["EMPLOYEE", "CONTRACTOR", "CSR", "DISPATCHER", "CARRIER_TEAM"];
 
