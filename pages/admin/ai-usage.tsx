@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { GetServerSideProps } from "next";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -127,9 +128,7 @@ export default function AiUsagePage() {
           </div>
 
           {loading ? (
-            <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-              Loading AI usage stats...
-            </div>
+          <Skeleton className="w-full h-[85vh]" />
           ) : (
             <div className="p-4">
               {activeTab === "users" && (

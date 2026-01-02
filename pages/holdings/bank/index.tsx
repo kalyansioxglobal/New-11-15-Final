@@ -4,6 +4,7 @@ import { isSuperAdmin } from "@/lib/permissions";
 import type { UserRole } from "@prisma/client";
 import AddBankAccountModal from "@/components/AddBankAccountModal";
 import AddBankSnapshotModal from "@/components/AddBankSnapshotModal";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type BankAccount = {
   id: number;
@@ -198,9 +199,7 @@ export default function BankSnapshotsPage() {
       )}
 
       {loading ? (
-        <div className="flex justify-center p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-        </div>
+       <Skeleton className="w-full h-[85vh]" />
       ) : snapshots.length === 0 ? (
         <div className="text-center py-12 border rounded-xl bg-gray-50">
           <div className="text-gray-400 text-3xl mb-3">🏦</div>

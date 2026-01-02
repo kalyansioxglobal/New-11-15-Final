@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { isSuperAdmin } from "@/lib/permissions";
 import type { UserRole } from "@prisma/client";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Asset = {
   id: number;
@@ -41,6 +42,10 @@ export default function AssetsListPage() {
   const [error, setError] = useState<string | null>(null);
   const [ventureFilter, setVentureFilter] = useState<string>("");
   const [typeFilter, setTypeFilter] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(30);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const { effectiveUser } = useEffectiveUser();
   const role = (effectiveUser?.role || "EMPLOYEE") as UserRole;
@@ -63,6 +68,8 @@ export default function AssetsListPage() {
         const params = new URLSearchParams();
         if (ventureFilter) params.set("ventureId", ventureFilter);
         if (typeFilter) params.set("type", typeFilter);
+        params.set("page", String(page));
+        params.set("pageSize", String(pageSize));
 
         const res = await fetch(`/api/holdings/assets?${params.toString()}`);
         if (!res.ok) throw new Error("Failed to load assets");
@@ -71,6 +78,10 @@ export default function AssetsListPage() {
         if (!cancelled) {
           setAssets(json.assets);
           setSummary(json.summary);
+          if (json.pagination) {
+            setTotalPages(json.pagination.totalPages || 1);
+            setTotalCount(json.pagination.totalCount || 0);
+          }
         }
       } catch (e: any) {
         if (!cancelled) setError(e.message);
@@ -83,6 +94,11 @@ export default function AssetsListPage() {
     return () => {
       cancelled = true;
     };
+  }, [ventureFilter, typeFilter, page, pageSize]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setPage(1);
   }, [ventureFilter, typeFilter]);
 
   const assetTypes = Array.from(new Set(assets.map((a) => a.type)));
@@ -159,9 +175,7 @@ export default function AssetsListPage() {
       )}
 
       {loading ? (
-        <div className="flex justify-center p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-        </div>
+       <Skeleton className="w-full h-[85vh]" />
       ) : assets.length === 0 ? (
         <div className="text-center py-12 border rounded-xl bg-gray-50">
           <div className="text-gray-400 text-3xl mb-3">🏠</div>
@@ -212,6 +226,33 @@ export default function AssetsListPage() {
               )}
             </Link>
           ))}
+        </div>
+      )}
+
+      {!loading && assets.length > 0 && totalPages > 1 && (
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, totalCount)} of {totalCount} assets
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Previous
+            </button>
+            <div className="text-sm text-gray-700 dark:text-gray-300">
+              Page {page} of {totalPages}
+            </div>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
     </div>

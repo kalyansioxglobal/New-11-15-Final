@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface Note {
   id: number;
@@ -179,7 +180,7 @@ function HotelDisputeDetailPage() {
 
   if (loading) {
     return (
-      <div className="text-sm text-gray-500">Loading...</div>
+      <Skeleton className="w-full h-[85vh]" />
     );
   }
 

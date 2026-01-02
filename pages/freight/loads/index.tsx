@@ -55,6 +55,10 @@ export default function LoadsListPage() {
   const [offices, setOffices] = useState<Office[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(50);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const [filters, setFilters] = useState<{
     ventureId?: string;
@@ -89,8 +93,8 @@ export default function LoadsListPage() {
         if (filters.officeId) params.set("officeId", filters.officeId);
         if (filters.status && filters.status !== "all") params.set("status", filters.status);
         if (filters.q) params.set("q", filters.q);
-        params.set("page", "1");
-        params.set("pageSize", "200");
+        params.set("page", String(page));
+        params.set("pageSize", String(pageSize));
 
         const res = await fetch(`/api/freight/loads?${params.toString()}`);
         if (!res.ok) {
@@ -100,6 +104,8 @@ export default function LoadsListPage() {
         const json = await res.json();
         if (!cancelled) {
           setLoads(json.items || []);
+          setTotal(json.total || 0);
+          setTotalPages(json.totalPages || 1);
         }
       } catch (e: any) {
         if (!cancelled) setError(e.message);
@@ -112,11 +118,16 @@ export default function LoadsListPage() {
     return () => {
       cancelled = true;
     };
-  }, [filters]);
+  }, [filters, page, pageSize]);
 
   const filteredOffices = filters.ventureId
     ? offices.filter((o) => o.ventureId === parseInt(filters.ventureId!, 10))
     : offices;
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [filters.ventureId, filters.officeId, filters.status, filters.q]);
 
   return (
     <div className="p-6 space-y-4">
@@ -322,6 +333,38 @@ export default function LoadsListPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {loads.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Showing <span className="font-medium text-gray-700 dark:text-gray-200">{loads.length}</span> of{" "}
+                <span className="font-medium text-gray-700 dark:text-gray-200">{total}</span> loads
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Previous
+                </button>
+                <span className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
+                  Page <span className="font-medium text-gray-700 dark:text-gray-200">{page}</span> of{" "}
+                  <span className="font-medium text-gray-700 dark:text-gray-200">{totalPages}</span>
+                </span>
+                <button
+                  type="button"
+                  disabled={page >= totalPages}
+                  onClick={() => setPage((p) => (p < totalPages ? p + 1 : p))}
+                  className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

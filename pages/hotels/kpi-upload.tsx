@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { PageWithLayout } from "@/types/page";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface HotelOption {
   id: number;
@@ -246,8 +247,8 @@ const KpiUploadPage: PageWithLayout = () => {
         </div>
 
         {loadingUploads ? (
-          <div className="text-xs text-gray-500">Loading uploads…</div>
-        ) : (
+          <Skeleton className="w-full h-[85vh]" />
+      ) : (
           <div className="overflow-auto">
             <table className="min-w-full text-[11px] text-left">
               <thead>

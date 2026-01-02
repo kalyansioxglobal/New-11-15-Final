@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import useSWR from "swr";
 import { VentureDocuments } from "../../../components/VentureDocuments";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface Venture {
   id: string;
@@ -78,7 +79,7 @@ function VentureDetailPage() {
     fetcher
   );
 
-  const { data: approvalsData } = useSWR<ApprovalRecord[]>(
+  const { data: approvalsData } = useSWR<{ items: ApprovalRecord[] } | ApprovalRecord[]>(
     id ? `/api/logistics/customer-approvals?ventureId=${id}` : null,
     fetcher
   );
@@ -106,7 +107,7 @@ function VentureDetailPage() {
   }, [id, router]);
 
   if (loading) {
-    return <div className="p-4">Loading...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
 
   if (!venture) {
@@ -118,10 +119,13 @@ function VentureDetailPage() {
   const summary = people?.summary;
 
   const documents = docsData?.documents ?? [];
-  const approvals = approvalsData ?? [];
+  // Handle approvals data - API returns object with items property
+  const approvals = Array.isArray(approvalsData) 
+    ? approvalsData 
+    : (approvalsData as { items: ApprovalRecord[] })?.items || [];
   const filteredApprovals = statusFilter === "ALL"
     ? approvals
-    : approvals.filter((a) => a.status === statusFilter);
+    : approvals.filter((a: ApprovalRecord) => a.status === statusFilter);
 
   return (
     <div className="space-y-6">
@@ -195,7 +199,7 @@ function VentureDetailPage() {
             </div>
             <Link
               href={`/logistics/ventures/${id}/customer-approval`}
-              className="px-3 py-1.5 text-xs bg-zinc-900 text-white rounded-md hover:bg-zinc-800"
+              className="px-3 py-1.5 text-xs bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 rounded-md"
             >
               + New Approval
             </Link>
@@ -213,7 +217,7 @@ function VentureDetailPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredApprovals.map((approval) => (
+                {filteredApprovals?.map((approval) => (
                   <tr key={approval.id} className="border-b border-zinc-100">
                     <td className="px-4 py-2 font-medium text-zinc-900">
                       {approval.customer.name}

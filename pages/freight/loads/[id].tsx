@@ -361,7 +361,14 @@ export default function LoadDetailPage() {
       if (res.ok) {
         const data = await res.json();
         setLoad((prev) => (prev ? { ...prev, ...data.load } : prev));
+      } else {
+        const errorData = await res.json().catch(() => ({ error: "Failed to update load" }));
+        console.error("Failed to update load:", errorData);
+        alert(errorData.error || errorData.detail || "Failed to update load. Please check the console for details.");
       }
+    } catch (err: any) {
+      console.error("Error updating load:", err);
+      alert(err.message || "An error occurred while updating the load.");
     } finally {
       setUpdating(false);
     }

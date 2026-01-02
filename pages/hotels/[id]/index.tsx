@@ -229,10 +229,10 @@ function HotelKpiPage() {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Hotel Details</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Hotel Details</h1>
       </div>
 
-      <div className="flex gap-2 border-b border-gray-200 dark:border-gray-200 dark:border-slate-700">
+      <div className="flex gap-2 border-b border-gray-200 dark:border-slate-700">
         <button
           onClick={() => setActiveTab("kpi")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition ${
@@ -267,8 +267,8 @@ function HotelKpiPage() {
           </div>
 
           {showKpiForm && (
-            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-6">
-              <h2 className="text-lg font-semibold mb-4">Manual Daily Report Entry</h2>
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6">
+              <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Manual Daily Report Entry</h2>
               
               {message && (
                 <div
@@ -459,7 +459,7 @@ function HotelKpiPage() {
               <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">From</label>
               <input
                 type="date"
-                className="bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm"
+                className="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm text-gray-900 dark:text-white"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
               />
@@ -468,7 +468,7 @@ function HotelKpiPage() {
               <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">To</label>
               <input
                 type="date"
-                className="bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm"
+                className="bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm text-gray-900 dark:text-white"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
               />
@@ -477,27 +477,27 @@ function HotelKpiPage() {
 
           {summary && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
                 <div className="text-xs text-gray-500 dark:text-gray-400">Occupancy</div>
-                <div className={`text-2xl font-semibold ${summary.lowOcc ? "text-red-400" : "text-white"}`}>
+                <div className={`text-2xl font-semibold ${summary.lowOcc ? "text-red-600 dark:text-red-400" : "text-gray-900 dark:text-white"}`}>
                   {summary.occupancyPct.toFixed(1)}%
                 </div>
               </div>
-              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
                 <div className="text-xs text-gray-500 dark:text-gray-400">ADR</div>
-                <div className="text-2xl font-semibold text-white">
+                <div className="text-2xl font-semibold text-gray-900 dark:text-white">
                   ${summary.adr.toFixed(0)}
                 </div>
               </div>
-              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
                 <div className="text-xs text-gray-500 dark:text-gray-400">RevPAR</div>
-                <div className={`text-2xl font-semibold ${summary.lowRevpar ? "text-red-400" : "text-white"}`}>
+                <div className={`text-2xl font-semibold ${summary.lowRevpar ? "text-red-600 dark:text-red-400" : "text-gray-900 dark:text-white"}`}>
                   ${summary.revpar.toFixed(0)}
                 </div>
               </div>
-              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
                 <div className="text-xs text-gray-500 dark:text-gray-400">Total Room Rev</div>
-                <div className="text-2xl font-semibold text-white">
+                <div className="text-2xl font-semibold text-gray-900 dark:text-white">
                   ${summary.totalRoomRevenue.toLocaleString()}
                 </div>
               </div>
@@ -505,10 +505,10 @@ function HotelKpiPage() {
           )}
 
           {rows.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-slate-900/50 border-b border-gray-200 dark:border-slate-700">
+                  <tr className="bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-700">
                     <th className="p-3 text-left text-gray-500 dark:text-gray-400 font-medium">Date</th>
                     <th className="p-3 text-center text-gray-500 dark:text-gray-400 font-medium">Rooms Avail</th>
                     <th className="p-3 text-center text-gray-500 dark:text-gray-400 font-medium">Rooms Sold</th>
@@ -520,7 +520,7 @@ function HotelKpiPage() {
                 </thead>
                 <tbody>
                   {rows.map((r) => (
-                    <tr key={r.id} className="border-b border-gray-200 dark:border-slate-700/50 hover:bg-gray-200 dark:bg-slate-700/30">
+                    <tr key={r.id} className="border-b border-gray-200 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-700/30">
                       <td className="p-3 text-left text-gray-900 dark:text-gray-200">
                         {new Date(r.date).toLocaleDateString()}
                       </td>
@@ -529,7 +529,7 @@ function HotelKpiPage() {
                       <td className="p-3 text-center text-gray-900 dark:text-gray-200">{r.occupancyPct.toFixed(1)}%</td>
                       <td className="p-3 text-center text-gray-900 dark:text-gray-200">${r.adr.toFixed(0)}</td>
                       <td className="p-3 text-center text-gray-900 dark:text-gray-200">${r.revpar.toFixed(0)}</td>
-                      <td className="p-3 text-center text-green-400 font-medium">${r.roomRevenue.toLocaleString()}</td>
+                      <td className="p-3 text-center text-green-600 dark:text-green-400 font-medium">${r.roomRevenue.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -538,9 +538,9 @@ function HotelKpiPage() {
           )}
 
           {rows.length === 0 && !summary && (
-            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-8 text-center">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-8 text-center">
               <p className="text-gray-500 dark:text-gray-400">No KPI data available for this hotel.</p>
-              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Click &quot;Add Daily Report&quot; above to enter data manually.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Click &quot;Add Daily Report&quot; above to enter data manually.</p>
             </div>
           )}
         </div>
@@ -553,18 +553,18 @@ function HotelKpiPage() {
               <div className="flex items-center gap-6">
                 <div>
                   <span className="text-gray-500 dark:text-gray-400 text-sm">Average Rating:</span>
-                  <span className="ml-2 text-xl font-semibold text-yellow-400">
+                  <span className="ml-2 text-xl font-semibold text-yellow-600 dark:text-yellow-400">
                     {reviewSummary.avgRating > 0 ? `${reviewSummary.avgRating.toFixed(1)} ★` : "N/A"}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-500 dark:text-gray-400 text-sm">Total Reviews:</span>
-                  <span className="ml-2 text-xl font-semibold text-white">{reviewSummary.total}</span>
+                  <span className="ml-2 text-xl font-semibold text-gray-900 dark:text-white">{reviewSummary.total}</span>
                 </div>
                 {reviewSummary.unrespondedCount > 0 && (
                   <div>
                     <span className="text-gray-500 dark:text-gray-400 text-sm">Needs Response:</span>
-                    <span className="ml-2 text-xl font-semibold text-orange-400">{reviewSummary.unrespondedCount}</span>
+                    <span className="ml-2 text-xl font-semibold text-orange-600 dark:text-orange-400">{reviewSummary.unrespondedCount}</span>
                   </div>
                 )}
               </div>
@@ -578,8 +578,8 @@ function HotelKpiPage() {
           </div>
 
           {showReviewForm && (
-            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-6">
-              <h2 className="text-lg font-semibold mb-4">Add Guest Review</h2>
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6">
+              <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Add Guest Review</h2>
               
               {reviewMessage && (
                 <div
@@ -700,7 +700,7 @@ function HotelKpiPage() {
           {reviews.length > 0 ? (
             <div className="space-y-4">
               {reviews.map((review) => (
-                <div key={review.id} className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                <div key={review.id} className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <div className="flex items-center gap-3">
@@ -713,12 +713,12 @@ function HotelKpiPage() {
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">by {review.reviewerName}</p>
                       )}
                     </div>
-                    <span className="text-xs text-gray-500 dark:text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       {review.reviewDate ? new Date(review.reviewDate).toLocaleDateString() : "No date"}
                     </span>
                   </div>
                   {review.title && (
-                    <h4 className="font-medium text-white mb-1">{review.title}</h4>
+                    <h4 className="font-medium text-gray-900 dark:text-white mb-1">{review.title}</h4>
                   )}
                   <p className="text-sm text-gray-700 dark:text-gray-300">{review.comment}</p>
                   {review.responseText && (
@@ -733,9 +733,9 @@ function HotelKpiPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-200 dark:border-slate-700 rounded-lg p-8 text-center">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-8 text-center">
               <p className="text-gray-500 dark:text-gray-400">No reviews yet for this hotel.</p>
-              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Click &quot;Add Review&quot; above to enter guest reviews manually.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Click &quot;Add Review&quot; above to enter guest reviews manually.</p>
             </div>
           )}
         </div>

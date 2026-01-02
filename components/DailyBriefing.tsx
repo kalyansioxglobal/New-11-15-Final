@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Skeleton } from './ui/Skeleton';
 
 type Severity = 'INFO' | 'WARN' | 'CRITICAL';
 
@@ -174,7 +175,7 @@ export default function DailyBriefingPanel() {
     return (
       <div className="border border-slate-700 rounded-xl bg-slate-800 p-4 shadow-sm">
         <h2 className="text-sm font-semibold mb-2 text-slate-100">Daily Briefing</h2>
-        <div className="text-xs text-slate-400">Loading briefing...</div>
+       <Skeleton className="w-full h-4" />
       </div>
     );
   }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Load = {
   id: number;
@@ -319,7 +320,7 @@ export default function CarrierDetailPage() {
   };
 
   if (loading) {
-    return <div className="p-6 text-gray-500">Loading carrier...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
 
   if (error || !carrier) {

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTestMode } from '@/contexts/TestModeContext';
 import { useRoleGuard } from '@/hooks/useRoleGuard';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 type Venture = { id: number; name: string; type: string };
 
@@ -133,7 +134,7 @@ export default function LogisticsDashboard() {
   }, [selectedVentureId, loadData, authorized]);
 
   if (roleLoading) {
-    return <div className="p-6 text-gray-500">Loading...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
   if (!authorized) {
     return null;
@@ -309,7 +310,7 @@ export default function LogisticsDashboard() {
                   ) : (
                     <tr>
                       <td colSpan={3} className="px-3 py-4 text-center text-gray-500">
-                        {loading ? 'Loading...' : 'No data yet for last 7 days.'}
+                        {loading ? <Skeleton className="w-full h-4" /> : 'No data yet for last 7 days.'}
                       </td>
                     </tr>
                   )}
@@ -362,7 +363,7 @@ export default function LogisticsDashboard() {
                   ) : (
                     <tr>
                       <td colSpan={7} className="px-3 py-4 text-center text-gray-500">
-                        {loading ? 'Loading...' : 'No office-level data yet.'}
+                        {loading ? <Skeleton className="w-full h-4" /> : 'No office-level data yet.'}
                       </td>
                     </tr>
                   )}
@@ -406,7 +407,7 @@ export default function LogisticsDashboard() {
                   ))
                 ) : (
                   <p className="text-gray-500 mt-1">
-                    {loading ? 'Loading...' : 'No lost loads with reasons tracked yet.'}
+                    {loading ? <Skeleton className="w-full h-4" /> : 'No lost loads with reasons tracked yet.'}
                   </p>
                 )}
               </div>
@@ -426,7 +427,7 @@ export default function LogisticsDashboard() {
                   ))
                 ) : (
                   <li className="text-gray-500">
-                    {loading ? 'Loading...' : 'No detailed lost reasons recorded yet.'}
+                    {loading ? <Skeleton className="w-full h-4" /> : 'No detailed lost reasons recorded yet.'}
                   </li>
                 )}
               </ul>
@@ -467,7 +468,7 @@ export default function LogisticsDashboard() {
                 </div>
               ) : (
                 <p className="text-xs text-gray-500">
-                  {loading ? 'Loading...' : 'Not enough lost loads with categories to generate playbooks yet.'}
+                  {loading ? <Skeleton className="w-full h-4" /> : 'Not enough lost loads with categories to generate playbooks yet.'}
                 </p>
               )}
             </div>

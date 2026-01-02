@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { PageWithLayout } from "@/types/page";
 import type { AuditRunSummary, LatestAuditResponse } from "@/lib/audit/types";
 import { GetServerSideProps } from "next";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -94,7 +95,7 @@ const AuditPage: PageWithLayout = () => {
       )}
 
       {loading && !latestRun && (
-        <div className="text-xs text-slate-400">Loading latest audit…</div>
+       <Skeleton className="w-full h-[85vh]" />
       )}
 
       {latestRun && (

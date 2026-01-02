@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTestMode } from '../../contexts/TestModeContext';
 import { GetServerSideProps } from "next";
+import { Skeleton } from '@/components/ui/Skeleton';
 
 interface CampaignCard {
   id: number;
@@ -154,7 +155,7 @@ export default function BpoDashboardPage() {
         </div>
       ) : loading ? (
         <div className="flex justify-center p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <Skeleton className="w-full h-[85vh]" />
         </div>
       ) : (
         <>

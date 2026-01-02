@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Venture = { id: number; name: string; type: string };
 
@@ -278,7 +279,7 @@ function FreightSalesKpiPage() {
 
   if (loading) {
     return (
-      <div className="p-4">Loading ventures...</div>
+      <Skeleton className="w-full h-[85vh]" />
     );
   }
 
@@ -382,7 +383,7 @@ function FreightSalesKpiPage() {
         </div>
       )}
 
-      {loadingKpi && <div className="text-sm text-gray-500">Loading KPIs...</div>}
+      {loadingKpi && <Skeleton className="w-full h-8" />}
 
       {data && (
         <div className="space-y-4">

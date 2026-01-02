@@ -16,7 +16,7 @@ import {
   TooltipProps,
 } from "recharts";
 
-import { chartTheme } from "./ChartTheme";
+import { getChartTheme } from "./ChartTheme";
 import { formatMetricValue } from "@/lib/analytics/formatters";
 import type { MetricFormat } from "@/lib/analytics/metrics";
 
@@ -42,17 +42,19 @@ const CustomTooltip: React.FC<
 
   const main = payload.find((p: any) => p.dataKey === "value");
   const comparison = payload.find((p: any) => p.dataKey === "comparisonValue");
+  const theme = getChartTheme();
 
   return (
     <div
       style={{
-        background: chartTheme.tooltipBg,
-        border: `1px solid ${chartTheme.tooltipBorder}`,
+        background: theme.tooltipBg,
+        border: `1px solid ${theme.tooltipBorder}`,
         borderRadius: 12,
         padding: "8px 10px",
         fontSize: 11,
-        color: chartTheme.tooltipText,
+        color: theme.tooltipText,
         minWidth: 160,
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
       }}
     >
       <div style={{ opacity: 0.7, marginBottom: 4 }}>{label}</div>
@@ -92,6 +94,28 @@ export const BaseTimeSeriesChart: React.FC<BaseTimeSeriesChartProps> = ({
 }) => {
   const ChartImpl =
     chartType === "line" ? LineChart : chartType === "bar" ? BarChart : AreaChart;
+  
+  // Use state to track theme and update when it changes
+  const [theme, setTheme] = React.useState(getChartTheme());
+  
+  // Generate unique gradient ID for this chart instance
+  const gradientId = React.useMemo(() => `primaryArea-${Math.random().toString(36).substr(2, 9)}`, []);
+  
+  React.useEffect(() => {
+    const updateTheme = () => setTheme(getChartTheme());
+    
+    // Update theme on mount and when DOM changes (theme class changes)
+    updateTheme();
+    
+    // Use MutationObserver to watch for theme class changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <ResponsiveContainer width="100%" height={280} minHeight={200}>
@@ -101,20 +125,20 @@ export const BaseTimeSeriesChart: React.FC<BaseTimeSeriesChartProps> = ({
       >
         <CartesianGrid
           strokeDasharray="3 3"
-          stroke={chartTheme.grid}
+          stroke={theme.grid}
           vertical={false}
         />
         <XAxis
           dataKey="date"
-          tick={{ fill: chartTheme.axis, fontSize: 11 }}
+          tick={{ fill: theme.axis, fontSize: 11 }}
           tickLine={false}
-          axisLine={{ stroke: chartTheme.axis }}
+          axisLine={{ stroke: theme.axis }}
           minTickGap={20}
         />
         <YAxis
-          tick={{ fill: chartTheme.axis, fontSize: 11 }}
+          tick={{ fill: theme.axis, fontSize: 11 }}
           tickLine={false}
-          axisLine={{ stroke: chartTheme.axis }}
+          axisLine={{ stroke: theme.axis }}
           tickFormatter={(v) => formatMetricValue(v as number, format)}
           label={
             yAxisLabel
@@ -123,7 +147,7 @@ export const BaseTimeSeriesChart: React.FC<BaseTimeSeriesChartProps> = ({
                   angle: -90,
                   position: "insideLeft",
                   style: {
-                    fill: chartTheme.axisLabel,
+                    fill: theme.axisLabel,
                     fontSize: 11,
                   },
                 }
@@ -132,7 +156,7 @@ export const BaseTimeSeriesChart: React.FC<BaseTimeSeriesChartProps> = ({
         />
         <Tooltip
           content={<CustomTooltip format={format} />}
-          cursor={{ stroke: chartTheme.muted, strokeWidth: 1 }}
+          cursor={{ stroke: theme.muted, strokeWidth: 1 }}
         />
 
         {chartType === "line" && (
@@ -140,7 +164,7 @@ export const BaseTimeSeriesChart: React.FC<BaseTimeSeriesChartProps> = ({
             <Line
               type="monotone"
               dataKey="value"
-              stroke={chartTheme.primary}
+              stroke={theme.primary}
               strokeWidth={2}
               dot={false}
               activeDot={{ r: 4 }}
@@ -149,7 +173,7 @@ export const BaseTimeSeriesChart: React.FC<BaseTimeSeriesChartProps> = ({
               <Line
                 type="monotone"
                 dataKey="comparisonValue"
-                stroke={chartTheme.secondary}
+                stroke={theme.secondary}
                 strokeWidth={1.5}
                 dot={false}
                 strokeDasharray="4 4"
@@ -161,24 +185,24 @@ export const BaseTimeSeriesChart: React.FC<BaseTimeSeriesChartProps> = ({
         {chartType === "area" && (
           <>
             <defs>
-              <linearGradient id="primaryArea" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={chartTheme.primary} stopOpacity={0.7} />
-                <stop offset="100%" stopColor={chartTheme.primary} stopOpacity={0} />
+              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={theme.primary} stopOpacity={0.7} />
+                <stop offset="100%" stopColor={theme.primary} stopOpacity={0} />
               </linearGradient>
             </defs>
             <Area
               type="monotone"
               dataKey="value"
-              stroke={chartTheme.primary}
+              stroke={theme.primary}
               strokeWidth={2}
-              fill="url(#primaryArea)"
+              fill={`url(#${gradientId})`}
               dot={false}
             />
             {showComparison && (
               <Line
                 type="monotone"
                 dataKey="comparisonValue"
-                stroke={chartTheme.secondary}
+                stroke={theme.secondary}
                 strokeWidth={1.5}
                 dot={false}
                 strokeDasharray="4 4"
@@ -191,13 +215,13 @@ export const BaseTimeSeriesChart: React.FC<BaseTimeSeriesChartProps> = ({
           <>
             <Bar
               dataKey="value"
-              fill={chartTheme.primary}
+              fill={theme.primary}
               radius={[6, 6, 0, 0]}
             />
             {showComparison && (
               <Bar
                 dataKey="comparisonValue"
-                fill={chartTheme.secondary}
+                fill={theme.secondary}
                 radius={[6, 6, 0, 0]}
               />
             )}

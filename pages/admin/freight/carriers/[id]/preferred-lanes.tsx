@@ -118,7 +118,7 @@ export default function CarrierPreferredLanesPage({ carrier, lanes: initialLanes
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white p-6 rounded w-full max-w-md">
             <h3 className="text-lg font-semibold mb-3">Create Preferred Lane</h3>
             <form onSubmit={handleCreate} className="space-y-3">

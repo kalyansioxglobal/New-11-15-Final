@@ -2,9 +2,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import formidable from "formidable";
-import fs from "fs";
-import path from "path";
+import Busboy from "busboy";
+import { v4 as uuidv4 } from "uuid";
+import { createStorageClient } from "@/lib/storage";
 
 export const config = {
   api: {
@@ -12,12 +12,75 @@ export const config = {
   },
 };
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "feedback");
+// Create a storage client specifically for feedback files
+const FEEDBACK_BUCKET = "FeedbackFiles";
+const feedbackStorageClient = createStorageClient(FEEDBACK_BUCKET);
 
-async function ensureUploadDir() {
-  if (!fs.existsSync(UPLOAD_DIR)) {
-    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-  }
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILES = 5;
+
+// Allowed file types for feedback attachments
+const ALLOWED_MIME_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "video/mp4",
+  "video/mpeg",
+  "video/quicktime",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "text/plain",
+];
+
+function isValidFileType(mimeType: string): boolean {
+  return ALLOWED_MIME_TYPES.includes(mimeType.toLowerCase());
+}
+
+function parseForm(req: NextApiRequest): Promise<{
+  fields: Record<string, string>;
+  files: Array<{ buffer: Buffer; filename: string; mimeType: string; size: number }>;
+}> {
+  return new Promise((resolve, reject) => {
+    const busboy = Busboy({ headers: req.headers });
+    const fields: Record<string, string> = {};
+    const files: Array<{ buffer: Buffer; filename: string; mimeType: string; size: number }> = [];
+
+    busboy.on("file", (name, file, info) => {
+      if (name === "attachments" && files.length < MAX_FILES) {
+        const filename = info.filename;
+        const mimeType = info.mimeType;
+        const chunks: Buffer[] = [];
+
+        file.on("data", (data) => chunks.push(data));
+        file.on("end", () => {
+          const buffer = Buffer.concat(chunks);
+          if (buffer.length > 0 && buffer.length <= MAX_FILE_SIZE && isValidFileType(mimeType)) {
+            files.push({
+              buffer,
+              filename,
+              mimeType,
+              size: buffer.length,
+            });
+          }
+        });
+      } else {
+        file.resume(); // Skip invalid files
+      }
+    });
+
+    busboy.on("field", (name, val) => {
+      fields[name] = val;
+    });
+
+    busboy.on("finish", () => {
+      resolve({ fields, files });
+    });
+
+    busboy.on("error", reject);
+    req.pipe(busboy);
+  });
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -27,33 +90,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    await ensureUploadDir();
-
     const session = await getServerSession(req, res, authOptions);
     const userId = session?.user?.id ? Number(session.user.id) : null;
 
-    const form = formidable({
-      uploadDir: UPLOAD_DIR,
-      keepExtensions: true,
-      maxFileSize: 10 * 1024 * 1024,
-      maxFiles: 5,
-      filename: (_name, _ext, part) => {
-        const timestamp = Date.now();
-        const random = Math.random().toString(36).substring(2, 8);
-        const ext = path.extname(part.originalFilename || "");
-        return `${timestamp}-${random}${ext}`;
-      },
-    });
+    const { fields, files } = await parseForm(req);
 
-    const [fields, files] = await form.parse(req);
-
-    const type = (fields.type?.[0] || "FEEDBACK") as string;
-    const priority = (fields.priority?.[0] || "NORMAL") as string;
-    const subject = fields.subject?.[0] || "";
-    const description = fields.description?.[0] || "";
-    const email = fields.email?.[0] || null;
-    const pageUrl = fields.pageUrl?.[0] || null;
-    const browserInfo = fields.browserInfo?.[0] || null;
+    const type = fields.type || "FEEDBACK";
+    const priority = fields.priority || "NORMAL";
+    const subject = fields.subject || "";
+    const description = fields.description || "";
+    const email = fields.email || null;
+    const pageUrl = fields.pageUrl || null;
+    const browserInfo = fields.browserInfo || null;
 
     if (!subject || !description) {
       return res.status(400).json({ error: "Subject and description are required" });
@@ -69,20 +117,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: "Invalid priority" });
     }
 
-    const attachmentFiles = files.attachments || [];
+    // Upload files to Supabase storage
     const attachmentPaths: string[] = [];
 
-    for (const file of attachmentFiles) {
-      if (Array.isArray(file)) {
-        for (const f of file) {
-          if (f.filepath) {
-            const relativePath = `/uploads/feedback/${path.basename(f.filepath)}`;
-            attachmentPaths.push(relativePath);
-          }
-        }
-      } else if (file.filepath) {
-        const relativePath = `/uploads/feedback/${path.basename(file.filepath)}`;
-        attachmentPaths.push(relativePath);
+    for (const file of files.slice(0, MAX_FILES)) {
+      try {
+        const ext = file.filename.includes(".")
+          ? file.filename.split(".").pop()
+          : "bin";
+        const timestamp = Date.now();
+        const random = uuidv4().substring(0, 8);
+        const storageKey = `feedback-${timestamp}-${random}.${ext}`;
+
+        const uploadResult = await feedbackStorageClient.upload(
+          storageKey,
+          file.buffer,
+          file.mimeType
+        );
+
+        // Store the path in the format: bucket/path
+        attachmentPaths.push(`${uploadResult.bucket}/${uploadResult.path}`);
+      } catch (err) {
+        console.error("Error uploading file:", err);
+        // Continue with other files even if one fails
       }
     }
 

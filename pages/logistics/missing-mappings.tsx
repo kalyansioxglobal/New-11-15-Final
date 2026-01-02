@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -87,7 +88,7 @@ export default function MissingMappingsPage() {
           </span>
         </div>
 
-        {loading && <div>Loading…</div>}
+        {loading && <Skeleton className="w-full h-[85vh]" />}
         {!loading && !data && <div className="text-red-500">Failed to load data.</div>}
         {!loading && data && (
           <div className="space-y-10">
@@ -113,10 +114,10 @@ export default function MissingMappingsPage() {
                     <tbody>
                       {data.usersWithoutMapping.map((u) => (
                         <tr key={u.id} className="border-t border-gray-800">
-                          <td className="px-4 py-2">{u.name}</td>
-                          <td className="px-4 py-2">{u.email}</td>
+                          <td className="px-4 py-2">{u.name || "-"}</td>
+                          <td className="px-4 py-2">{u.email || "-"}</td>
                           <td className="px-4 py-2">{u.phone || "-"}</td>
-                          <td className="px-4 py-2">{u.role}</td>
+                          <td className="px-4 py-2">{u.role || "-"}</td>
                         </tr>
                       ))}
                     </tbody>

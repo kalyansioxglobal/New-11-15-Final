@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { GetServerSideProps } from "next";
 import { PageWithLayout } from "@/types/page";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -169,7 +170,7 @@ const MyIncentivesPage: PageWithLayout = () => {
           )}
         </div>
         {gamificationLoading ? (
-          <div className="text-xs text-gray-500">Loading gamification…</div>
+        <Skeleton className="w-full h-4" />
         ) : gamification ? (
           <>
             <div className="flex flex-wrap gap-6 text-sm">
@@ -355,7 +356,7 @@ const MyIncentivesPage: PageWithLayout = () => {
           Daily Incentives
         </div>
         {loading ? (
-          <div className="text-xs text-gray-500">Loading…</div>
+<Skeleton className="w-full h-4" />
         ) : (
           <div className="overflow-auto">
             <table className="min-w-full text-[11px] text-left">

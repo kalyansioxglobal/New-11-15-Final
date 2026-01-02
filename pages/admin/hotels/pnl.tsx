@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import toast from 'react-hot-toast';
 import { getServerSidePropsForPnlPage } from '@/lib/hotels/pnlPageServer';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 interface PnlMonth {
   month: number;
@@ -242,7 +243,7 @@ export default function AdminPnlPage({ hotels, initialHotelId, initialYear }: Ad
               disabled={!hotelId || loading}
               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium"
             >
-              {loading ? 'Loading...' : 'Load Data'}
+              {loading ? <Skeleton className="w-20 h-8" /> : 'Load Data'}
             </button>
           </div>
 

@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type ChurnStatus = "ACTIVE" | "AT_RISK" | "CHURNED" | "REACTIVATED" | "NEW";
 type RiskLevel = "low" | "medium" | "high" | "critical";
@@ -344,7 +345,7 @@ export default function ShipperChurnTab() {
       {activeTab === "SUMMARY" && (
         <div>
           {summaryLoading ? (
-            <div className="text-center py-8 text-gray-500">Loading...</div>
+            <Skeleton className="w-full h-[85vh]" />
           ) : summaryError ? (
             <div className="text-center py-8 text-red-500">{summaryError}</div>
           ) : summary ? (
@@ -429,7 +430,7 @@ export default function ShipperChurnTab() {
             </p>
           </div>
           {highRiskLoading ? (
-            <div className="text-center py-8 text-gray-500">Loading...</div>
+            <Skeleton className="w-full h-[85vh]" />
           ) : highRiskShippers.length === 0 ? (
             <div className="text-center py-8 text-gray-500">No high-risk shippers found</div>
           ) : (
@@ -475,7 +476,7 @@ export default function ShipperChurnTab() {
             </p>
           </div>
           {atRiskLoading ? (
-            <div className="text-center py-8 text-gray-500">Loading...</div>
+           <Skeleton className="w-full h-[85vh]" />
           ) : atRiskShippers.length === 0 ? (
             <div className="text-center py-8 text-gray-500">No at-risk shippers found</div>
           ) : (
@@ -521,7 +522,7 @@ export default function ShipperChurnTab() {
             </p>
           </div>
           {churnedLoading ? (
-            <div className="text-center py-8 text-gray-500">Loading...</div>
+           <Skeleton className="w-full h-[85vh]" />
           ) : churnedShippers.length === 0 ? (
             <div className="text-center py-8 text-gray-500">No churned shippers found</div>
           ) : (

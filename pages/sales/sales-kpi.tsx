@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -283,7 +284,7 @@ function SaasSalesKpiPage() {
   }
 
   if (loading) {
-    return <div className="p-4">Loading ventures...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
 
   if (!ventures.length) {

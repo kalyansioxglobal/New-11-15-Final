@@ -96,3 +96,8 @@ const defaultBucket = process.env.SUPABASE_BUCKET_NAME || BUCKET_NAME;
 export const storageClient: StorageClient = new SupabaseStorageClient(
   defaultBucket
 );
+
+// Helper function to create a storage client with a custom bucket
+export function createStorageClient(bucket: string): StorageClient {
+  return new SupabaseStorageClient(bucket);
+}

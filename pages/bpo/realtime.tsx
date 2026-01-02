@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next';
 import { useState, useEffect, useCallback } from 'react';
 import { getEffectiveUser } from '@/lib/effectiveUser';
 import type { PageWithLayout } from '@/types/page';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 type AgentStats = {
   id: number;
@@ -171,8 +172,8 @@ function BpoRealtimePage() {
       {error && <div className="p-4 bg-red-50 text-red-600 rounded-lg">{error}</div>}
 
       {loading && !data && (
-        <div className="text-center py-12 text-gray-500">Loading real-time data...</div>
-      )}
+        <Skeleton className='w-full h-[85vh]' />
+     )}
 
       {data && (
         <>
