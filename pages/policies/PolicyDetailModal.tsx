@@ -3,6 +3,7 @@ import { useEffectiveUser } from '@/hooks/useEffectiveUser';
 import { canEditPolicies } from '@/lib/permissions';
 import type { UserRole } from '@prisma/client';
 import { Skeleton } from '@/components/ui/Skeleton';
+import toast from 'react-hot-toast';
 
 type PolicyFile = {
   id: number;
@@ -127,6 +128,9 @@ export default function PolicyDetailModal({ policyId, onClose, onSave }: PolicyD
         throw new Error(data.error || 'Save failed');
       }
 
+      // Show success toast
+      toast.success('Policy updated successfully');
+
       setSaving(false);
 
       // Call onSave callback if provided (to refresh the list)
@@ -137,7 +141,9 @@ export default function PolicyDetailModal({ policyId, onClose, onSave }: PolicyD
       // Close modal immediately after successful save
       onClose();
     } catch (e: any) {
-      setError(e.message || 'Save failed');
+      const errorMessage = e.message || 'Save failed';
+      setError(errorMessage);
+      toast.error(errorMessage);
       setSaving(false);
     }
   }

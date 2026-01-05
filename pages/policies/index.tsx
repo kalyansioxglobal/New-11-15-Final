@@ -5,6 +5,7 @@ import { canEditPolicies } from '@/lib/permissions';
 import type { UserRole } from '@prisma/client';
 import PolicyDetailModal from './PolicyDetailModal';
 import { Skeleton } from '@/components/ui/Skeleton';
+import toast from 'react-hot-toast';
 
 type PolicyRow = {
   id: number;
@@ -70,7 +71,9 @@ function PoliciesPage() {
         pageSize: json.pageSize,
       });
     } catch (e: any) {
-      setError(e.message || 'Failed to load policies');
+      const errorMessage = e.message || 'Failed to load policies';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -110,6 +113,9 @@ function PoliciesPage() {
         throw new Error(data.error || 'Failed to delete policy');
       }
 
+      // Show success toast before closing modal
+      toast.success('Policy deleted successfully');
+
       // Set loading state immediately before closing modal
       setLoading(true);
       
@@ -140,7 +146,9 @@ function PoliciesPage() {
         await loadPolicies();
       }
     } catch (e: any) {
-      setDeleteError(e.message || 'Failed to delete policy');
+      const errorMessage = e.message || 'Failed to delete policy';
+      setDeleteError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setDeleting(false);
     }

@@ -76,7 +76,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             fileName: file.fileName,
             mimeType: file.mimeType,
             sizeBytes: file.sizeBytes,
-            url: null,
+            url: null as string | null,
             error: 'Failed to generate URL',
             createdAt: file.createdAt,
             uploadedBy: file.uploadedBy,

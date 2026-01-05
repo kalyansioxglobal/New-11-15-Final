@@ -1,67 +1,39 @@
-import React, { useState } from "react";
-import { GetServerSideProps } from "next";
-import type { UserRole } from "@/lib/permissions";
-import prisma from "../../lib/prisma";
-import toast from "react-hot-toast";
+import { useEffect, useState, useCallback } from 'react';
+import { GetServerSideProps } from 'next';
+import { getEffectiveUser } from '@/lib/effectiveUser';
+import { canEditPolicies } from '@/lib/permissions';
+import { useEffectiveUser } from '@/hooks/useEffectiveUser';
+import type { UserRole } from '@prisma/client';
+import PolicyDetailModal from '../policies/PolicyDetailModal';
+import NewPolicyModal from '../policies/NewPolicyModal';
+import { Skeleton } from '@/components/ui/Skeleton';
+import toast from 'react-hot-toast';
 
-// Lightweight local copies of Policy-related types to avoid tight coupling
-// to the Prisma client type definitions.
-type PolicyType = "INSURANCE" | "LEASE" | "CONTRACT" | "LICENSE" | "PERMIT" | "OTHER";
-
-type PolicyStatus = "ACTIVE" | "PENDING" | "EXPIRED" | "CANCELLED";
-
-type Venture = {
+type PolicyRow = {
   id: number;
   name: string;
-};
-
-type Office = {
-  id: number;
-  name: string;
-  ventureId: number | null;
-};
-
-type User = {
-  id: number;
-  fullName: string | null;
-};
-
-type Policy = {
-  id: number;
-  ventureId: number;
-  officeId: number | null;
-  name: string;
-  type: PolicyType;
+  type: string;
   provider: string | null;
   policyNo: string | null;
+  status: string;
   startDate: string | null;
   endDate: string | null;
-  status: PolicyStatus;
-  fileUrl: string | null;
-  notes: string | null;
+  ventureName: string | null;
+  officeName: string | null;
+  isExpiringSoon: boolean;
+  isExpired: boolean;
+  daysToExpiry: number | null;
 };
 
-import { useRouter } from "next/router";
-import { useTestMode } from "@/contexts/TestModeContext";
-import { getEffectiveUser } from "@/lib/effectiveUser";
-import { canEditPolicies } from "@/lib/permissions";
-import { useEffectiveUser } from "@/hooks/useEffectiveUser";
-
-type PolicyWithRelations = Policy & {
-  venture: Venture;
-  office: Office | null;
-  creator: User | null;
+type PaginatedResponse = {
+  items: PolicyRow[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
 };
 
-type Props = {
-  policies: PolicyWithRelations[];
-  ventures: Venture[];
-  offices: Office[];
-  policyTypes: PolicyType[];
-  statusOptions: PolicyStatus[];
-};
-
-export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { req, res } = ctx;
   const user = await getEffectiveUser(req, res);
 
@@ -69,496 +41,527 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
     return { redirect: { destination: '/policies', permanent: false } };
   }
 
-  const [policies, ventures, offices] = await Promise.all([
-    prisma.policy.findMany({
-      include: { venture: true, office: true, creator: true },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.venture.findMany({
-      where: { isActive: true },
-      orderBy: { name: "asc" },
-    }),
-    prisma.office.findMany({
-      where: { isActive: true },
-      orderBy: { name: "asc" },
-    }),
-  ]);
-
-  const policyTypes: PolicyType[] = [
-    "INSURANCE",
-    "LEASE",
-    "CONTRACT",
-    "LICENSE",
-    "PERMIT",
-    "OTHER",
-  ];
-
-  const statusOptions: PolicyStatus[] = [
-    "ACTIVE",
-    "PENDING",
-    "EXPIRED",
-    "CANCELLED",
-  ];
-
-  return {
-    props: {
-      policies: JSON.parse(JSON.stringify(policies)),
-      ventures: JSON.parse(JSON.stringify(ventures)),
-      offices: JSON.parse(JSON.stringify(offices)),
-      policyTypes,
-      statusOptions,
-    },
-  };
+  return { props: {} };
 };
 
-export default function AdminPolicies({
-  policies,
-  ventures,
-  offices,
-  policyTypes,
-  statusOptions,
-}: Props) {
-  const router = useRouter();
-  const { testMode } = useTestMode();
+export default function AdminPolicies() {
+  const [policies, setPolicies] = useState<PolicyRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedPolicyId, setSelectedPolicyId] = useState<number | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [viewDeleted, setViewDeleted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<{ total: number; totalPages: number; page: number; pageSize: number } | null>(null);
+  const [deletePolicyId, setDeletePolicyId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
   const { effectiveUser } = useEffectiveUser();
   const role = (effectiveUser?.role || 'EMPLOYEE') as UserRole;
-  const canEdit = canEditPolicies(role);
+  const allowCreate = canEditPolicies(role);
+  const allowDelete = canEditPolicies(role);
 
-  const [ventureId, setVentureId] = useState<number | "">("");
-  const [officeId, setOfficeId] = useState<number | "">("");
-  const [name, setName] = useState("");
-  const [type, setType] = useState<PolicyType>("INSURANCE");
-  const [provider, setProvider] = useState("");
-  const [policyNo, setPolicyNo] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [status, setStatus] = useState<PolicyStatus>("ACTIVE");
-  const [fileUrl, setFileUrl] = useState("");
-  const [notes, setNotes] = useState("");
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const loadPolicies = useCallback(async () => {
     setLoading(true);
-
+    setError(null);
     try {
-      const data: any = {
-        ventureId: Number(ventureId),
-        officeId: officeId === "" ? null : Number(officeId),
-        name,
-        type,
-        provider: provider || null,
-        policyNo: policyNo || null,
-        startDate: startDate || null,
-        endDate: endDate || null,
-        status,
-        fileUrl: fileUrl || null,
-        notes: notes || null,
-      };
-
-      if (testMode) data.isTest = true;
-
-      const res = await fetch("/api/policies", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        pageSize: '20',
+        ...(viewDeleted && { deletedOnly: 'true' }),
       });
-
+      const res = await fetch(`/api/policies?${params}`);
       if (!res.ok) {
-        const result = await res.json().catch(() => ({}));
-        throw new Error(result.error || `Request failed with ${res.status}`);
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to load policies');
       }
-
-      setName("");
-      setProvider("");
-      setPolicyNo("");
-      setStartDate("");
-      setEndDate("");
-      setFileUrl("");
-      setNotes("");
-      setVentureId("");
-      setOfficeId("");
-      setType("INSURANCE");
-      setStatus("ACTIVE");
-      setShowCreateModal(false);
-
-      await router.replace(router.asPath);
-      toast.success("Policy created successfully");
-    } catch (err: any) {
-      setError(err.message || "Failed to create policy");
+      const json: PaginatedResponse = await res.json();
+      setPolicies(json.items);
+      setPagination({
+        total: json.total,
+        totalPages: json.totalPages,
+        page: json.page,
+        pageSize: json.pageSize,
+      });
+    } catch (e: any) {
+      const errorMessage = e.message || 'Failed to load policies';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, viewDeleted]);
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Delete this policy?")) return;
-    try {
-      const res = await fetch(`/api/admin/policies?id=${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete");
-      await router.replace(router.asPath);
-      toast.success("Policy deleted successfully");
-    } catch (err: any) {
-      toast.error(err.message || "Error deleting policy");
-    }
-  };
+  useEffect(() => {
+    loadPolicies();
+  }, [loadPolicies]);
 
-  const handleStatusChange = async (id: number, newStatus: PolicyStatus) => {
+  function handleRefreshPolicies() {
+    // Reload policies list after save/delete
+    loadPolicies();
+  }
+
+  function handleViewToggle(isDeleted: boolean) {
+    setViewDeleted(isDeleted);
+    setCurrentPage(1); // Reset to first page when switching views
+  }
+
+  async function handleDelete() {
+    if (!deletePolicyId || !allowDelete) return;
+    
+    setDeleting(true);
+    setDeleteError(null);
+    
     try {
-      const res = await fetch("/api/admin/policies", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, status: newStatus }),
+      const res = await fetch(`/api/policies/${deletePolicyId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isDeleted: true,
+        }),
       });
-      if (!res.ok) throw new Error("Failed to update status");
-      await router.replace(router.asPath);
-      toast.success("Policy status updated");
-    } catch (err: any) {
-      toast.error(err.message || "Error updating policy");
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to delete policy');
+      }
+
+      // Show success toast before closing modal
+      toast.success('Policy deleted successfully');
+      setLoading(false);
+      setDeletePolicyId(null);
+      
+      // Refresh list - check if we need to adjust page first
+      const checkPageParams = new URLSearchParams({
+        page: currentPage.toString(),
+        pageSize: '20',
+        ...(viewDeleted && { deletedOnly: 'true' }),
+      });
+      const checkRes = await fetch(`/api/policies?${checkPageParams}`);
+      
+      if (checkRes.ok) {
+        const checkJson: PaginatedResponse = await checkRes.json();
+        
+        // If current page is empty and we're not on page 1, go back one page
+        // This will trigger useEffect to reload with the new page and show loading
+        if (checkJson.items.length === 0 && currentPage > 1 && checkJson.totalPages > 0) {
+          setCurrentPage(currentPage - 1);
+        } else {
+          // Reload using loadPolicies to show loading state
+          await loadPolicies();
+        }
+      } else {
+        // If check fails, reload using loadPolicies
+        await loadPolicies();
+      }
+    } catch (e: any) {
+      const errorMessage = e.message || 'Failed to delete policy';
+      setDeleteError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setDeleting(false);
     }
+  }
+
+  const statusColors: Record<string, string> = {
+    ACTIVE: 'bg-green-100 text-green-800',
+    PENDING: 'bg-yellow-100 text-yellow-800',
+    EXPIRED: 'bg-red-100 text-red-800',
+    CANCELLED: 'bg-gray-100 text-gray-800',
   };
 
-  const getStatusColor = (s: PolicyStatus) => {
-    switch (s) {
-      case "ACTIVE": return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400";
-      case "PENDING": return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400";
-      case "EXPIRED": return "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400";
-      case "CANCELLED": return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
-      default: return "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
-    }
-  };
-
-  const resetForm = () => {
-    setName("");
-    setProvider("");
-    setPolicyNo("");
-    setStartDate("");
-    setEndDate("");
-    setFileUrl("");
-    setNotes("");
-    setVentureId("");
-    setOfficeId("");
-    setType("INSURANCE");
-    setStatus("ACTIVE");
-    setError(null);
+  const getTypeIcon = (type: string) => {
+    const icons: Record<string, string> = {
+      INSURANCE: '🛡️',
+      LEASE: '📋',
+      CONTRACT: '📄',
+      LICENSE: '📜',
+      PERMIT: '✅',
+      WARRANTY: '🔧',
+      OTHER: '📌',
+    };
+    return icons[type] || '📌';
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-6 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Policies</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage company policies and documents</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Policies (Admin)</h1>
+          <p className="text-sm text-gray-500">
+            Manage insurance policies, leases, contracts, and licenses
+          </p>
         </div>
-        {canEdit && (
+        {allowCreate && !viewDeleted && (
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow-sm hover:shadow"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
           >
-            + Create Policy
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            New Policy
           </button>
         )}
       </div>
 
-      {!canEdit && (
-        <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-700 dark:text-yellow-400 text-sm">
-          You don&apos;t have permission to create or edit policies.
+      {/* View Toggle Tabs */}
+      <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg w-fit">
+        <button
+          onClick={() => handleViewToggle(false)}
+          className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+            !viewDeleted
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Active Policies
+        </button>
+        <button
+          onClick={() => handleViewToggle(true)}
+          className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+            viewDeleted
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          Deleted Policies
+        </button>
+      </div>
+
+      {loading && <Skeleton className="w-full h-[85vh]" />}
+      {error && <div className="text-sm text-red-500 mb-2">{error}</div>}
+
+      {!loading && policies.length === 0 && (
+        <div className="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl bg-gradient-to-br from-gray-50 to-white">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
+            <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No Policies Found</h3>
+          <p className="text-sm text-gray-500 max-w-sm mx-auto mb-6">
+            {viewDeleted
+              ? 'No deleted policies found.'
+              : 'Get started by creating your first policy document.'}
+          </p>
+          {allowCreate && !viewDeleted && (
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Create Your First Policy
+            </button>
+          )}
         </div>
+      )}
+
+      {!loading && policies.length > 0 && (
+        <div className="overflow-x-auto bg-white rounded-xl border border-gray-200 shadow-sm">
+          <table className="w-full text-sm">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <tr>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Name</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Type</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Provider</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700">Venture</th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700">Status</th>
+                <th className="px-4 py-3 text-center font-semibold text-gray-700">End Date</th>
+                <th className="px-4 py-3 text-right font-semibold text-gray-700">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {policies.map((p) => (
+                <tr
+                  key={p.id}
+                  className={`hover:bg-blue-50/50 transition-colors ${
+                    p.isExpired
+                      ? 'bg-red-50/30'
+                      : p.isExpiringSoon
+                      ? 'bg-amber-50/30'
+                      : ''
+                  }`}
+                >
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{getTypeIcon(p.type)}</span>
+                      <span className="font-semibold text-gray-900">{p.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">{p.type}</td>
+                  <td className="px-4 py-3 text-gray-600">{p.provider || '-'}</td>
+                  <td className="px-4 py-3 text-gray-600">{p.ventureName || '-'}</td>
+                  <td className="px-4 py-3 text-center">
+                    <span
+                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
+                        statusColors[p.status] || 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      {p.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    {p.endDate ? (
+                      <div className="flex items-center justify-center gap-1.5">
+                        {(p.isExpired || p.isExpiringSoon) && (
+                          <svg
+                            className={`w-4 h-4 flex-shrink-0 ${
+                              p.isExpired ? 'text-red-500' : 'text-amber-500'
+                            }`}
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-label={p.isExpired ? 'Expired' : 'Expiring soon'}
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        )}
+                        <span
+                          className={`text-sm ${
+                            p.isExpired
+                              ? 'text-red-700 font-semibold'
+                              : p.isExpiringSoon
+                              ? 'text-amber-700 font-medium'
+                              : 'text-gray-600'
+                          }`}
+                        >
+                          {new Date(p.endDate).toLocaleDateString()}
+                          {p.daysToExpiry !== null && p.daysToExpiry > 0 && (
+                            <span className="text-gray-400 ml-1">({p.daysToExpiry}d)</span>
+                          )}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => setSelectedPolicyId(p.id)}
+                        className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        View
+                      </button>
+                      {!viewDeleted && allowDelete && (
+                        <button
+                          onClick={() => setDeletePolicyId(p.id)}
+                          className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete policy"
+                          aria-label="Delete policy"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {!loading && pagination && pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
+          <div className="text-sm text-gray-600">
+            Showing <span className="font-semibold text-gray-900">{(pagination.page - 1) * pagination.pageSize + 1}</span> to{' '}
+            <span className="font-semibold text-gray-900">{Math.min(pagination.page * pagination.pageSize, pagination.total)}</span> of{' '}
+            <span className="font-semibold text-gray-900">{pagination.total}</span> policies
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Previous
+            </button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                .filter((page) => {
+                  if (page === 1 || page === pagination.totalPages) return true;
+                  if (Math.abs(page - currentPage) <= 1) return true;
+                  return false;
+                })
+                .map((page, idx, arr) => {
+                  const prevPage = arr[idx - 1];
+                  const showEllipsis = prevPage && page - prevPage > 1;
+                  return (
+                    <div key={page} className="flex items-center gap-1">
+                      {showEllipsis && <span className="px-2 text-gray-400">...</span>}
+                      <button
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-all ${
+                          currentPage === page
+                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md'
+                            : 'border border-gray-300 hover:bg-gray-50 text-gray-700'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    </div>
+                  );
+                })}
+            </div>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))}
+              disabled={currentPage === pagination.totalPages}
+              className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+            >
+              Next
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {selectedPolicyId && (
+        <PolicyDetailModal
+          policyId={selectedPolicyId}
+          onClose={() => setSelectedPolicyId(null)}
+          onSave={handleRefreshPolicies}
+        />
       )}
 
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-6 w-full max-w-4xl shadow-2xl border border-blue-200 dark:border-blue-800 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Create New Policy</h2>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCreateModal(false);
-                  resetForm();
-                }}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+        <NewPolicyModal
+          onClose={() => setShowCreateModal(false)}
+          onSave={handleRefreshPolicies}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletePolicyId && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30"
+          onClick={() => !deleting && setDeletePolicyId(null)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-2xl max-w-md w-full m-4 transform transition-all"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center ring-4 ring-red-100">
+                    <svg
+                      className="w-7 h-7 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="flex-1 pt-1">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Delete Policy?
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                    Are you sure you want to delete this policy? This action cannot be undone.
+                  </p>
+                  {deleteError && (
+                    <div className="mb-4 p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                      <svg
+                        className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-600"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span>{deleteError}</span>
+                    </div>
+                  )}
+                  <div className="flex gap-3 justify-end pt-2">
+                    <button
+                      onClick={() => {
+                        setDeletePolicyId(null);
+                        setDeleteError(null);
+                      }}
+                      disabled={deleting}
+                      className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDelete}
+                      disabled={deleting}
+                      className="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                    >
+                      {deleting ? (
+                        <>
+                          <svg
+                            className="animate-spin h-4 w-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Deleting...
+                        </>
+                      ) : (
+                        'Delete Policy'
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            {error && (
-              <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Venture <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={ventureId}
-                    onChange={(e) => setVentureId(e.target.value === "" ? "" : Number(e.target.value))}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Select venture</option>
-                    {ventures.map((v) => (
-                      <option key={v.id} value={v.id}>{v.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Office
-                  </label>
-                  <select
-                    value={officeId}
-                    onChange={(e) => setOfficeId(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">- None -</option>
-                    {offices.map((o) => (
-                      <option key={o.id} value={o.id}>{o.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    placeholder="General Liability 2025"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Type <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={type}
-                    onChange={(e) => setType(e.target.value as PolicyType)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {policyTypes.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Provider
-                  </label>
-                  <input
-                    type="text"
-                    value={provider}
-                    onChange={(e) => setProvider(e.target.value)}
-                    placeholder="Geico, landlord name..."
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Policy #
-                  </label>
-                  <input
-                    type="text"
-                    value={policyNo}
-                    onChange={(e) => setPolicyNo(e.target.value)}
-                    placeholder="POL-12345"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Status
-                  </label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as PolicyStatus)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {statusOptions.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    File URL
-                  </label>
-                  <input
-                    type="text"
-                    value={fileUrl}
-                    onChange={(e) => setFileUrl(e.target.value)}
-                    placeholder="https://..."
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Notes
-                </label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t border-blue-200 dark:border-blue-800">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCreateModal(false);
-                    resetForm();
-                  }}
-                  className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-slate-600 transition text-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? "Creating..." : "Create Policy"}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}
-
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-          Existing Policies
-        </h2>
-
-        {policies.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700">
-            <p className="text-gray-500 dark:text-gray-400">No policies yet.</p>
-          </div>
-        ) : (
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-700">
-                  <tr>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300">Name</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300">Type</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300">Venture / Office</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300">Dates</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300">Status</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
-                  {policies.map((p) => {
-                    return (
-                      <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/30">
-                        <td className="px-4 py-3">
-                          <div className="font-semibold text-gray-900 dark:text-white">{p.name}</div>
-                          {p.policyNo && <div className="text-xs text-gray-500 dark:text-gray-400">#{p.policyNo}</div>}
-                          {p.provider && <div className="text-xs text-gray-500 dark:text-gray-400">{p.provider}</div>}
-                        </td>
-                        <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{p.type}</td>
-                        <td className="px-4 py-3">
-                          <div className="text-gray-900 dark:text-white">{p.venture?.name}</div>
-                          {p.office && <div className="text-xs text-gray-500 dark:text-gray-400">{p.office.name}</div>}
-                        </td>
-                        <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          {p.startDate || p.endDate ? (
-                            <>
-                              {p.startDate && new Date(p.startDate).toLocaleDateString()}
-                              {p.startDate && p.endDate && " - "}
-                              {p.endDate && new Date(p.endDate).toLocaleDateString()}
-                            </>
-                          ) : "-"}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(p.status)}`}>
-                            {p.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex flex-col gap-2">
-                            <div className="flex flex-wrap gap-1">
-                              {statusOptions.map((s) => (
-                                <button
-                                  key={s}
-                                  onClick={() => handleStatusChange(p.id, s)}
-                                  className={`px-2 py-1 rounded text-xs font-medium transition ${
-                                    p.status === s
-                                      ? "bg-gray-900 dark:bg-gray-700 text-white border border-gray-900 dark:border-gray-700"
-                                      : "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-slate-600 hover:bg-gray-200 dark:hover:bg-slate-600"
-                                  }`}
-                                >
-                                  {s}
-                                </button>
-                              ))}
-                            </div>
-                            <button
-                              onClick={() => handleDelete(p.id)}
-                              className="px-2 py-1 bg-red-600 text-white rounded text-xs font-medium hover:bg-red-700 transition self-start"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
