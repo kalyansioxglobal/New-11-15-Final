@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getEffectiveUser } from '@/lib/effectiveUser';
 import { canManageUsers } from '@/lib/permissions';
 import type { UserRole } from '@/lib/permissions';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 // Keep department as a simple string union for display/filtering purposes.
 type Department = string;
@@ -319,7 +320,7 @@ function UsersAdminPage() {
           </button>
         </div>
 
-        {loading && <div className="text-sm text-gray-400">Loading users...</div>}
+        {loading && <Skeleton className="w-full h-[85vh]" />}
         {error && !loading && (
           <div className="mb-2 text-sm text-red-500">{error}</div>
         )}

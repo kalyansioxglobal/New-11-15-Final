@@ -38,10 +38,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const scope = getUserScope(user);
   const includeTest = req.query.includeTest === 'true';
-  const { date, ventureId } = req.query;
+  const { date, startDate, endDate, ventureId } = req.query;
 
-  const targetDate = date ? new Date(date as string) : new Date();
-  targetDate.setHours(0, 0, 0, 0);
+  // Support both single date (backward compatibility) and date range
+  let dateStart: Date;
+  let dateEnd: Date;
+  
+  if (startDate && endDate) {
+    // Date range mode - parse date strings and set to start/end of day in UTC
+    const startStr = startDate as string;
+    const endStr = endDate as string;
+    dateStart = new Date(startStr + 'T00:00:00.000Z');
+    dateEnd = new Date(endStr + 'T23:59:59.999Z');
+  } else if (date) {
+    // Single date mode (backward compatibility)
+    const dateStr = date as string;
+    dateStart = new Date(dateStr + 'T00:00:00.000Z');
+    dateEnd = new Date(dateStr + 'T23:59:59.999Z');
+  } else {
+    // Default to today - use UTC to avoid timezone issues
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    dateStart = new Date(todayStr + 'T00:00:00.000Z');
+    dateEnd = new Date(todayStr + 'T23:59:59.999Z');
+  }
 
   const userWhere: any = { isActive: true };
   if (!includeTest) userWhere.isTestUser = false;
@@ -55,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else if (!scope.allVentures) {
     if (scope.ventureIds.length === 0) {
       return res.status(200).json({
-        date: targetDate.toISOString().split('T')[0],
+        date: dateStart.toISOString().split('T')[0],
         summary: { total: 0, submitted: 0, pending: 0, needsAttention: 0, withBlockers: 0 },
         team: [],
       });
@@ -82,13 +102,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const reports = await prisma.eodReport.findMany({
     where: {
-      date: targetDate,
+      date: {
+        gte: dateStart,
+        lte: dateEnd,
+      },
       userId: { in: teamUsers.map((u: (typeof teamUsers)[number]) => u.id) },
       ...(includeTest ? {} : { isTest: false }),
     },
     select: {
       id: true,
       userId: true,
+      date: true,
       status: true,
       summary: true,
       hoursWorked: true,
@@ -96,21 +120,79 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       blockers: true,
       createdAt: true,
     },
+    orderBy: [
+      { userId: 'asc' },
+      { date: 'desc' },
+    ],
   });
 
   type ReportType = typeof reports[number];
-  const reportByUser = new Map<number, ReportType>(reports.map((r: ReportType) => [r.userId, r]));
+  
+  // For date ranges, we aggregate data per user (use latest report or aggregate)
+  // Group reports by userId
+  const reportsByUser = new Map<number, ReportType[]>();
+  reports.forEach((r: ReportType) => {
+    const existing = reportsByUser.get(r.userId) || [];
+    existing.push(r);
+    reportsByUser.set(r.userId, existing);
+  });
+
+  // For each user, get the most recent report or aggregate
+  const userReportData = new Map<number, {
+    report: ReportType | null;
+    hasAnyBlockers: boolean;
+    totalHours: number;
+    totalTasks: number;
+    latestStatus: string | null;
+    latestReportId: number | null;
+    latestSubmittedAt: Date | null;
+  }>();
+
+  teamUsers.forEach((u: (typeof teamUsers)[number]) => {
+    const userReports = reportsByUser.get(u.id) || [];
+    if (userReports.length === 0) {
+      userReportData.set(u.id, {
+        report: null,
+        hasAnyBlockers: false,
+        totalHours: 0,
+        totalTasks: 0,
+        latestStatus: null,
+        latestReportId: null,
+        latestSubmittedAt: null,
+      });
+    } else {
+      // Use the most recent report for status/ID, but aggregate hours/tasks
+      const latestReport = userReports[0]; // Already sorted by date desc
+      const hasAnyBlockers = userReports.some((r: ReportType) => r.blockers && r.blockers.trim().length > 0);
+      const totalHours = userReports.reduce((sum: number, r: ReportType) => sum + (r.hoursWorked || 0), 0);
+      const totalTasks = userReports.reduce((sum: number, r: ReportType) => sum + (r.tasksCompleted || 0), 0);
+      
+      userReportData.set(u.id, {
+        report: latestReport,
+        hasAnyBlockers,
+        totalHours,
+        totalTasks,
+        latestStatus: latestReport.status,
+        latestReportId: latestReport.id,
+        latestSubmittedAt: latestReport.createdAt,
+      });
+    }
+  });
+
+  const submittedCount = Array.from(userReportData.values()).filter((d) => d.report !== null).length;
+  const needsAttentionCount = Array.from(userReportData.values()).filter((d) => d.latestStatus === 'NEEDS_ATTENTION').length;
+  const withBlockersCount = Array.from(userReportData.values()).filter((d) => d.hasAnyBlockers).length;
 
   const summary = {
     total: teamUsers.length,
-    submitted: reports.length,
-    pending: teamUsers.length - reports.length,
-    needsAttention: reports.filter((r: ReportType) => r.status === 'NEEDS_ATTENTION').length,
-    withBlockers: reports.filter((r: ReportType) => r.blockers && r.blockers.trim().length > 0).length,
+    submitted: submittedCount,
+    pending: teamUsers.length - submittedCount,
+    needsAttention: needsAttentionCount,
+    withBlockers: withBlockersCount,
   };
 
   const teamStatus = teamUsers.map((u: (typeof teamUsers)[number]) => {
-    const report = reportByUser.get(u.id);
+    const data = userReportData.get(u.id)!;
     return {
       userId: u.id,
       userName: u.fullName ?? u.email,
@@ -118,18 +200,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       role: u.role,
       ventures: u.ventures.map((v: { venture: { name: string } }) => v.venture.name),
       offices: u.offices.map((o: { office: { name: string } }) => o.office.name),
-      submitted: !!report,
-      reportId: report?.id ?? null,
-      status: report?.status ?? null,
-      hoursWorked: report?.hoursWorked ?? null,
-      tasksCompleted: report?.tasksCompleted ?? null,
-      hasBlockers: !!(report?.blockers && report.blockers.trim().length > 0),
-      submittedAt: report?.createdAt ?? null,
+      submitted: data.report !== null,
+      reportId: data.latestReportId,
+      status: data.latestStatus,
+      hoursWorked: data.totalHours > 0 ? data.totalHours : null,
+      tasksCompleted: data.totalTasks > 0 ? data.totalTasks : null,
+      hasBlockers: data.hasAnyBlockers,
+      submittedAt: data.latestSubmittedAt,
     };
   });
 
   return res.status(200).json({
-    date: targetDate.toISOString().split('T')[0],
+    date: dateStart.toISOString().split('T')[0],
     summary,
     team: teamStatus,
   });

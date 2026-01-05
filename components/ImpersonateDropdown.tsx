@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import useSWR from 'swr';
+import { Skeleton } from './ui/Skeleton';
 
 type Role =
   | 'CEO'
@@ -127,7 +128,7 @@ const ImpersonateDropdown: React.FC = () => {
         ))}
       </select>
 
-      {loading && <span className="text-[11px] text-gray-400">Loading users...</span>}
+      {loading && <Skeleton className="w-full h-[40px]" />}
       {error && (
         <span className="text-[11px] text-red-400">{error}</span>
       )}

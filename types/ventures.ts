@@ -1,4 +1,4 @@
-export type VentureHealth = "HEALTHY" | "ATTENTION" | "CRITICAL";
+export type VentureHealth = "Healthy" | "Attention" | "Critical";
 
 export type VentureStatusReason = {
   code: string;

@@ -406,6 +406,7 @@ model Policy {
   status    PolicyStatus @default(ACTIVE)
   notes     String?
   isTest    Boolean      @default(false)
+  isDeleted Boolean      @default(false)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   createdBy Int?
@@ -1803,6 +1804,7 @@ model ITAsset {
   files            ITAssetFile[]
   history          ITAssetHistory[]
   incidents        ITIncident[]
+  isDeleted        Boolean          @default(false)
 
   @@unique([ventureId, tag])
   @@index([ventureId])

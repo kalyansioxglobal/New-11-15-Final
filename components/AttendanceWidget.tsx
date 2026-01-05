@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Skeleton } from "./ui/Skeleton";
 
 type AttendanceStatus = "PRESENT" | "PTO" | "HALF_DAY" | "SICK" | "REMOTE" | "LATE";
 
@@ -56,12 +57,21 @@ export default function AttendanceWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
-      if (!res.ok) throw new Error("Failed to save");
+      
       const json = await res.json();
+      
+      if (!res.ok) {
+        // Show the specific error message from the API
+        const errorMessage = json?.error?.message || "Failed to save attendance";
+        setError(errorMessage);
+        return;
+      }
+      
       setData((prev) => prev ? { ...prev, today: json.data } : null);
       setIsOpen(false);
-    } catch (err) {
-      setError("Could not save attendance");
+    } catch (err: any) {
+      console.error("Failed to mark attendance:", err);
+      setError(err?.message || "Could not save attendance. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -70,7 +80,8 @@ export default function AttendanceWidget() {
   if (loading) {
     return (
       <div className="rounded-lg border border-gray-200 p-4 bg-white shadow-sm">
-        <div className="text-sm text-gray-500">Loading attendance...</div>
+        {/* <div className="text-sm text-gray-500">Loading attendance...</div> */}
+        <Skeleton className="w-full h-[40px]" />
       </div>
     );
   }

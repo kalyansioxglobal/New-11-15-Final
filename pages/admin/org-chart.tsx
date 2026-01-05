@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getEffectiveUser } from '@/lib/effectiveUser';
 import { canManageUsers } from '@/lib/permissions';
 import type { UserRole } from '@/lib/permissions';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -90,7 +91,7 @@ function OrgNode({ node, level = 0 }: { node: TreeNode; level?: number }) {
           </button>
         )}
         {!hasChildren && <div className="w-5" />}
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-medium text-sm truncate">
@@ -211,7 +212,7 @@ export default function OrgChartPage() {
       )}
 
       {isLoading && (
-        <div className="text-center py-12 text-gray-500">Loading organization...</div>
+        <Skeleton className="w-full h-[85vh]" />
       )}
 
       {!isLoading && tree.length === 0 && (

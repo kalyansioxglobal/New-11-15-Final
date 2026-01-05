@@ -104,8 +104,22 @@ export default withUser(async function handler(
         });
       }
       data.status = normalized;
-      if (normalized === "RESOLVED" && !existing.resolvedAt) {
+      
+      // Set resolvedAt when status changes to RESOLVED
+      // JavaScript Date objects are stored internally as UTC milliseconds since epoch
+      // Prisma/PostgreSQL will store this as UTC timestamp
+      // The timezone issue you're seeing is likely due to server/DB timezone config
+      // For now, we use new Date() which creates a UTC timestamp
+      // To fix timezone issues globally, ensure:
+      // 1. Server timezone is set to UTC (TZ=UTC environment variable)
+      // 2. PostgreSQL timezone is set to UTC (timezone = 'UTC' in postgresql.conf)
+      // 3. Frontend converts UTC timestamps to user's local timezone for display
+      if (normalized === "RESOLVED") {
         data.resolvedAt = new Date();
+      }
+      // Clear resolvedAt when status changes from RESOLVED to something else
+      else if (existing.status === "RESOLVED" && normalized !== "RESOLVED") {
+        data.resolvedAt = null;
       }
     }
 

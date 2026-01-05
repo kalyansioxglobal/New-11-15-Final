@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type DispatchNotification = {
   type: "NEW_MESSAGE" | "CONVERSATION_CLAIMED" | "CONVERSATION_RELEASED" | "NEW_CONVERSATION";
@@ -417,7 +418,7 @@ function DispatchInboxPage() {
 
             <div className="flex-1 overflow-y-auto">
               {loading ? (
-                <div className="p-4 text-center text-gray-500">Loading...</div>
+                <Skeleton className="w-full h-[85vh]" />
               ) : conversations.length === 0 ? (
                 <div className="p-4 text-center text-gray-500">No conversations found</div>
               ) : (

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface Venture {
   id: number;
@@ -100,7 +101,7 @@ function NewAssetPage() {
         )}
 
         {loading ? (
-          <div className="text-sm text-gray-500">Loading...</div>
+          <Skeleton className="w-full h-[85vh]" />
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

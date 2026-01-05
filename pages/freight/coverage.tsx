@@ -13,6 +13,7 @@ import {
   BarChart,
   Bar,
 } from "recharts";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const fetcher = (url: string) =>
   fetch(url, { credentials: "include" }).then((res) => {
@@ -117,7 +118,7 @@ export default function CoveragePage() {
 }
 
 function CoverageStatsTab({ data, loading, error }: { data: any; loading: boolean; error: any }) {
-  if (loading) return <LoadingState />;
+  if (loading) return <Skeleton className="w-full h-[85vh]" />;
   if (error) return <ErrorState message="Failed to load coverage stats" />;
   if (!data) return null;
 
@@ -220,7 +221,7 @@ function CoverageStatsTab({ data, loading, error }: { data: any; loading: boolea
 }
 
 function WarRoomTab({ data, loading, error }: { data: any; loading: boolean; error: any }) {
-  if (loading) return <LoadingState />;
+  if (loading) return <Skeleton className="w-full h-[85vh]" />;
   if (error) return <ErrorState message="Failed to load war room data" />;
   if (!data) return null;
 

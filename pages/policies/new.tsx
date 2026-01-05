@@ -46,11 +46,54 @@ export default function NewPolicyPage() {
       .catch(() => {});
   }, []);
 
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const MAX_FILES = 5;
+  const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+  const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png'];
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
-      setSelectedFiles((prev) => [...prev, ...Array.from(files)]);
+    if (!files) return;
+
+    const newFiles: File[] = [];
+    const errors: string[] = [];
+
+    Array.from(files).forEach((file) => {
+      // Check file count
+      if (selectedFiles.length + newFiles.length >= MAX_FILES) {
+        errors.push(`Maximum ${MAX_FILES} files allowed.`);
+        return;
+      }
+
+      // Check file type
+      const fileExt = '.' + file.name.split('.').pop()?.toLowerCase();
+      if (!ALLOWED_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(fileExt)) {
+        errors.push(`${file.name}: Only PDF, JPG, and PNG files are allowed.`);
+        return;
+      }
+
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        errors.push(`${file.name}: File size exceeds 5MB limit (${(file.size / 1024 / 1024).toFixed(2)}MB).`);
+        return;
+      }
+
+      newFiles.push(file);
+    });
+
+    if (errors.length > 0) {
+      setError(errors.join(' '));
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
     }
+
+    if (newFiles.length > 0) {
+      setSelectedFiles((prev) => [...prev, ...newFiles]);
+      setError(null);
+    }
+
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -126,43 +169,46 @@ export default function NewPolicyPage() {
   };
 
   return (
-    <div className="p-6 max-w-2xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">New Policy</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Add a new insurance, lease, or contract policy
+    <div className="p-6 max-w-3xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Policy</h1>
+        <p className="text-sm text-gray-500">
+          Add a new insurance, lease, contract, license, or permit policy
         </p>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
-          {error}
+        <div className="mb-6 p-4 rounded-xl bg-red-50 border-l-4 border-red-500 text-red-700 text-sm flex items-start gap-3">
+          <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          </svg>
+          <span>{error}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Name *
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Policy Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             placeholder="e.g., General Liability Insurance"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type *
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Type <span className="text-red-500">*</span>
             </label>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
               {POLICY_TYPES.map((t) => (
                 <option key={t} value={t}>
@@ -173,13 +219,13 @@ export default function NewPolicyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Venture *
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Venture <span className="text-red-500">*</span>
             </label>
             <select
               value={form.ventureId}
               onChange={(e) => setForm({ ...form, ventureId: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
               <option value="">Select venture...</option>
               {ventures.map((v) => (
@@ -191,80 +237,83 @@ export default function NewPolicyPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Provider
             </label>
             <input
               type="text"
               value={form.provider}
               onChange={(e) => setForm({ ...form, provider: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               placeholder="e.g., State Farm"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Policy Number
             </label>
             <input
               type="text"
               value={form.policyNo}
               onChange={(e) => setForm({ ...form, policyNo: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               placeholder="e.g., POL-12345"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Start Date
             </label>
             <input
               type="date"
               value={form.startDate}
               onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               End Date
             </label>
             <input
               type="date"
               value={form.endDate}
               onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Notes
           </label>
           <textarea
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
-            rows={3}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-            placeholder="Additional notes..."
+            rows={4}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            placeholder="Additional notes or important information..."
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Documents
           </label>
-          <div className="border border-dashed border-gray-300 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <label className="px-3 py-1.5 bg-gray-100 border border-gray-300 rounded-md text-sm cursor-pointer hover:bg-gray-200">
+          <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gradient-to-br from-gray-50 to-white hover:border-blue-400 transition-colors">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <label className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-semibold cursor-pointer hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
                 Choose Files
                 <input
                   ref={fileInputRef}
@@ -272,58 +321,111 @@ export default function NewPolicyPage() {
                   multiple
                   className="hidden"
                   onChange={handleFileSelect}
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+                  accept=".pdf,.jpg,.jpeg,.png"
                 />
               </label>
-              <span className="text-xs text-gray-500">
-                PDF, Word, Excel, or images (max 10MB each)
-              </span>
+              <div className="flex-1">
+                <p className="text-xs text-gray-600 font-medium">
+                  PDF, JPG, PNG only
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Max 5MB per file • Max 5 files per policy
+                </p>
+              </div>
             </div>
 
             {selectedFiles.length > 0 && (
-              <ul className="mt-3 space-y-1">
-                {selectedFiles.map((file, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center justify-between text-sm py-1 px-2 bg-gray-50 rounded"
-                  >
-                    <span className="truncate max-w-xs">{file.name}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400">
-                        {(file.size / 1024).toFixed(1)} KB
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => removeFile(index)}
-                        className="text-red-500 hover:text-red-700 text-xs"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-5 pt-5 border-t border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-gray-700">
+                    {selectedFiles.length} of {MAX_FILES} files selected
+                  </p>
+                </div>
+                <ul className="space-y-2">
+                  {selectedFiles.map((file, index) => (
+                    <li
+                      key={index}
+                      className="flex items-center justify-between text-sm py-2.5 px-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"
+                    >
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className={`p-1.5 rounded ${
+                          file.type === 'application/pdf' ? 'bg-red-100' : 'bg-blue-100'
+                        }`}>
+                          {file.type === 'application/pdf' ? (
+                            <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                            </svg>
+                          ) : (
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                          )}
+                        </div>
+                        <span className="truncate flex-1 font-medium text-gray-700">{file.name}</span>
+                      </div>
+                      <div className="flex items-center gap-3 ml-3">
+                        <span className="text-xs text-gray-500 font-medium">
+                          {(file.size / 1024 / 1024).toFixed(2)} MB
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeFile(index)}
+                          className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Remove file"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
             {uploadProgress && (
-              <p className="mt-2 text-xs text-blue-600">{uploadProgress}</p>
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-xs text-blue-700 font-medium flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {uploadProgress}
+                </p>
+              </div>
             )}
           </div>
         </div>
 
-        <div className="flex gap-3 pt-4">
+        <div className="flex gap-3 pt-6 border-t border-gray-200">
           <Link
             href="/policies"
-            className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
+            className="px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={saving}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
           >
-            {saving ? 'Creating...' : 'Create Policy'}
+            {saving ? (
+              <>
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creating...
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Create Policy
+              </>
+            )}
           </button>
         </div>
       </form>

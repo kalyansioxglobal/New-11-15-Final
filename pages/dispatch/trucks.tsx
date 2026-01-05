@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Truck = {
   id: number;
@@ -189,8 +190,8 @@ function TrucksPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12">Loading...</div>
-        ) : trucks.length === 0 ? (
+      <Skeleton className="w-full h-[85vh]" />  
+      ) : trucks.length === 0 ? (
           <div className="text-center py-12 text-gray-500">No trucks found</div>
         ) : (
           <div className="bg-white rounded-lg shadow overflow-hidden">

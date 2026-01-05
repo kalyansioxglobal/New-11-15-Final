@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next';
 import { useState, useEffect } from 'react';
 import { getEffectiveUser } from '@/lib/effectiveUser';
 import type { PageWithLayout } from '@/types/page';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 type MetricsData = {
   summary: {
@@ -128,7 +129,7 @@ function SaasMetricsPage() {
         </button>
       </div>
 
-      {loading && <div className="text-center py-12 text-gray-500">Loading metrics...</div>}
+      {loading && <Skeleton className="w-full h-[85vh]" />}
 
       {!loading && metrics && activeTab === 'overview' && (
         <>

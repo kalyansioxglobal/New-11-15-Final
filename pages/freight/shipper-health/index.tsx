@@ -7,6 +7,7 @@ import { useRoleGuard } from "@/hooks/useRoleGuard";
 import ShipperChurnTab from "./tabs/ShipperChurnTab";
 import ShipperIcpTab from "./tabs/ShipperIcpTab";
 import AtRiskLostTab from "./tabs/AtRiskLostTab";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type TabId = "churn" | "icp" | "at-risk";
 
@@ -34,7 +35,7 @@ const ShipperHealthPage: PageWithLayout = () => {
   };
 
   if (roleLoading) {
-    return <div className="p-6 text-gray-500">Loading...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
   if (!authorized) {
     return null;

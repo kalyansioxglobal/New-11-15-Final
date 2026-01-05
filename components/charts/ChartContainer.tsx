@@ -17,23 +17,23 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
 }) => {
   return (
     <div
-      className="rounded-2xl shadow-lg border border-slate-800 bg-slate-950/70 p-4 flex flex-col"
+      className="rounded-2xl shadow-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950/70 p-5 flex flex-col"
       style={{
         backdropFilter: "blur(10px)",
       }}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <h3 className="text-sm font-semibold text-slate-100 tracking-wide">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex-1 min-w-0 pr-2">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100 tracking-wide">
             {title}
           </h3>
           {description && (
-            <p className="mt-1 text-xs text-slate-400 max-w-md">
+            <p className="mt-1 text-xs text-gray-500 dark:text-slate-400 max-w-md">
               {description}
             </p>
           )}
         </div>
-        {rightSlot && <div className="flex items-center gap-2">{rightSlot}</div>}
+        {rightSlot && <div className="flex items-center gap-2 flex-shrink-0">{rightSlot}</div>}
       </div>
       <div
         className="flex-1 w-full"

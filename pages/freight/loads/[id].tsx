@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { getValidNextStatuses } from "@/lib/freight/loadStatus";
 
 const COMPONENT_LABELS: Record<string, string> = {
   distanceScore: 'Distance score',
@@ -44,7 +46,8 @@ type Load = {
   buyRate: number | null;
   sellRate: number | null;
   currency: string;
-  status: string;
+  status?: string; // Legacy field
+  loadStatus?: string; // Primary field from schema
   lostReason: string | null;
   lostReasonCategory: string | null;
   dormantReason: string | null;
@@ -93,12 +96,14 @@ type MatchedCarrier = {
   matchReason: string[];
 };
 
-const STATUS_OPTIONS = ["OPEN", "WORKING", "COVERED", "LOST", "DORMANT", "MAYBE"];
+const STATUS_OPTIONS = ["OPEN", "WORKING", "COVERED", "IN_TRANSIT", "DELIVERED", "LOST", "DORMANT", "MAYBE"];
 
 const STATUS_COLORS: Record<string, string> = {
   OPEN: "bg-blue-100 text-blue-800 border-blue-200",
   WORKING: "bg-yellow-100 text-yellow-800 border-yellow-200",
   COVERED: "bg-green-100 text-green-800 border-green-200",
+  IN_TRANSIT: "bg-indigo-100 text-indigo-800 border-indigo-200",
+  DELIVERED: "bg-emerald-100 text-emerald-800 border-emerald-200",
   LOST: "bg-red-100 text-red-800 border-red-200",
   DORMANT: "bg-gray-100 text-gray-800 border-gray-200",
   MAYBE: "bg-purple-100 text-purple-800 border-purple-200",
@@ -113,6 +118,9 @@ function StatusActionsCard({
   updating: boolean;
   onUpdateLoad: (updates: LoadUpdate) => Promise<void>;
 }) {
+  // Use loadStatus (primary) or status (legacy) for backward compatibility
+  const currentStatus = load.loadStatus || load.status || "OPEN";
+  
   const [pendingStatus, setPendingStatus] = useState<string | null>(null);
   const [lostReasonCategory, setLostReasonCategory] = useState(load.lostReasonCategory || "");
   const [lostReason, setLostReason] = useState(load.lostReason || "");
@@ -156,27 +164,48 @@ function StatusActionsCard({
     setPendingStatus(null);
   };
 
-  const showLostForm = load.status === "LOST" || pendingStatus === "LOST";
-  const showDormantForm = load.status === "DORMANT" || pendingStatus === "DORMANT";
+  const showLostForm = currentStatus === "LOST" || pendingStatus === "LOST";
+  const showDormantForm = currentStatus === "DORMANT" || pendingStatus === "DORMANT";
+
+  // Get valid next statuses based on current status
+  const validNextStatuses = getValidNextStatuses(currentStatus as 'OPEN' | 'WORKING' | 'QUOTED' | 'AT_RISK' | 'COVERED' | 'IN_TRANSIT' | 'DELIVERED' | 'LOST' | 'FELL_OFF' | 'DORMANT');
+  // Always show current status and valid next statuses
+  const availableStatuses = [
+    currentStatus, // Current status (for display)
+    ...validNextStatuses.filter(s => s !== currentStatus) // Valid next statuses
+  ];
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
       <h2 className="font-semibold text-lg mb-4">Status & Actions</h2>
+      <div className="mb-2">
+        <span className="text-xs text-gray-500">Current Status: </span>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_COLORS[currentStatus] || "bg-gray-100"}`}>
+          {currentStatus}
+        </span>
+      </div>
       <div className="flex flex-wrap gap-2">
-        {STATUS_OPTIONS.map((status) => (
-          <button
-            key={status}
-            disabled={updating || load.status === status}
-            onClick={() => handleStatusClick(status)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
-              load.status === status
-                ? STATUS_COLORS[status]
-                : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-            } disabled:opacity-50`}
-          >
-            {status}
-          </button>
-        ))}
+        {availableStatuses.map((status) => {
+          const isCurrent = currentStatus === status;
+          const isValidNext = validNextStatuses.includes(status as any);
+          return (
+            <button
+              key={status}
+              disabled={updating || isCurrent || (!isValidNext && !isCurrent)}
+              onClick={() => handleStatusClick(status)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
+                isCurrent
+                  ? STATUS_COLORS[status]
+                  : isValidNext
+                  ? "bg-white border-blue-300 text-blue-700 hover:bg-blue-50"
+                  : "bg-white border-gray-200 text-gray-400 cursor-not-allowed"
+              } disabled:opacity-50`}
+              title={isCurrent ? "Current status" : isValidNext ? "Click to change status" : "Invalid transition"}
+            >
+              {status === "COVERED" ? "Assigned" : status === "IN_TRANSIT" ? "In Transit" : status.replace(/_/g, " ")}
+            </button>
+          );
+        })}
       </div>
 
       {showLostForm && (
@@ -225,7 +254,7 @@ function StatusActionsCard({
               </button>
             </div>
           )}
-          {load.status === "LOST" && !pendingStatus && (
+          {currentStatus === "LOST" && !pendingStatus && (
             <button
               onClick={() => onUpdateLoad({ lostReasonCategory, lostReason } as any)}
               disabled={updating}
@@ -265,7 +294,7 @@ function StatusActionsCard({
               </button>
             </div>
           )}
-          {load.status === "DORMANT" && !pendingStatus && (
+          {currentStatus === "DORMANT" && !pendingStatus && (
             <button
               onClick={() => onUpdateLoad({ dormantReason } as any)}
               disabled={updating}
@@ -332,7 +361,14 @@ export default function LoadDetailPage() {
       if (res.ok) {
         const data = await res.json();
         setLoad((prev) => (prev ? { ...prev, ...data.load } : prev));
+      } else {
+        const errorData = await res.json().catch(() => ({ error: "Failed to update load" }));
+        console.error("Failed to update load:", errorData);
+        alert(errorData.error || errorData.detail || "Failed to update load. Please check the console for details.");
       }
+    } catch (err: any) {
+      console.error("Error updating load:", err);
+      alert(err.message || "An error occurred while updating the load.");
     } finally {
       setUpdating(false);
     }
@@ -374,8 +410,6 @@ export default function LoadDetailPage() {
     }
   };
 
-  const canNotify = load && ["OPEN", "WORKING", "AT_RISK", "MAYBE"].includes(load.status) && !load.carrier;
-
   const openBreakdown = async (carrier: MatchedCarrier) => {
     setBreakdownError(null);
     setSelectedBreakdown(null);
@@ -400,7 +434,7 @@ export default function LoadDetailPage() {
   };
 
   if (loading) {
-    return <div className="p-6 text-gray-500">Loading load...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
 
   if (error || !load) {
@@ -414,6 +448,10 @@ export default function LoadDetailPage() {
     );
   }
 
+  // Calculate current status after null check
+  const currentLoadStatus = load.loadStatus || load.status || "OPEN";
+  const canNotify = ["OPEN", "WORKING", "AT_RISK", "MAYBE"].includes(currentLoadStatus) && !load.carrier;
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -424,10 +462,10 @@ export default function LoadDetailPage() {
             </h1>
             <span
               className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                STATUS_COLORS[load.status] || "bg-gray-100"
+                STATUS_COLORS[currentLoadStatus] || "bg-gray-100"
               }`}
             >
-              {load.status}
+              {currentLoadStatus}
             </span>
           </div>
           <p className="text-sm text-gray-500 mt-1">

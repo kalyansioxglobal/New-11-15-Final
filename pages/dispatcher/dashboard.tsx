@@ -4,6 +4,7 @@ import { getEffectiveUser } from "@/lib/effectiveUser";
 import useSWR from "swr";
 import Layout from "@/components/Layout";
 import PersonalPerformance from "@/components/PersonalPerformance";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -172,7 +173,7 @@ export default function DispatcherDashboard() {
         </div>
         
         {loadsLoading ? (
-          <div className="p-8 text-center text-gray-500">Loading loads...</div>
+          <Skeleton className="w-full h-full" />
         ) : loads.length === 0 ? (
           <div className="p-8 text-center text-gray-500">No loads found</div>
         ) : (

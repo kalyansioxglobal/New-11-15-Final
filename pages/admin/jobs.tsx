@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { GetServerSideProps } from "next";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -189,8 +190,8 @@ export default function AdminJobsPage() {
           <h2 className="font-semibold text-gray-900 dark:text-white">Recent Job Runs</h2>
         </div>
         {logsLoading ? (
-          <div className="p-8 text-center text-gray-500 dark:text-gray-400">Loading job history...</div>
-        ) : jobLogs.length === 0 ? (
+          <Skeleton className="w-full h-8" />
+      ) : jobLogs.length === 0 ? (
           <div className="p-8 text-center text-gray-500 dark:text-gray-400">No job runs recorded yet</div>
         ) : (
           <div className="overflow-x-auto">

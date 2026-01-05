@@ -3,6 +3,7 @@ import useSWR from "swr";
 import { useState } from "react";
 import Link from "next/link";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -89,7 +90,7 @@ export default function VenturePeoplePage() {
   );
 
   if (isLoading || !data) {
-    return <div className="p-6 text-sm text-gray-500">Loading people KPIs...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
 
   const { employees, windowDays, summary } = data;

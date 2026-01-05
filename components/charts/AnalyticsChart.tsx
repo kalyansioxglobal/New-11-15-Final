@@ -7,6 +7,7 @@ import type { DateRangeKey, MetricFilterState } from "@/hooks/useMetricSeries";
 import { useMetricSeries } from "@/hooks/useMetricSeries";
 import { getMetricConfig } from "@/lib/analytics/metrics";
 import type { MetricKey } from "@/lib/analytics/metrics";
+import { Skeleton } from "../ui/Skeleton";
 
 type AnalyticsChartProps = {
   metric: MetricKey;
@@ -55,10 +56,10 @@ export const AnalyticsChart: React.FC<AnalyticsChartProps> = ({
         <button
           key={dr}
           onClick={() => setDateRange(dr)}
-          className={`px-2.5 py-1 rounded-full text-[11px] border ${
+          className={`px-2.5 py-1 rounded-full text-[11px] border transition-colors ${
             dateRange === dr
               ? "bg-indigo-600 border-indigo-500 text-white"
-              : "bg-slate-900/60 border-slate-700 text-slate-300 hover:bg-slate-900"
+              : "bg-gray-100 dark:bg-slate-900/60 border-gray-300 dark:border-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-900"
           }`}
         >
           {DATE_RANGE_LABELS[dr]}
@@ -75,17 +76,17 @@ export const AnalyticsChart: React.FC<AnalyticsChartProps> = ({
       height={height}
     >
       {loading && (
-        <div className="flex items-center justify-center h-full text-xs text-slate-400">
-          Loading…
+        <div className="flex items-center justify-center h-full text-xs text-gray-500 dark:text-slate-400">
+          <Skeleton className="w-full h-auto" />
         </div>
       )}
       {!loading && error && (
-        <div className="flex items-center justify-center h-full text-xs text-red-400">
+        <div className="flex items-center justify-center h-full text-xs text-red-600 dark:text-red-400">
           Failed to load: {error}
         </div>
       )}
       {!loading && !error && data.length === 0 && (
-        <div className="flex items-center justify-center h-full text-xs text-slate-500">
+        <div className="flex items-center justify-center h-full text-xs text-gray-500 dark:text-slate-500">
           No data for this range.
         </div>
       )}

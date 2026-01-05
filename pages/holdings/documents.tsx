@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next';
 import { useState, useEffect, useMemo } from 'react';
 import { getEffectiveUser } from '@/lib/effectiveUser';
 import type { PageWithLayout } from '@/types/page';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 type Venture = {
   id: number;
@@ -55,9 +56,9 @@ function HoldingsDocumentsPage() {
     name: '',
     description: '',
     category: '',
-    fileUrl: '',
-    fileName: '',
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/holdings/assets')
@@ -129,20 +130,48 @@ function HoldingsDocumentsPage() {
   }, [selectedAssetId]);
 
   const handleUpload = async () => {
-    if (!selectedAssetId || !uploadForm.name || !uploadForm.fileUrl) return;
+    if (!selectedAssetId || !uploadForm.name || !selectedFile) return;
+    
+    // Validate file type
+    if (selectedFile.type !== 'application/pdf') {
+      setUploadError('Only PDF files are allowed');
+      return;
+    }
+
+    // Validate file size (10MB)
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      setUploadError('File size must be less than 10MB');
+      return;
+    }
+
     setUploading(true);
+    setUploadError(null);
+    
     try {
+      const formData = new FormData();
+      formData.append('name', uploadForm.name);
+      formData.append('description', uploadForm.description || '');
+      formData.append('category', uploadForm.category || '');
+      formData.append('file', selectedFile);
+
       const res = await fetch(`/api/holdings/assets/${selectedAssetId}/documents`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(uploadForm),
+        body: formData,
       });
-      if (res.ok) {
-        const newDoc = await res.json();
-        setDocuments((prev) => [newDoc, ...prev]);
-        setShowUploadModal(false);
-        setUploadForm({ name: '', description: '', category: '', fileUrl: '', fileName: '' });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || errorData.detail || 'Failed to upload document');
       }
+
+      const newDoc = await res.json();
+      setDocuments((prev) => [newDoc, ...prev]);
+      setShowUploadModal(false);
+      setUploadForm({ name: '', description: '', category: '' });
+      setSelectedFile(null);
+      setUploadError(null);
+    } catch (err: any) {
+      setUploadError(err.message || 'Failed to upload document');
     } finally {
       setUploading(false);
     }
@@ -316,7 +345,7 @@ function HoldingsDocumentsPage() {
         </div>
       )}
 
-      {loading && <div className="text-center py-12 text-gray-500">Loading documents...</div>}
+      {loading && <Skeleton className="w-full h-[85vh]" />}
 
       {!loading && !selectedAssetId && (
         <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed">
@@ -393,36 +422,45 @@ function HoldingsDocumentsPage() {
       )}
 
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-            <h2 className="text-lg font-semibold mb-4">Add Document</h2>
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-md shadow-xl border border-gray-200 dark:border-slate-700">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Add Document</h2>
+            
+            {uploadError && (
+              <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+                {uploadError}
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Document Name *</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-slate-300">
+                  Document Name <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="text"
                   value={uploadForm.name}
                   onChange={(e) => setUploadForm((f) => ({ ...f, name: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                   placeholder="e.g., Property Deed"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-slate-300">Description</label>
                 <input
                   type="text"
                   value={uploadForm.description}
                   onChange={(e) => setUploadForm((f) => ({ ...f, description: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                   placeholder="Optional description"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Category</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-slate-300">Category</label>
                 <select
                   value={uploadForm.category}
                   onChange={(e) => setUploadForm((f) => ({ ...f, category: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 >
                   <option value="">Select category</option>
                   <option value="Deed">Deed</option>
@@ -434,39 +472,47 @@ function HoldingsDocumentsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">File URL *</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-slate-300">
+                  PDF File <span className="text-red-500">*</span>
+                </label>
                 <input
-                  type="url"
-                  value={uploadForm.fileUrl}
-                  onChange={(e) => setUploadForm((f) => ({ ...f, fileUrl: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg"
-                  placeholder="https://..."
+                  type="file"
+                  accept=".pdf,application/pdf"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setSelectedFile(file);
+                    setUploadError(null);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 dark:file:bg-blue-900/30 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/50"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">File Name *</label>
-                <input
-                  type="text"
-                  value={uploadForm.fileName}
-                  onChange={(e) => setUploadForm((f) => ({ ...f, fileName: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg"
-                  placeholder="document.pdf"
-                />
+                {selectedFile && (
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Selected: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                  </p>
+                )}
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Maximum file size: 10MB. Only PDF files are accepted.
+                </p>
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button
-                onClick={() => setShowUploadModal(false)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                onClick={() => {
+                  setShowUploadModal(false);
+                  setUploadForm({ name: '', description: '', category: '' });
+                  setSelectedFile(null);
+                  setUploadError(null);
+                }}
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpload}
-                disabled={uploading || !uploadForm.name || !uploadForm.fileUrl || !uploadForm.fileName}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                disabled={uploading || !uploadForm.name || !selectedFile}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
-                {uploading ? 'Adding...' : 'Add Document'}
+                {uploading ? 'Uploading...' : 'Upload Document'}
               </button>
             </div>
           </div>

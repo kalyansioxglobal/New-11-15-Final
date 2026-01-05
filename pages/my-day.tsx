@@ -2,6 +2,7 @@ import useSWR from "swr";
 import Link from "next/link";
 import { useTestMode } from "@/contexts/TestModeContext";
 import OverdueTaskAlert from "@/components/OverdueTaskAlert";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -81,7 +82,7 @@ function MyDayPage() {
   );
 
   if (isLoading || !data) {
-    return <div className="p-6 text-sm text-gray-500">Loading your day...</div>;
+    return <Skeleton className="w-full h-[85vh]" />
   }
 
   const { user, tasks, loads, kpi, notifications } = data;

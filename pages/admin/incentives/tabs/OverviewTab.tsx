@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import useSWR from "swr";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Venture = {
   id: number;
@@ -27,7 +28,7 @@ export default function OverviewTab() {
       </div>
 
       {isLoading && (
-        <div className="text-sm text-gray-400">Loading ventures...</div>
+      <Skeleton className="w-full h-[85vh]" />
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

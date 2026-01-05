@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -95,7 +96,7 @@ function InsurancePoliciesPage() {
 
   if (loading) {
     return (
-      <div className="p-4">Loading policies...</div>
+     <Skeleton className="w-full h-[85vh]" />
     );
   }
 

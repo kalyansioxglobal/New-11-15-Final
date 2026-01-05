@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Load = {
   id: number;
@@ -121,7 +122,7 @@ function LoadsPage() {
         </div>
 
         {loading ? (
-          <div className="rounded-xl border border-gray-200 bg-white p-6"><p className="text-gray-500">Loading loads...</p></div>
+          <Skeleton className="w-full h-[85vh]" />
         ) : (
           <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">

@@ -118,9 +118,9 @@ function IncentivePlanEditor({
 
   if (!isAdmin) {
     return (
-      <div className="border border-gray-700 rounded-lg p-4 bg-gray-900/50">
-        <h2 className="font-semibold mb-2">Incentive Plan (Admin View)</h2>
-        <p className="text-sm text-gray-400">
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800/50 shadow-sm">
+        <h2 className="font-semibold mb-2 text-gray-900 dark:text-white">Incentive Plan (Admin View)</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           You don&apos;t have access to edit incentive plans.
         </p>
       </div>
@@ -129,18 +129,18 @@ function IncentivePlanEditor({
 
   if (loading) {
     return (
-      <div className="border border-gray-700 rounded-lg p-4 bg-gray-900/50">
-        <h2 className="font-semibold mb-2">Incentive Plan</h2>
-        <p className="text-sm text-gray-400">Loading plan…</p>
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800/50 shadow-sm">
+        <h2 className="font-semibold mb-2 text-gray-900 dark:text-white">Incentive Plan</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Loading plan…</p>
       </div>
     );
   }
 
   if (!plan) {
     return (
-      <div className="border border-gray-700 rounded-lg p-4 bg-gray-900/50">
-        <h2 className="font-semibold mb-2">Incentive Plan</h2>
-        <p className="text-sm text-gray-400">
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800/50 shadow-sm">
+        <h2 className="font-semibold mb-2 text-gray-900 dark:text-white">Incentive Plan</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           No plan configured yet. Ask admin to create one.
         </p>
       </div>
@@ -148,18 +148,18 @@ function IncentivePlanEditor({
   }
 
   return (
-    <div className="border border-gray-700 rounded-lg p-4 bg-gray-900/50">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800/50 shadow-sm">
       <div className="flex justify-between items-center mb-3">
         <div>
-          <h2 className="font-semibold">Incentive Plan</h2>
-          <p className="text-xs text-gray-400">
+          <h2 className="font-semibold text-gray-900 dark:text-white">Incentive Plan</h2>
+          <p className="text-xs text-gray-600 dark:text-gray-400">
             {plan.name} · Effective from {formatDate(plan.effectiveFrom)}
           </p>
         </div>
         <button
           onClick={savePlan}
           disabled={saving}
-          className="px-3 py-1.5 rounded-md border border-blue-500 text-blue-200 text-sm disabled:opacity-60"
+          className="px-3 py-1.5 rounded-md border border-blue-500 dark:border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
         >
           {saving ? "Saving…" : "Save Changes"}
         </button>
@@ -168,25 +168,25 @@ function IncentivePlanEditor({
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-700">
-              <th className="text-left py-2 pr-3">Role</th>
-              <th className="text-left py-2 pr-3">Metric</th>
-              <th className="text-left py-2 pr-3">Calc Type</th>
-              <th className="text-left py-2 pr-3">Rate</th>
-              <th className="text-left py-2 pr-3">Currency</th>
-              <th className="text-left py-2 pr-3">Enabled</th>
+            <tr className="border-b border-gray-200 dark:border-gray-700">
+              <th className="text-left py-2 pr-3 font-semibold text-gray-700 dark:text-gray-300">Role</th>
+              <th className="text-left py-2 pr-3 font-semibold text-gray-700 dark:text-gray-300">Metric</th>
+              <th className="text-left py-2 pr-3 font-semibold text-gray-700 dark:text-gray-300">Calc Type</th>
+              <th className="text-left py-2 pr-3 font-semibold text-gray-700 dark:text-gray-300">Rate</th>
+              <th className="text-left py-2 pr-3 font-semibold text-gray-700 dark:text-gray-300">Currency</th>
+              <th className="text-left py-2 pr-3 font-semibold text-gray-700 dark:text-gray-300">Enabled</th>
             </tr>
           </thead>
           <tbody>
             {plan.rules.map((rule) => (
-              <tr key={rule.id} className="border-b border-gray-800">
-                <td className="py-2 pr-3">{rule.roleKey}</td>
-                <td className="py-2 pr-3">{rule.metricKey}</td>
-                <td className="py-2 pr-3">{rule.calcType}</td>
+              <tr key={rule.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                <td className="py-2 pr-3 text-gray-900 dark:text-gray-200">{rule.roleKey}</td>
+                <td className="py-2 pr-3 text-gray-900 dark:text-gray-200">{rule.metricKey}</td>
+                <td className="py-2 pr-3 text-gray-900 dark:text-gray-200">{rule.calcType}</td>
                 <td className="py-2 pr-3">
                   <input
                     type="number"
-                    className="w-24 bg-gray-900 border border-gray-700 rounded px-2 py-1 text-sm"
+                    className="w-24 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={rule.rate ?? ""}
                     onChange={(e) =>
                       handleRuleChange(rule.id, "rate", e.target.value)
@@ -197,7 +197,7 @@ function IncentivePlanEditor({
                 <td className="py-2 pr-3">
                   <input
                     type="text"
-                    className="w-20 bg-gray-900 border border-gray-700 rounded px-2 py-1 text-sm"
+                    className="w-20 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={rule.currency ?? ""}
                     onChange={(e) =>
                       handleRuleChange(rule.id, "currency", e.target.value)
@@ -206,7 +206,7 @@ function IncentivePlanEditor({
                 </td>
                 <td className="py-2 pr-3">
                   <select
-                    className="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-sm"
+                    className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={rule.isEnabled ? "true" : "false"}
                     onChange={(e) =>
                       handleRuleChange(rule.id, "isEnabled", e.target.value)
@@ -259,47 +259,47 @@ function MyIncentivesPanel({ ventureId, officeId }: { ventureId: number; officeI
   const mtd = daily.reduce((sum, d) => sum + d.amount, 0);
 
   return (
-    <div className="border border-gray-700 rounded-lg p-4 bg-gray-900/50">
-      <h2 className="font-semibold mb-2">My Incentives</h2>
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800/50 shadow-sm">
+      <h2 className="font-semibold mb-2 text-gray-900 dark:text-white">My Incentives</h2>
       {loading ? (
-        <p className="text-sm text-gray-400">Loading your incentives…</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Loading your incentives…</p>
       ) : daily.length === 0 ? (
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           No incentive data for this venture yet.
         </p>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <p className="text-xs text-gray-400">Today</p>
-              <p className="text-xl font-bold">
+              <p className="text-xs text-gray-600 dark:text-gray-400">Today</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">
                 {currency} {today.toFixed(0)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-400">Month-to-Date</p>
-              <p className="text-xl font-bold">
+              <p className="text-xs text-gray-600 dark:text-gray-400">Month-to-Date</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">
                 {currency} {mtd.toFixed(0)}
               </p>
             </div>
           </div>
 
-          <div className="max-h-64 overflow-y-auto border-t border-gray-800 pt-2">
-            <p className="text-xs text-gray-400 mb-1">
+          <div className="max-h-64 overflow-y-auto border-t border-gray-200 dark:border-gray-800 pt-2">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
               Daily breakdown (most recent last):
             </p>
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-gray-800">
-                  <th className="text-left py-1 pr-2">Date</th>
-                  <th className="text-right py-1">Amount</th>
+                <tr className="border-b border-gray-200 dark:border-gray-800">
+                  <th className="text-left py-1 pr-2 font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                  <th className="text-right py-1 font-semibold text-gray-700 dark:text-gray-300">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {daily.map((d) => (
-                  <tr key={d.date} className="border-b border-gray-900">
-                    <td className="py-1 pr-2">{formatDate(d.date)}</td>
-                    <td className="py-1 text-right">
+                  <tr key={d.date} className="border-b border-gray-100 dark:border-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <td className="py-1 pr-2 text-gray-900 dark:text-gray-200">{formatDate(d.date)}</td>
+                    <td className="py-1 text-right text-gray-900 dark:text-gray-200 font-medium">
                       {currency} {d.amount.toFixed(0)}
                     </td>
                   </tr>
@@ -368,15 +368,15 @@ function VentureIncentivesPage() {
   };
 
   if (!ventureId || Number.isNaN(ventureId)) {
-    return <div className="p-6 text-gray-300">Invalid venture</div>;
+    return <div className="p-6 text-gray-700 dark:text-gray-300">Invalid venture</div>;
   }
 
   return (
     <div className="p-6 space-y-4">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-semibold mb-2">Venture Incentives</h1>
-          <p className="text-sm text-gray-400 mb-4">
+          <h1 className="text-2xl font-semibold mb-2 text-gray-900 dark:text-white">Venture Incentives</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             Configure incentive plans and see your daily incentive performance for
             this venture.
           </p>
@@ -386,7 +386,7 @@ function VentureIncentivesPage() {
             <select
               value={selectedOfficeId ?? ""}
               onChange={(e) => setSelectedOfficeId(e.target.value ? Number(e.target.value) : undefined)}
-              className="px-3 py-1.5 bg-gray-900 border border-gray-700 rounded-md text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md text-sm text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">All Offices</option>
               {offices.map((o) => (
@@ -400,7 +400,7 @@ function VentureIncentivesPage() {
             <button
               onClick={handleRecalculateYesterday}
               disabled={recalculating}
-              className="px-3 py-1.5 rounded-md border border-amber-500 text-amber-200 text-xs disabled:opacity-60"
+              className="px-3 py-1.5 rounded-md border border-amber-500 dark:border-amber-500 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/30 text-xs font-medium disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
             >
               {recalculating ? "Recalculating…" : "Recalculate Yesterday"}
             </button>
@@ -409,7 +409,7 @@ function VentureIncentivesPage() {
       </div>
 
       {recalcMessage && (
-        <div className="text-sm text-green-400 bg-green-900/20 border border-green-800 rounded px-3 py-2">
+        <div className="text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded px-3 py-2">
           {recalcMessage}
         </div>
       )}

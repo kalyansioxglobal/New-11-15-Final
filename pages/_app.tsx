@@ -5,6 +5,7 @@ import { TestModeProvider } from "@/contexts/TestModeContext";
 import { UserPreferencesProvider } from "@/contexts/UserPreferencesContext";
 import Layout from "@/components/Layout";
 import { First30DaysModal } from "@/components/First30DaysModal";
+import { ToastProvider } from "@/components/ui/ToastProvider";
 import { APP_NAME, APP_TAGLINE } from "@/lib/appMeta";
 import "@/styles/globals.css";
 
@@ -26,6 +27,7 @@ function AppContent({
         <title>{APP_NAME}</title>
         <meta name="description" content={APP_TAGLINE} />
       </Head>
+      <ToastProvider />
       <TestModeProvider>
         <UserPreferencesProvider>
           {session?.user && (

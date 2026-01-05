@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { canCreateTasks } from "@/lib/permissions";
 import type { UserRole } from "@prisma/client";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Review = {
   id: number;
@@ -138,9 +139,7 @@ export default function ReviewsListPage() {
       )}
 
       {loading ? (
-        <div className="flex justify-center p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-        </div>
+        <Skeleton className="w-full h-[85vh]" />
       ) : reviews.length === 0 ? (
         <div className="text-center p-8 text-gray-500">
           No reviews found

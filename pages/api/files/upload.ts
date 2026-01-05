@@ -65,6 +65,32 @@ function parseForm(req: NextApiRequest): Promise<{
   });
 }
 
+// Allowed file types for policy documents
+const ALLOWED_MIME_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+];
+
+const ALLOWED_EXTENSIONS = ["pdf", "jpg", "jpeg", "png"];
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+const MAX_FILES_PER_POLICY = 5;
+
+function isValidFileType(mimeType: string, filename: string): boolean {
+  // Check MIME type
+  if (!ALLOWED_MIME_TYPES.includes(mimeType.toLowerCase())) {
+    return false;
+  }
+
+  // Check file extension
+  const ext = filename.includes(".")
+    ? filename.split(".").pop()?.toLowerCase()
+    : "";
+  return ext ? ALLOWED_EXTENSIONS.includes(ext) : false;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -78,6 +104,20 @@ export default async function handler(
   try {
     const { fields, file } = await parseForm(req);
     if (!file) return res.status(400).json({ error: "No file provided" });
+
+    // Validate file type
+    if (!isValidFileType(file.mimeType, file.filename)) {
+      return res.status(400).json({
+        error: "Invalid file type. Only PDF, JPG, and PNG files are allowed.",
+      });
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      return res.status(400).json({
+        error: `File size exceeds 5MB limit. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`,
+      });
+    }
 
     const taskId = fields.taskId ? Number(fields.taskId) : undefined;
     const policyId = fields.policyId ? Number(fields.policyId) : undefined;
@@ -103,6 +143,20 @@ export default async function handler(
       });
       if (!policy) return res.status(400).json({ error: "Invalid policyId" });
       ventureId = policy.ventureId ?? ventureId;
+
+      // Check max files per policy
+      const existingFileCount = await prisma.file.count({
+        where: {
+          policyId: policyId,
+          deletedAt: null,
+        },
+      });
+
+      if (existingFileCount >= MAX_FILES_PER_POLICY) {
+        return res.status(400).json({
+          error: `Maximum ${MAX_FILES_PER_POLICY} files allowed per policy. This policy already has ${existingFileCount} file(s).`,
+        });
+      }
     }
 
     const tag = fields.tag || null;

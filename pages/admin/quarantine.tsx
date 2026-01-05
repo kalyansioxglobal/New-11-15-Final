@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface QuarantineItem {
   id: number;
@@ -101,7 +102,7 @@ export default function QuarantinePage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="p-6">Loading...</div>
+    <Skeleton className="w-full h-[85vh]" />
     );
   }
 

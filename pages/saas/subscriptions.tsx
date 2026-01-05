@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -122,7 +123,7 @@ function SaasSubscriptionsPage() {
 
       {loading ? (
         <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <Skeleton className="w-full h-[85vh]" />
         </div>
       ) : subscriptions.length === 0 ? (
         <div className="bg-gray-50 border rounded-xl p-8 text-center">

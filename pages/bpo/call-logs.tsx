@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface CallLog {
   id: number;
@@ -226,7 +227,7 @@ export default function BpoCallLogsPage() {
 
       {loading && callLogs.length === 0 ? (
         <div className="flex justify-center p-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <Skeleton className="w-full h-[85vh]" />
         </div>
       ) : callLogs.length === 0 ? (
         <div className="text-center py-12 border rounded-xl bg-gray-50">

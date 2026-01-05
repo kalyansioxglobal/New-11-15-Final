@@ -5,6 +5,7 @@ import { getEffectiveUser } from "@/lib/effectiveUser";
 import useSWR from "swr";
 import Layout from "@/components/Layout";
 import PersonalPerformance from "@/components/PersonalPerformance";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -198,7 +199,8 @@ export default function CSRDashboard({ userId }: CSRDashboardProps) {
         {activeTab === "tasks" && (
           <div className="p-4">
             {tasksLoading ? (
-              <div className="text-center text-gray-500 py-8">Loading tasks...</div>
+              // <div className="text-center text-gray-500 py-8">Loading tasks...</div>
+              <Skeleton className="w-full h-[85vh]" />
             ) : myTasks.length === 0 ? (
               <div className="text-center text-gray-500 py-8">No open tasks</div>
             ) : (

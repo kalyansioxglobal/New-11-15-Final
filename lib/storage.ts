@@ -1,4 +1,4 @@
-import { supabaseService } from "./supabase";
+import { supabaseService, BUCKET_NAME } from "./supabase";
 
 export type StorageProviderName = "supabase";
 
@@ -34,21 +34,43 @@ class SupabaseStorageClient implements StorageClient {
     mimeType: string
   ): Promise<UploadResult> {
     const client = supabaseService();
-    const { error } = await client.storage
+    
+    // Ensure the bucket exists, create if it doesn't
+    const { data: buckets, error: listError } = await client.storage.listBuckets();
+    if (!listError) {
+      const bucketExists = buckets?.some(b => b.id === this.bucket || b.name === this.bucket);
+      if (!bucketExists) {
+        // Try to create the bucket (this might fail if user doesn't have permission, but that's okay)
+        await client.storage.createBucket(this.bucket, {
+          public: false,
+          fileSizeLimit: 5242880, // 5MB
+          allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'],
+        });
+      }
+    }
+
+    // Upload the file
+    const { data: uploadData, error } = await client.storage
       .from(this.bucket)
       .upload(key, data, {
         contentType: mimeType,
         upsert: false,
+        cacheControl: '3600',
       });
 
     if (error) {
+      console.error('Supabase upload error:', error);
       throw new Error(`Supabase upload failed: ${error.message}`);
+    }
+
+    if (!uploadData) {
+      throw new Error('Upload succeeded but no data returned');
     }
 
     return {
       provider: "supabase",
       bucket: this.bucket,
-      path: key,
+      path: uploadData.path || key,
     };
   }
 
@@ -70,7 +92,12 @@ class SupabaseStorageClient implements StorageClient {
   }
 }
 
-const defaultBucket = process.env.SUPABASE_BUCKET_NAME!;
+const defaultBucket = process.env.SUPABASE_BUCKET_NAME || BUCKET_NAME;
 export const storageClient: StorageClient = new SupabaseStorageClient(
   defaultBucket
 );
+
+// Helper function to create a storage client with a custom bucket
+export function createStorageClient(bucket: string): StorageClient {
+  return new SupabaseStorageClient(bucket);
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRoleGuard } from "@/hooks/useRoleGuard";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type PnlItem = {
   id: number;
@@ -159,7 +160,7 @@ export default function FreightPnlPage() {
           </div>
         </div>
 
-        {loading && <div className="text-gray-500">Loading P&amp;L…</div>}
+        {loading && <Skeleton className="w-full h-[85vh]" />}
         {!loading && !data && (
           <div className="text-red-500 text-sm">Failed to load P&amp;L data.</div>
         )}

@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useEffect, useState } from "react";
 
 type LoadRow = {
@@ -56,7 +57,7 @@ function AtRiskLoadsPage() {
         Loads flagged as at-risk requiring immediate attention.
       </p>
 
-      {loading && <div className="text-gray-500">Loading...</div>}
+      {loading && <Skeleton className="w-full h-[85vh]" />}
       {error && <div className="text-red-500 mb-2">{error}</div>}
 
       {!loading && !error && (

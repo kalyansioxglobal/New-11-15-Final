@@ -20,10 +20,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const type = req.query.type as string | undefined;
 
     if (req.method === 'GET') {
+      const limit = 30;
+      const page = Math.max(Number(req.query.page) || 1, 1);
+      const skip = (page - 1) * limit;
+    
       const where: any = {
         isActive: true,
       };
-
+    
       if (ventureId) {
         where.ventureId = ventureId;
       } else if (!scope.allVentures) {
@@ -32,36 +36,54 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           { ventureId: null },
         ];
       }
-
+    
       if (type) {
         where.type = type;
       }
-
-      const assets = await prisma.holdingAsset.findMany({
-        where,
-        include: {
-          venture: { select: { id: true, name: true } },
-        },
-        orderBy: { name: 'asc' },
-      });
-
+    
+      // Fetch paginated assets + total count in parallel
+      const [assets, totalCount] = await Promise.all([
+        prisma.holdingAsset.findMany({
+          where,
+          include: {
+            venture: { select: { id: true, name: true } },
+          },
+          orderBy: { name: 'asc' },
+          skip,
+          take: limit,
+        }),
+        prisma.holdingAsset.count({ where }),
+      ]);
+    
       const totalValue = assets.reduce(
-        (sum: number, a: (typeof assets)[number]) => sum + (a.valueEstimate || 0),
-        0,
+        (sum: number, a: (typeof assets)[number]) =>
+          sum + (a.valueEstimate || 0),
+        0
       );
-
+    
       return res.json({
         assets,
         summary: {
-          totalAssets: assets.length,
+          totalAssets: totalCount,
           totalValue,
-          byType: assets.reduce((acc: Record<string, number>, a: (typeof assets)[number]) => {
-            acc[a.type] = (acc[a.type] || 0) + 1;
-            return acc;
-          }, {} as Record<string, number>),
+          byType: assets.reduce(
+            (acc: Record<string, number>, a: (typeof assets)[number]) => {
+              acc[a.type] = (acc[a.type] || 0) + 1;
+              return acc;
+            },
+            {}
+          ),
+        },
+        pagination: {
+          page,
+          limit,
+          totalPages: Math.ceil(totalCount / limit),
+          totalCount,
+          hasNextPage: skip + assets.length < totalCount,
+          hasPrevPage: page > 1,
         },
       });
-    }
+    }    
 
     if (req.method === 'POST') {
       if (!isSuperAdmin(user.role)) {

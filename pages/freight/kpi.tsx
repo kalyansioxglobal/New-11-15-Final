@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { AnalyticsChart } from "@/components/charts/AnalyticsChart";
 import { useTestMode } from "@/contexts/TestModeContext";
 import { useRoleGuard } from "@/hooks/useRoleGuard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Venture = {
   id: number;
@@ -50,7 +51,7 @@ function FreightKpiPage() {
   if (selectedOfficeId) filters.officeId = selectedOfficeId;
 
   if (roleLoading) {
-    return <div className="p-6 text-gray-500">Loading...</div>;
+    return <Skeleton className="w-full h-[85vh]" />;
   }
   if (!authorized) {
     return null;
@@ -59,7 +60,7 @@ function FreightKpiPage() {
   return (
     <div className="p-4 md:p-6 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h1 className="text-xl font-semibold text-slate-100">
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-slate-100">
           Freight Sales & Margin KPIs
         </h1>
 
@@ -67,7 +68,7 @@ function FreightKpiPage() {
           <select
             value={selectedVentureId}
             onChange={(e) => handleVentureChange(e.target.value)}
-            className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="px-3 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
           >
             <option value="">All Logistics Ventures</option>
             {logisticsVentures.map((v) => (
@@ -81,7 +82,7 @@ function FreightKpiPage() {
             <select
               value={selectedOfficeId}
               onChange={(e) => setSelectedOfficeId(e.target.value)}
-              className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             >
               <option value="">All Offices</option>
               {offices.map((o) => (

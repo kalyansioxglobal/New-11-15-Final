@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/Skeleton";
 import React, { useEffect, useState } from "react";
 
 interface IncentivePlan {
@@ -256,7 +257,7 @@ export default function RulesTab() {
       </div>
 
       {loading && (
-        <div className="text-xs text-gray-500">Loading…</div>
+       <Skeleton className="w-full h-[85vh]" />
       )}
 
       {selectedPlan && !loading && (

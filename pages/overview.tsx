@@ -9,6 +9,7 @@ import QuickLinks from "../components/QuickLinks";
 import { VenturesHealthTable } from "@/components/Overview/VenturesHealthTable";
 import type { VentureSummaryWithAggregates, VentureHealth } from "@/types/ventures";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type SummaryStats = {
   openTasks: number;
@@ -72,14 +73,12 @@ function OverviewPage() {
       acc[v.health] = (acc[v.health] || 0) + 1;
       return acc;
     },
-    { HEALTHY: 0, ATTENTION: 0, CRITICAL: 0 } as Record<VentureHealth, number>
+    { Healthy: 0, Attention: 0, Critical: 0 } as Record<VentureHealth, number>
   );
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-500">
-        Loading ventures…
-      </div>
+     <Skeleton className="w-full h-[85vh]" />
     );
   }
 
@@ -141,18 +140,18 @@ function OverviewPage() {
           <SummaryCard label="Total Ventures" value={ventures.length} />
           <SummaryCard
             label="Healthy"
-            value={healthCounts.HEALTHY}
+            value={healthCounts.Healthy}
             variant="healthy"
           />
           <SummaryCard
             label="Attention"
-            value={healthCounts.ATTENTION}
-            variant={healthCounts.ATTENTION > 0 ? "attention" : "default"}
+            value={healthCounts.Attention}
+            variant={healthCounts.Attention > 0 ? "attention" : "default"}
           />
           <SummaryCard
             label="Critical"
-            value={healthCounts.CRITICAL}
-            variant={healthCounts.CRITICAL > 0 ? "critical" : "default"}
+            value={healthCounts.Critical}
+            variant={healthCounts.Critical > 0 ? "critical" : "default"}
           />
         </section>
 
@@ -231,14 +230,15 @@ function SummaryCard({ label, value, variant = "default" }: SummaryCardProps) {
 }
 
 function VentureCard({ venture }: { venture: VentureSummaryWithAggregates }) {
-  const badgeClasses = {
-    HEALTHY: "bg-green-100 text-green-800",
-    ATTENTION: "bg-amber-100 text-amber-800",
-    CRITICAL: "bg-red-100 text-red-800",
-  }[venture.health];
+  const badgeClasses: Record<VentureHealth, string> = {
+    Healthy: "bg-green-100 text-green-800",
+    Attention: "bg-amber-100 text-amber-800",
+    Critical: "bg-red-100 text-red-800",
+  };
+  const badgeClass = badgeClasses[venture.health];
 
   const cardShadow =
-    venture.health !== "HEALTHY" ? "shadow-md" : "shadow-sm";
+    venture.health !== "Healthy" ? "shadow-md" : "shadow-sm";
 
   const topReason = venture.reasons?.[0];
 
@@ -260,13 +260,9 @@ function VentureCard({ venture }: { venture: VentureSummaryWithAggregates }) {
           </div>
         </div>
         <span
-          className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 ${badgeClasses}`}
+          className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 ${badgeClass}`}
         >
-          {venture.health === "HEALTHY"
-            ? "Healthy"
-            : venture.health === "ATTENTION"
-            ? "Attention"
-            : "Critical"}
+          {venture.health}
         </span>
       </div>
 
