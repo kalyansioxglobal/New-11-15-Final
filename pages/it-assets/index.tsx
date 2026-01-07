@@ -9,8 +9,8 @@ export default function ITAssetsRedirect() {
   }, [router]);
 
   return (
-    <div className="p-6 flex items-center justify-center">
-      <p className="text-sm text-gray-500">Redirecting to IT Management...</p>
+    <div className="p-6 flex items-center justify-center dark:bg-gray-900 min-h-screen">
+      <p className="text-sm text-gray-500 dark:text-gray-400">Redirecting to IT Management...</p>
     </div>
   );
 }

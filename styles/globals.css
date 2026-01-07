@@ -71,6 +71,13 @@ a {
   border-color: var(--input-border);
 }
 
+/* Select options in dark mode */
+.theme-dark select option,
+.dark select option {
+  background-color: #374151;
+  color: #f9fafb;
+}
+
 .theme-dark input::placeholder,
 .theme-dark textarea::placeholder {
   color: var(--text-muted);
@@ -172,4 +179,12 @@ a {
 
 .theme-dark .bg-red-100 {
   background-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+/* 
+  The syntax in the original selection is incorrect for both CSS and Tailwind's @apply. 
+  To define a custom utility class with Tailwind styles in global CSS, use plain CSS selectors and @apply inside the class, like so:
+*/
+.btn {
+  @apply inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl text-center sm:text-left;
 }

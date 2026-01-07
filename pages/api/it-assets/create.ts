@@ -66,8 +66,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       data.assignedSince = assignedSince ? new Date(assignedSince) : new Date();
     }
 
+    // Check if asset with same tag already exists for this venture
+    const existingAsset = await prisma.iTAsset.findFirst({
+      where: {
+        ventureId: vId,
+        tag: tag.trim(),
+        isDeleted: false,
+      },
+    });
+
+    if (existingAsset) {
+      return res.status(409).json({
+        error: "DUPLICATE_ASSET",
+        detail: `An asset with tag "${tag.trim()}" already exists for this venture. Please use a different tag.`,
+      });
+    }
+
     const asset = await prisma.iTAsset.create({
-      data,
+      data: {
+        ...data,
+        tag: tag.trim(), // Ensure tag is trimmed
+      },
     });
 
     await logAuditEvent(req, user, {
@@ -81,6 +100,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(201).json(asset);
   } catch (err: any) {
     console.error("IT asset create error", err);
+    
+    // Handle Prisma unique constraint violation
+    if (err.code === "P2002") {
+      const target = err.meta?.target;
+      if (Array.isArray(target) && target.includes("tag") && target.includes("ventureId")) {
+        return res.status(409).json({
+          error: "DUPLICATE_ASSET",
+          detail: `An asset with tag "${req.body.tag}" already exists for this venture. Please use a different tag.`,
+        });
+      }
+    }
+    
     return res
       .status(500)
       .json({ error: "Internal server error", detail: err.message || String(err) });
