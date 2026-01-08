@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Skeleton } from "./ui/Skeleton";
+import toast from 'react-hot-toast';
 
 type QuickLink = {
   id: string;
@@ -30,11 +31,12 @@ export default function QuickLinks() {
         const data = await res.json();
         setLinks(data.links || []);
       } else {
-        setError("Failed to load quick links");
+        // setError("Failed to load quick links");
+        toast.error("Failed to load quick links");
       }
     } catch (err) {
       console.error("Failed to fetch quick links:", err);
-      setError("Failed to load quick links");
+      // setError("Failed to load quick links");
     } finally {
       setLoading(false);
     }
@@ -55,12 +57,14 @@ export default function QuickLinks() {
         return true;
       } else {
         const errorData = await res.json().catch(() => ({}));
-        setError(errorData.error || "Failed to save link");
+        // setError(errorData.error || "Failed to save link");
+        toast.error(errorData.error || "Failed to save link");
         return false;
       }
     } catch (err) {
       console.error("Failed to save quick links:", err);
-      setError("Failed to save link. Please try again.");
+      // setError("Failed to save link. Please try again.");
+      toast.error("Failed to save link. Please try again.");
       return false;
     } finally {
       setSaving(false);
@@ -83,6 +87,7 @@ export default function QuickLinks() {
 
     const success = await saveLinks([...links, newLink]);
     if (success) {
+      toast.success("Link added successfully");
       setNewName("");
       setNewUrl("");
       setIsAdding(false);
@@ -110,6 +115,7 @@ export default function QuickLinks() {
 
     const success = await saveLinks(updatedLinks);
     if (success) {
+      toast.success("Link updated successfully");
       setEditingId(null);
       setNewName("");
       setNewUrl("");
@@ -131,10 +137,12 @@ export default function QuickLinks() {
       const success = await saveLinks(updatedLinks);
       if (success) {
         setDeleteConfirmId(null);
+        toast.success("Link deleted successfully");
       }
     } catch (err) {
       console.error("Failed to delete link:", err);
-      setError("Failed to delete link. Please try again.");
+      // setError("Failed to delete link. Please try again.");
+      toast.error("Failed to delete link. Please try again.");
     } finally {
       setDeleting(false);
     }
@@ -170,7 +178,7 @@ export default function QuickLinks() {
           {!isAdding && !editingId && (
             <button
               onClick={() => { setIsAdding(true); setError(null); }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-700 dark:hover:text-blue-300 rounded-lg transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

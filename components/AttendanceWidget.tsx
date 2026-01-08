@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Skeleton } from "./ui/Skeleton";
+import toast from 'react-hot-toast';
 
 type AttendanceStatus = "PRESENT" | "PTO" | "HALF_DAY" | "SICK" | "REMOTE" | "LATE";
 
@@ -8,6 +9,8 @@ type AttendanceRecord = {
   status: AttendanceStatus;
   date: string;
   notes: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 type AttendanceData = {
@@ -28,7 +31,6 @@ export default function AttendanceWidget() {
   const [data, setData] = useState<AttendanceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -42,45 +44,44 @@ export default function AttendanceWidget() {
       const json = await res.json();
       setData(json.data);
     } catch (err) {
-      setError("Could not load attendance");
+      toast.error("Could not load attendance");
     } finally {
       setLoading(false);
     }
   }
 
   async function markStatus(status: AttendanceStatus) {
-    setSaving(true);
-    setError(null);
+    setSaving(true)
     try {
       const res = await fetch("/api/attendance/my", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
-      
+
       const json = await res.json();
-      
+
       if (!res.ok) {
         // Show the specific error message from the API
         const errorMessage = json?.error?.message || "Failed to save attendance";
-        setError(errorMessage);
+        // setError(errorMessage);
+        toast.error(errorMessage);
         return;
       }
-      
+
       setData((prev) => prev ? { ...prev, today: json.data } : null);
+      toast.success("Attendance saved successfully");
       setIsOpen(false);
     } catch (err: any) {
-      console.error("Failed to mark attendance:", err);
-      setError(err?.message || "Could not save attendance. Please try again.");
+      // console.error("Failed to mark attendance:", err);
+      toast.error("Failed to mark attendance. Please try again.");
     } finally {
       setSaving(false);
     }
   }
-
   if (loading) {
     return (
-      <div className="rounded-lg border border-gray-200 p-4 bg-white shadow-sm">
-        {/* <div className="text-sm text-gray-500">Loading attendance...</div> */}
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800 shadow-sm">
         <Skeleton className="w-full h-[40px]" />
       </div>
     );
@@ -90,33 +91,59 @@ export default function AttendanceWidget() {
   const statusInfo = currentStatus ? STATUS_LABELS[currentStatus] : null;
 
   return (
-    <div className="rounded-lg border border-gray-200 p-4 bg-white shadow-sm relative">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800 shadow-sm relative">
       <div className="flex items-center justify-between gap-3">
-        <div>
-          <div className="text-sm text-gray-500 mb-1">Today&apos;s Attendance</div>
+        <div className="flex-1">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Today&apos;s Attendance</div>
           {currentStatus ? (
-            <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${statusInfo?.color}`} />
-              <span className="font-medium text-gray-900">
-                {statusInfo?.emoji} {statusInfo?.label}
-              </span>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${statusInfo?.color}`} />
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {statusInfo?.emoji} {statusInfo?.label}
+                </span>
+              </div>
+              {data?.today && (
+                <div className="text-xs text-gray-500 dark:text-gray-400 ml-4">
+                  Marked: {new Date(data.today.createdAt).toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                  })}
+                  {data.today.updatedAt &&
+                    data.today.updatedAt !== data.today.createdAt && (
+                      <span className="block text-gray-400 dark:text-gray-500">
+                        Updated: {new Date(data.today.updatedAt).toLocaleString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                          hour12: true
+                        })}
+                      </span>
+                    )
+                  }
+                </div>
+              )}
             </div>
           ) : (
-            <div className="text-gray-400 text-sm italic">Not marked yet</div>
+            <div className="text-gray-400 dark:text-gray-500 text-sm italic">Not marked yet</div>
           )}
         </div>
-        
+
         <button
           onClick={() => setIsOpen(!isOpen)}
           disabled={saving}
-          className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          className="btn"
         >
           {currentStatus ? "Change" : "Mark Status"}
         </button>
       </div>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 z-10 bg-white border border-gray-200 rounded-lg shadow-lg p-2 min-w-[160px]">
+        <div className="absolute right-0 top-full mt-1 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-2 min-w-[160px]">
           {data?.statuses.map((status) => {
             const info = STATUS_LABELS[status];
             const isSelected = status === currentStatus;
@@ -125,11 +152,10 @@ export default function AttendanceWidget() {
                 key={status}
                 onClick={() => markStatus(status)}
                 disabled={saving}
-                className={`w-full text-left px-3 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${
-                  isSelected
-                    ? "bg-blue-50 text-blue-700"
-                    : "hover:bg-gray-50 text-gray-700"
-                }`}
+                className={`w-full text-left px-3 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${isSelected
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                    : "hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                  }`}
               >
                 <span className={`w-2 h-2 rounded-full ${info.color}`} />
                 <span>{info.emoji}</span>
@@ -138,10 +164,6 @@ export default function AttendanceWidget() {
             );
           })}
         </div>
-      )}
-
-      {error && (
-        <div className="mt-2 text-sm text-red-600">{error}</div>
       )}
     </div>
   );
