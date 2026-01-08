@@ -164,7 +164,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Create notification if assignment changed
       if (assignmentChanged && updated.assignedToUserId) {
         try {
-          await prisma.notification.create({
+          const notification = await prisma.notification.create({
             data: {
               userId: updated.assignedToUserId,
               title: "IT Asset Assigned",
@@ -174,6 +174,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               entityId: updated.id,
             },
           });
+          
+          // Push via SSE
+          const { pushNotificationViaSSE, pushUnreadCountViaSSE } = await import("@/lib/notifications/push");
+          await pushNotificationViaSSE(updated.assignedToUserId, notification);
+          const unreadCount = await prisma.notification.count({
+            where: { userId: updated.assignedToUserId, isRead: false },
+          });
+          await pushUnreadCountViaSSE(updated.assignedToUserId, unreadCount);
         } catch (notifErr) {
           // Don't fail the update if notification creation fails
           console.error("Failed to create notification for asset assignment:", notifErr);
