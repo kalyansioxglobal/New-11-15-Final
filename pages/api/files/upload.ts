@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
-import { storageClient } from "@/lib/storage";
+import { storageClient, createStorageClient } from "@/lib/storage";
 import Busboy from "busboy";
 import { v4 as uuidv4 } from "uuid";
 import { getServerSession } from "next-auth";
@@ -65,18 +65,25 @@ function parseForm(req: NextApiRequest): Promise<{
   });
 }
 
-// Allowed file types for policy documents
+// Allowed file types for documents (policies and tasks)
 const ALLOWED_MIME_TYPES = [
   "application/pdf",
+  "application/msword", // .doc
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+  "application/vnd.ms-excel", // .xls
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
   "image/jpeg",
   "image/jpg",
   "image/png",
+  "image/gif",
+  "image/webp",
 ];
 
-const ALLOWED_EXTENSIONS = ["pdf", "jpg", "jpeg", "png"];
+const ALLOWED_EXTENSIONS = ["pdf", "doc", "docx", "xls", "xlsx", "jpg", "jpeg", "png", "gif", "webp"];
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const MAX_FILES_PER_POLICY = 5;
+const MAX_FILES_PER_TASK = 5;
 
 function isValidFileType(mimeType: string, filename: string): boolean {
   // Check MIME type
@@ -108,7 +115,7 @@ export default async function handler(
     // Validate file type
     if (!isValidFileType(file.mimeType, file.filename)) {
       return res.status(400).json({
-        error: "Invalid file type. Only PDF, JPG, and PNG files are allowed.",
+        error: "Invalid file type. Allowed formats: PDF, Word (.doc, .docx), Excel (.xls, .xlsx), Images (JPG, PNG, GIF, WebP).",
       });
     }
 
@@ -134,6 +141,20 @@ export default async function handler(
       });
       if (!task) return res.status(400).json({ error: "Invalid taskId" });
       ventureId = task.ventureId ?? ventureId;
+
+      // Check max files per task
+      const existingFileCount = await prisma.file.count({
+        where: {
+          taskId: taskId,
+          deletedAt: null,
+        },
+      });
+
+      if (existingFileCount >= MAX_FILES_PER_TASK) {
+        return res.status(400).json({
+          error: `Maximum ${MAX_FILES_PER_TASK} files allowed per task. This task already has ${existingFileCount} file(s).`,
+        });
+      }
     }
 
     if (policyId) {
@@ -183,7 +204,10 @@ export default async function handler(
 
     const objectKey = keyParts.join("/");
 
-    const uploadResult = await storageClient.upload(
+    // Use taskFiles bucket for tasks, default bucket for others
+    const client = taskId ? createStorageClient("taskFiles") : storageClient;
+
+    const uploadResult = await client.upload(
       objectKey,
       file.buffer,
       file.mimeType

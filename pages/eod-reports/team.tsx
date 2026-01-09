@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import { useTestMode } from '@/contexts/TestModeContext';
 import { Skeleton } from '@/components/ui/Skeleton';
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch: ${res.statusText}`);
+  }
+  return res.json();
+};
 
 type TeamMember = {
   userId: number;
@@ -44,7 +51,7 @@ function TeamEodReportsPage() {
   const [selectedVentureId, setSelectedVentureId] = useState<string>('');
   const [filter, setFilter] = useState<'all' | 'submitted' | 'pending' | 'blockers'>('all');
 
-  const { data: ventures } = useSWR<Venture[]>(
+  const { data: ventures, error: venturesError } = useSWR<Venture[]>(
     `/api/ventures?includeTest=${testMode}`,
     fetcher
   );
@@ -57,23 +64,25 @@ function TeamEodReportsPage() {
     fetcher
   );
 
+  // Show toast notifications for errors
+  useEffect(() => {
+    if (venturesError) {
+      toast.error('Failed to load ventures. Please try again.');
+    }
+  }, [venturesError]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error('Failed to load team reports. You may not have permission to view this page.');
+    }
+  }, [error]);
+
   const filteredTeam = data?.team.filter((m) => {
     if (filter === 'submitted') return m.submitted;
     if (filter === 'pending') return !m.submitted;
     if (filter === 'blockers') return m.hasBlockers;
     return true;
   }) ?? [];
-
-  if (error) {
-    return (
-      <div className="p-4 md:p-6 text-center">
-        <p className="text-red-600 dark:text-red-400">Failed to load team reports. You may not have permission to view this page.</p>
-        <Link href="/eod-reports/submit" className="text-emerald-600 dark:text-emerald-400 hover:underline mt-4 inline-block">
-          Go to submit your report
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6">
@@ -131,16 +140,21 @@ function TeamEodReportsPage() {
 
             <div className="flex-1 min-w-[150px]">
               <label className="block text-xs font-semibold text-gray-700 dark:text-slate-300 mb-2">Venture</label>
-              <select
-                value={selectedVentureId}
-                onChange={(e) => setSelectedVentureId(e.target.value)}
-                className="w-full border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
-              >
-                <option value="">All Ventures</option>
-                {ventures?.map((v) => (
-                  <option key={v.id} value={v.id}>{v.name}</option>
-                ))}
-              </select>
+              {ventures === undefined && !venturesError ? (
+                <Skeleton className="h-10 w-full rounded-lg" />
+              ) : (
+                <select
+                  value={selectedVentureId}
+                  onChange={(e) => setSelectedVentureId(e.target.value)}
+                  disabled={venturesError || !ventures}
+                  className="w-full border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">All Ventures</option>
+                  {ventures?.map((v) => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
 
@@ -162,7 +176,29 @@ function TeamEodReportsPage() {
         </div>
       </div>
 
-      {data && (
+      {isLoading && !data ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {[...Array(5)].map((_, idx) => (
+            <Skeleton key={idx} className="h-24 w-full rounded-xl" />
+          ))}
+        </div>
+      ) : error && !data ? (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/50 rounded-full mb-4">
+            <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-red-700 dark:text-red-300 font-medium mb-2">Failed to load team reports</p>
+          <p className="text-red-600 dark:text-red-400 text-sm mb-4">You may not have permission to view this page.</p>
+          <Link href="/eod-reports/submit" className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium text-sm">
+            Go to submit your report
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      ) : data ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4 md:p-5 text-center shadow-sm hover:shadow-md transition-shadow">
             <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-slate-100 mb-1">{data.summary.total}</div>
@@ -185,7 +221,7 @@ function TeamEodReportsPage() {
             <div className="text-xs text-yellow-700 dark:text-yellow-300/80 font-medium">With Blockers</div>
           </div>
         </div>
-      )}
+      ) : null}
 
       <div className="hidden md:block bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-lg">
         <div className="overflow-x-auto">
@@ -203,14 +239,26 @@ function TeamEodReportsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-slate-700/50">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={8} className="px-4 py-12 text-center text-gray-500 dark:text-slate-400">
-                    <div className="flex items-center justify-center gap-3">
-                     <Skeleton className="w-full h-full" />
-                     </div>
-                  </td>
-                </tr>
+              {isLoading && !data ? (
+                <>
+                  {[...Array(5)].map((_, idx) => (
+                    <tr key={idx}>
+                      <td className="px-4 py-3"><Skeleton className="h-5 w-32" /></td>
+                      <td className="px-4 py-3"><Skeleton className="h-5 w-24" /></td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-col gap-1.5">
+                          <Skeleton className="h-6 w-28" />
+                          <Skeleton className="h-6 w-24" />
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-center"><Skeleton className="h-6 w-20 mx-auto rounded-full" /></td>
+                      <td className="px-4 py-3 text-center"><Skeleton className="h-5 w-12 mx-auto" /></td>
+                      <td className="px-4 py-3 text-center"><Skeleton className="h-5 w-12 mx-auto" /></td>
+                      <td className="px-4 py-3 text-center"><Skeleton className="h-6 w-6 mx-auto rounded-full" /></td>
+                      <td className="px-4 py-3 text-right"><Skeleton className="h-8 w-16 ml-auto" /></td>
+                    </tr>
+                  ))}
+                </>
               ) : filteredTeam.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-12 text-center">
@@ -286,11 +334,36 @@ function TeamEodReportsPage() {
 
       <div className="md:hidden space-y-3">
         {isLoading ? (
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-6 text-center text-gray-500 dark:text-slate-400 shadow-sm">
-            <div className="flex items-center justify-center gap-3">
-              <Skeleton className="w-full h-10" />
-            </div>
-          </div>
+          <>
+            {[...Array(5)].map((_, idx) => (
+              <div
+                key={idx}
+                className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4 shadow-sm"
+              >
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="min-w-0 flex-1">
+                    <Skeleton className="h-5 w-2/3 mb-1" />
+                    <Skeleton className="h-4 w-1/2 mb-0.5" />
+                    <Skeleton className="h-3 w-1/3 mt-1" />
+                  </div>
+                  <Skeleton className="h-7 w-20 rounded-full" />
+                </div>
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {[0, 1, 2].map((i) => (
+                    <Skeleton key={i} className="h-5 w-16 rounded-md" />
+                  ))}
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex gap-4">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                  <Skeleton className="h-4 w-12" />
+                </div>
+              </div>
+            ))}
+          </>
         ) : filteredTeam.length === 0 ? (
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-6 text-center shadow-sm">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-slate-700/50 rounded-full mb-4">

@@ -131,25 +131,25 @@ export default function TaskBoardPage() {
   }
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-6 space-y-4 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Tasks Board</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Tasks Board</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Kanban view across ventures and offices
           </p>
         </div>
         <div className="flex gap-2">
           <Link
             href="/tasks"
-            className="px-3 py-1.5 rounded border border-gray-300 text-sm hover:bg-gray-50"
+            className="px-3 py-1.5 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             List View
           </Link>
           {allowCreate && (
             <Link
               href="/tasks/new"
-              className="px-3 py-1.5 rounded bg-blue-600 !text-white text-sm font-medium hover:bg-blue-700"
+              className="btn px-3 py-1.5 text-sm"
             >
               + New Task
             </Link>
@@ -158,9 +158,9 @@ export default function TaskBoardPage() {
       </div>
 
       <div className="flex gap-3 text-sm items-center">
-        <span className="text-gray-500">Filters:</span>
+        <span className="text-gray-500 dark:text-gray-400">Filters:</span>
         <select
-          className="border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-sm"
+          className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
           value={filters.ventureId || ""}
           onChange={(e) => {
             onFilterChange("ventureId", e.target.value);
@@ -176,7 +176,7 @@ export default function TaskBoardPage() {
         </select>
 
         <select
-          className="border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-sm"
+          className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
           value={filters.officeId || ""}
           onChange={(e) => onFilterChange("officeId", e.target.value)}
         >
@@ -193,7 +193,7 @@ export default function TaskBoardPage() {
         // <div className="text-sm text-gray-400">Loading tasks...</div>
         <Skeleton className="w-full h-[85vh]" />
       )}
-      {error && <div className="text-sm text-red-500 mb-2">{error}</div>}
+      {error && <div className="text-sm text-red-600 dark:text-red-400 mb-2">{error}</div>}
 
       {!loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -224,19 +224,19 @@ function TaskColumn({
   onStatusChange: (taskId: number, newStatus: string) => void;
 }) {
   const statusColors: Record<string, string> = {
-    OPEN: "border-blue-200 bg-blue-50",
-    IN_PROGRESS: "border-yellow-200 bg-yellow-50",
-    BLOCKED: "border-red-200 bg-red-50",
-    DONE: "border-green-200 bg-green-50",
+    OPEN: "border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20",
+    IN_PROGRESS: "border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20",
+    BLOCKED: "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20",
+    DONE: "border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20",
   };
 
   return (
     <div
-      className={`rounded-xl border-2 ${statusColors[status] || "border-gray-200 bg-gray-50"} p-3 flex flex-col max-h-[70vh]`}
+      className={`rounded-xl border-2 ${statusColors[status] || "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50"} p-3 flex flex-col max-h-[70vh]`}
     >
       <div className="flex justify-between items-center mb-3 px-1">
-        <div className="font-semibold text-sm">{title}</div>
-        <div className="text-xs text-gray-500 bg-white px-2 py-0.5 rounded-full">
+        <div className="font-semibold text-sm text-gray-900 dark:text-white">{title}</div>
+        <div className="text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 py-0.5 rounded-full border border-gray-200 dark:border-gray-700">
           {tasks.length}
         </div>
       </div>
@@ -246,7 +246,7 @@ function TaskColumn({
           <TaskCard key={task.id} task={task} onStatusChange={onStatusChange} />
         ))}
         {tasks.length === 0 && (
-          <div className="text-xs text-gray-400 text-center py-4">
+          <div className="text-xs text-gray-400 dark:text-gray-500 text-center py-4">
             No tasks in this column
           </div>
         )}
@@ -271,10 +271,10 @@ function TaskCard({
     new Date(task.dueDate) < new Date();
 
   const priorityColors: Record<string, string> = {
-    LOW: "text-gray-500",
-    MEDIUM: "text-yellow-600",
-    HIGH: "text-orange-600",
-    CRITICAL: "text-red-600 font-bold",
+    LOW: "text-gray-500 dark:text-gray-400",
+    MEDIUM: "text-yellow-600 dark:text-yellow-400",
+    HIGH: "text-orange-600 dark:text-orange-400",
+    CRITICAL: "text-red-600 dark:text-red-400 font-bold",
   };
 
   const nextStatus: Record<string, string> = {
@@ -286,38 +286,38 @@ function TaskCard({
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-sm hover:shadow-md transition-shadow">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-xs shadow-sm dark:shadow-gray-900/50 hover:shadow-md dark:hover:shadow-lg transition-shadow">
       <div className="flex justify-between items-start gap-2 mb-1">
         <Link
           href={`/tasks/${task.id}`}
-          className="font-medium text-gray-900 hover:text-blue-600 line-clamp-2"
+          className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 line-clamp-2 transition-colors"
         >
           {task.title}
         </Link>
-        <span className={`shrink-0 ${priorityColors[task.priority] || ""}`}>
+        <span className={`shrink-0 ${priorityColors[task.priority] || "text-gray-600 dark:text-gray-400"}`}>
           {task.priority}
         </span>
       </div>
 
       {(task.venture || task.office) && (
-        <div className="text-gray-500 mb-1">
+        <div className="text-gray-500 dark:text-gray-400 mb-1">
           {task.venture?.name}
           {task.office && ` · ${task.office.name}`}
         </div>
       )}
 
-      <div className="flex justify-between items-center text-gray-500">
+      <div className="flex justify-between items-center text-gray-500 dark:text-gray-400">
         <span>{task.assignee?.name || "Unassigned"}</span>
-        <span className={isOverdue ? "text-red-600 font-semibold" : ""}>
+        <span className={isOverdue ? "text-red-600 dark:text-red-400 font-semibold" : ""}>
           {due ? `Due: ${due}` : "No due date"}
         </span>
       </div>
 
       {task.status !== "DONE" && nextStatus[task.status] && (
-        <div className="mt-2 pt-2 border-t border-gray-100">
+        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
           <button
             onClick={() => onStatusChange(task.id, nextStatus[task.status])}
-            className="text-blue-600 hover:underline text-xs"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline text-xs transition-colors"
           >
             Move to {(nextStatus[task.status] || "").replace("_", " ")}
           </button>

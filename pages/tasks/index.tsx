@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { canCreateTasks, type UserRole } from "@/lib/permissions";
 import { Skeleton } from "@/components/ui/Skeleton";
+import toast from 'react-hot-toast';
 
 // TaskRow type (unchanged)
 type TaskRow = {
@@ -67,12 +68,14 @@ function TasksPage() {
         const res = await fetch("/api/tasks");
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          throw new Error(data.error || "Failed to load tasks");
+          // throw new Error(data.error || "Failed to load tasks");
+          toast.error(data.error || "Failed to load tasks");
         }
         const json = await res.json();
         if (!cancelled) setTasks(json.tasks || []);
       } catch (e: any) {
-        if (!cancelled) setError(e.message || "Failed to load tasks");
+        // if (!cancelled) setError(e.message || "Failed to load tasks");
+        toast.error(e.message || "Failed to load tasks");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -110,31 +113,31 @@ function TasksPage() {
   }, [tasks, statusFilter, assignedFilter, priorityFilter, dateFilter]);
 
   const statusColors: Record<string, string> = {
-    OPEN: "bg-blue-100 text-blue-800",
-    IN_PROGRESS: "bg-yellow-100 text-yellow-800",
-    BLOCKED: "bg-red-100 text-red-800",
-    DONE: "bg-green-100 text-green-800",
-    OVERDUE: "bg-orange-100 text-orange-800",
+    OPEN: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
+    IN_PROGRESS: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300",
+    BLOCKED: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
+    DONE: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
+    OVERDUE: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300",
   };
 
   const priorityColors: Record<string, string> = {
-    LOW: "text-gray-500",
-    MEDIUM: "text-yellow-600",
-    HIGH: "text-orange-600",
-    URGENT: "text-red-600 font-semibold",
+    LOW: "text-gray-500 dark:text-gray-400",
+    MEDIUM: "text-yellow-600 dark:text-yellow-400",
+    HIGH: "text-orange-600 dark:text-orange-400",
+    URGENT: "text-red-600 dark:text-red-400 font-semibold",
   };
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage and track your tasks</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tasks</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage and track your tasks</p>
         </div>
         {allowCreate && (
           <Link
             href="/tasks/new"
-            className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+            className="btn"
           >
             + New Task
           </Link>
@@ -142,19 +145,19 @@ function TasksPage() {
       </div>
 
       {/* Filter controls */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6 shadow-sm">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-6 shadow-sm">
         <div className="flex flex-wrap gap-3 items-center">
           {/* Status filter: tab buttons */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-gray-600">Status</label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Status</label>
             <div className="flex gap-2">
               {statusTabs.map((s) => (
                 <button
                   key={s}
                   onClick={() => setStatusFilter(s)}
                   className={`px-3 py-1.5 text-sm rounded-md font-medium transition-colors ${statusFilter === s
-                      ? "bg-gray-900 text-white shadow-sm"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-gray-900 dark:bg-gray-700 text-white shadow-sm"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                     }`}
                 >
                   {s === "all" ? "All" : s.replaceAll("_", " ")}
@@ -163,15 +166,15 @@ function TasksPage() {
             </div>
           </div>
 
-          <div className="h-8 w-px bg-gray-300"></div>
+          <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
 
           {/* Assigned filter: dropdown */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-gray-600">Assigned To</label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Assigned To</label>
             <select
               value={assignedFilter}
               onChange={(e) => setAssignedFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-md border border-gray-300 text-sm bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors min-w-[150px]"
+              className="px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors min-w-[150px]"
             >
               <option value="all">All People</option>
               {assignedOptions.map((name) => (
@@ -184,11 +187,11 @@ function TasksPage() {
 
           {/* Priority filter: dropdown */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-gray-600">Priority</label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Priority</label>
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-md border border-gray-300 text-sm bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors min-w-[120px]"
+              className="px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors min-w-[120px]"
             >
               <option value="all">All Priorities</option>
               {priorityOptions.map((priority) => (
@@ -201,18 +204,18 @@ function TasksPage() {
 
           {/* Due date filter: date input */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-gray-600">Due Date</label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Due Date</label>
             <div className="flex items-center gap-2">
               <input
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="px-3 py-1.5 rounded-md border border-gray-300 text-sm bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
                 max={new Date(8640000000000000).toISOString().slice(0, 10)}
               />
               {dateFilter && (
                 <button
-                  className="text-xs px-2 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
+                  className="text-xs px-2 py-1.5 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
                   onClick={() => setDateFilter("")}
                   type="button"
                   title="Clear date filter"
@@ -227,7 +230,7 @@ function TasksPage() {
           {(statusFilter !== "all" || assignedFilter !== "all" || priorityFilter !== "all" || dateFilter) && (
             <div className="flex items-end">
               <button
-                className="text-xs px-3 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors font-medium"
+                className="text-xs px-3 py-1.5 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors font-medium"
                 onClick={() => {
                   setStatusFilter("all");
                   setAssignedFilter("all");
@@ -246,17 +249,17 @@ function TasksPage() {
       {loading && (
         <Skeleton className="w-full h-[85vh]" />
       )}
-      {error && (
+      {/* {error && (
         <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200">
           <div className="text-sm text-red-600">{error}</div>
         </div>
-      )}
+      )} */}
 
       {!loading && filteredTasks.length === 0 && (
-        <div className="text-center py-12 border border-gray-200 rounded-xl bg-gray-50">
-          <div className="text-gray-400 text-3xl mb-3">✅</div>
-          <h3 className="text-gray-700 font-medium mb-1">No tasks found</h3>
-          <p className="text-sm text-gray-500 max-w-sm mx-auto">
+        <div className="text-center py-12 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+          <div className="text-gray-400 dark:text-gray-500 text-3xl mb-3">✅</div>
+          <h3 className="text-gray-700 dark:text-gray-300 font-medium mb-1">No tasks found</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
             {statusFilter === "all" && assignedFilter === "all" && priorityFilter === "all" && !dateFilter
               ? "No tasks have been created yet for your assigned ventures."
               : "No tasks match the selected filter(s)."}
@@ -264,7 +267,7 @@ function TasksPage() {
           {allowCreate && statusFilter === "all" && assignedFilter === "all" && priorityFilter === "all" && !dateFilter && (
             <Link
               href="/tasks/new"
-              className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
+              className="btn mt-4"
             >
               + New Task
             </Link>
@@ -274,22 +277,22 @@ function TasksPage() {
 
       {/* Table section */}
       {!loading && filteredTasks.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
                 <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Title</th>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Venture</th>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Office</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Status</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Priority</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Due Date</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Assigned</th>
-                  <th className="px-4 py-3 text-right font-semibold text-gray-700">Action</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Title</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Venture</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Office</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">Priority</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">Due Date</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">Assigned</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {filteredTasks.map((t) => {
                   const today = new Date();
                   today.setHours(0, 0, 0, 0);
@@ -301,19 +304,19 @@ function TasksPage() {
                   return (
                     <tr
                       key={t.id}
-                      className={`hover:bg-gray-50 transition-colors ${isOverdue ? "bg-red-50/30 border-l-2 border-l-red-500" : ""
+                      className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${isOverdue ? "bg-red-50/30 dark:bg-red-900/20 border-l-2 border-l-red-500 dark:border-l-red-400" : ""
                         }`}
                     >
-                      <td className="px-4 py-3 font-medium text-gray-900">{t.title}</td>
-                      <td className="px-4 py-3 text-gray-600">
-                        {t.ventureName ?? <span className="text-gray-400">-</span>}
+                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{t.title}</td>
+                      <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
+                        {t.ventureName ?? <span className="text-gray-400 dark:text-gray-500">-</span>}
                       </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        {t.officeName ?? <span className="text-gray-400">-</span>}
+                      <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
+                        {t.officeName ?? <span className="text-gray-400 dark:text-gray-500">-</span>}
                       </td>
                       <td className="px-4 py-3 text-center">
                         <span
-                          className={`inline-block px-2.5 py-1 rounded-md text-xs font-medium ${statusColors[t.status] || "bg-gray-100 text-gray-700"
+                          className={`inline-block px-2.5 py-1 rounded-md text-xs font-medium ${statusColors[t.status] || "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                             }`}
                         >
                           {t.status ? t.status.replaceAll("_", " ") : "-"}
@@ -321,18 +324,18 @@ function TasksPage() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         <span
-                          className={`text-xs font-medium ${priorityColors[t.priority] || "text-gray-600"
+                          className={`text-xs font-medium ${priorityColors[t.priority] || "text-gray-600 dark:text-gray-400"
                             }`}
                         >
                           {t.priority || "-"}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-center text-gray-600 text-xs">
+                      <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-300 text-xs">
                         {t.dueDate ? (
                           <div className="flex items-center justify-center gap-1.5">
                             {isOverdue && (
                               <svg
-                                className="w-4 h-4 text-red-500 flex-shrink-0"
+                                className="w-4 h-4 text-red-500 dark:text-red-400 flex-shrink-0"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -345,21 +348,21 @@ function TasksPage() {
                                 />
                               </svg>
                             )}
-                            <span className={isOverdue ? "text-red-400 font-medium" : ""}>
+                            <span className={isOverdue ? "text-red-600 dark:text-red-400 font-medium" : ""}>
                               {new Date(t.dueDate).toLocaleDateString()}
                             </span>
                           </div>
                         ) : (
-                          <span className="text-gray-400">-</span>
+                          <span className="text-gray-400 dark:text-gray-500">-</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-center text-gray-600 text-xs">
-                        {t.assignedToName || <span className="text-gray-400">-</span>}
+                      <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-300 text-xs">
+                        {t.assignedToName || <span className="text-gray-400 dark:text-gray-500">-</span>}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <Link
                           href={`/tasks/${t.id}`}
-                          className="inline-block px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
+                          className="inline-block px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
                         >
                           View
                         </Link>
@@ -371,7 +374,7 @@ function TasksPage() {
             </table>
           </div>
           {filteredTasks.length > 0 && (
-            <div className="px-4 py-2 bg-gray-50 border-t border-gray-200 text-xs text-gray-600">
+            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
               Showing {filteredTasks.length} of {tasks.length} task{filteredTasks.length !== 1 ? 's' : ''}
             </div>
           )}
