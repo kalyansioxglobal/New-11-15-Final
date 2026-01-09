@@ -271,36 +271,36 @@ export default function CSRDashboard({ userId }: CSRDashboardProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div className="bg-white dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-700 p-4 transition-colors">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
             <Link
               href="/tasks/new"
-              className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 text-center"
+              className="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg hover:bg-gray-50 dark:hover:bg-neutral-800 text-center transition-colors"
             >
-              <div className="text-2xl mb-1">+</div>
-              <div className="text-sm text-gray-600">New Task</div>
+              <div className="text-2xl mb-1 text-gray-900 dark:text-gray-100">+</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">New Task</div>
             </Link>
             <Link
               href="/logistics/customers"
-              className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 text-center"
+              className="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg hover:bg-gray-50 dark:hover:bg-neutral-800 text-center transition-colors"
             >
-              <div className="text-2xl mb-1">👥</div>
-              <div className="text-sm text-gray-600">Customers</div>
+              <div className="text-2xl mb-1 text-gray-900 dark:text-gray-100">👥</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Customers</div>
             </Link>
             <Link
               href="/eod"
-              className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 text-center"
+              className="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg hover:bg-gray-50 dark:hover:bg-neutral-800 text-center transition-colors"
             >
-              <div className="text-2xl mb-1">📝</div>
-              <div className="text-sm text-gray-600">Submit EOD</div>
+              <div className="text-2xl mb-1 text-gray-900 dark:text-gray-100">📝</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Submit EOD</div>
             </Link>
             <Link
               href="/attendance"
-              className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 text-center"
+              className="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg hover:bg-gray-50 dark:hover:bg-neutral-800 text-center transition-colors"
             >
-              <div className="text-2xl mb-1">✓</div>
-              <div className="text-sm text-gray-600">Attendance</div>
+              <div className="text-2xl mb-1 text-gray-900 dark:text-gray-100">✓</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Attendance</div>
             </Link>
           </div>
         </div>

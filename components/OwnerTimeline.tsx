@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { Skeleton } from "./ui/Skeleton";
 
 type TimelineSeverity = "info" | "warning" | "critical";
 
@@ -24,28 +26,31 @@ export default function OwnerTimeline() {
     fetch("/api/owner/timeline")
       .then((r) => {
         if (r.status === 401) {
-          setError("unauthorized");
+          toast.error("Unauthorized");
+          // setError("unauthorized");
           return { items: [] as OwnerTimelineItem[] };
         }
         if (r.status === 403) {
-          setError("forbidden");
+          toast.error("Forbidden");
+          // setError("forbidden");
           return { items: [] as OwnerTimelineItem[] };
         }
         return r.json();
       })
       .then((d) => setItems(d.items || []))
-      .catch(() => setError("error"))
+      .catch(() => toast.error("Failed to load timeline"))
+      // .catch(() => setError("error"))
       .finally(() => setLoading(false));
   }, []);
 
   const badgeClass = (severity: TimelineSeverity) => {
     switch (severity) {
       case "critical":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800";
       case "warning":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600";
     }
   };
 
@@ -62,7 +67,7 @@ export default function OwnerTimeline() {
     ({ item, children }) => {
       if (item.url) {
         return (
-          <Link href={item.url} className="block hover:bg-gray-50 rounded-md px-1 -mx-1">
+          <Link href={item.url} className="block hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-md px-1 -mx-1 transition-colors">
             {children}
           </Link>
         );
@@ -72,18 +77,19 @@ export default function OwnerTimeline() {
 
   if (loading) {
     return (
-      <div className="border rounded-lg p-4 bg-white shadow-sm">
-        <h2 className="text-lg font-semibold mb-2">Owner Timeline</h2>
-        <p className="text-sm text-gray-500">Loading alerts…</p>
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm">
+        <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Owner Timeline</h2>
+        <Skeleton className="w-full h-4" />
+        {/* <p className="text-sm text-gray-500 dark:text-gray-400">Loading alerts…</p> */}
       </div>
     );
   }
 
   if (error === "unauthorized" || error === "forbidden") {
     return (
-      <div className="border rounded-lg p-4 bg-white shadow-sm">
-        <h2 className="text-lg font-semibold mb-2">Owner Timeline</h2>
-        <p className="text-sm text-gray-500">
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm">
+        <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Owner Timeline</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Sign in as CEO or Admin to view the timeline.
         </p>
       </div>
@@ -92,19 +98,19 @@ export default function OwnerTimeline() {
 
   if (error) {
     return (
-      <div className="border rounded-lg p-4 bg-white shadow-sm">
-        <h2 className="text-lg font-semibold mb-2">Owner Timeline</h2>
-        <p className="text-sm text-red-500">Failed to load timeline.</p>
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm">
+        <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Owner Timeline</h2>
+        <p className="text-sm text-red-500 dark:text-red-400">Failed to load timeline.</p>
       </div>
     );
   }
 
   return (
-    <div className="border rounded-lg p-4 bg-white shadow-sm max-h-[600px] overflow-y-auto">
-      <h2 className="text-lg font-semibold mb-3">Owner Timeline</h2>
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm max-h-[600px] overflow-y-auto">
+      <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Owner Timeline</h2>
 
       {items.length === 0 && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           No alerts right now. All ventures are stable.
         </p>
       )}
@@ -116,10 +122,10 @@ export default function OwnerTimeline() {
             <Wrapper item={item}>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
                     {item.title}
                     {item.ventureName && (
-                      <span className="text-xs text-gray-500 ml-1">
+                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
                         · {item.ventureName}
                       </span>
                     )}
@@ -133,11 +139,11 @@ export default function OwnerTimeline() {
                   </span>
                 </div>
                 {item.description && (
-                  <div className="text-xs text-gray-600 mt-0.5">
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                     {item.description}
                   </div>
                 )}
-                <div className="text-[10px] text-gray-400 mt-0.5">
+                <div className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
                   {new Date(item.date).toLocaleString()}
                 </div>
               </div>
