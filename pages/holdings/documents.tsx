@@ -231,7 +231,7 @@ function HoldingsDocumentsPage() {
         <button
           onClick={() => setShowUploadModal(true)}
           disabled={!selectedAssetId}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50"
+          className="btn"
         >
           Add Document
         </button>
@@ -378,7 +378,7 @@ function HoldingsDocumentsPage() {
             </thead>
             <tbody className="divide-y">
               {documents.map((doc) => (
-                <tr key={doc.id} className="hover:bg-gray-50">
+                <tr key={doc.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
                   <td className="px-4 py-3">
                     <div className="font-medium">{doc.name}</div>
                     {doc.description && (
