@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useSWR from "swr";
+import toast from "react-hot-toast";
 import { AnalyticsChart } from "@/components/charts/AnalyticsChart";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Venture = {
   id: number;
@@ -15,26 +17,56 @@ type HotelProperty = {
   ventureId: number;
 };
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+type HotelsResponse = {
+  items: HotelProperty[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
+
+const fetcher = (url: string) => fetch(url).then((r) => {
+  if (!r.ok) {
+    throw new Error(`Failed to fetch: ${r.statusText}`);
+  }
+  return r.json();
+});
 
 export default function ChartsTab() {
   const { testMode } = useTestMode();
   const [selectedVentureId, setSelectedVentureId] = useState<string>("");
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>("");
 
-  const { data: venturesData = [] } = useSWR<Venture[]>(
+  const { data: venturesData, error: venturesError, isLoading: venturesLoading } = useSWR<Venture[]>(
     `/api/ventures?types=HOSPITALITY&includeTest=${testMode}`,
     fetcher
   );
 
-  const { data: propertiesData } = useSWR<HotelProperty[]>(
-    `/api/hospitality/hotels?includeTest=${testMode}`,
+  const { data: propertiesData, error: propertiesError, isLoading: propertiesLoading } = useSWR<HotelsResponse>(
+    `/api/hospitality/hotels?includeTest=${testMode}&pageSize=200`,
     fetcher
   );
 
-  const hospitalityVentures = venturesData;
+  // Show toast on errors
+  useEffect(() => {
+    if (venturesError) {
+      toast.error('Failed to load ventures. Please try again.');
+    }
+  }, [venturesError]);
 
-  const properties = (propertiesData ?? []).filter(
+  useEffect(() => {
+    if (propertiesError) {
+      toast.error('Failed to load hotels. Please try again.');
+    }
+  }, [propertiesError]);
+
+  // Extract arrays from API responses
+  const hospitalityVentures = venturesData || [];
+
+  // Handle paginated response with items property
+  const propertiesArray = propertiesData?.items || [];
+
+  const properties = propertiesArray.filter(
     (p) => !selectedVentureId || p.ventureId === parseInt(selectedVentureId, 10)
   );
 
@@ -45,39 +77,54 @@ export default function ChartsTab() {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Performance Charts
-        </h2>
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Performance Charts
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Visualize hotel performance metrics over time
+          </p>
+        </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={selectedVentureId}
-            onChange={(e) => {
-              setSelectedVentureId(e.target.value);
-              setSelectedPropertyId("");
-            }}
-            className="px-3 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          >
-            <option value="">All Hospitality Ventures</option>
-            {hospitalityVentures.map((v) => (
-              <option key={v.id} value={String(v.id)}>
-                {v.name}
-              </option>
-            ))}
-          </select>
+          {venturesLoading ? (
+            <Skeleton className="h-10 w-56" />
+          ) : (
+            <select
+              value={selectedVentureId}
+              onChange={(e) => {
+                setSelectedVentureId(e.target.value);
+                setSelectedPropertyId("");
+              }}
+              disabled={venturesError || hospitalityVentures.length === 0}
+              className="px-3 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="">All Hospitality Ventures</option>
+              {hospitalityVentures.map((v) => (
+                <option key={v.id} value={String(v.id)}>
+                  {v.name}
+                </option>
+              ))}
+            </select>
+          )}
 
-          <select
-            value={selectedPropertyId}
-            onChange={(e) => setSelectedPropertyId(e.target.value)}
-            className="px-3 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-          >
-            <option value="">All Properties</option>
-            {properties.map((p) => (
-              <option key={p.id} value={String(p.id)}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+          {propertiesLoading ? (
+            <Skeleton className="h-10 w-56" />
+          ) : (
+            <select
+              value={selectedPropertyId}
+              onChange={(e) => setSelectedPropertyId(e.target.value)}
+              disabled={propertiesError || properties.length === 0}
+              className="px-3 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="">All Properties</option>
+              {properties.map((p) => (
+                <option key={p.id} value={String(p.id)}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 

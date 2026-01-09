@@ -92,7 +92,7 @@ export const ROUTE_REGISTRY: RouteConfig[] = [
   },
   {
     id: "eod_reports",
-    path: "/eod-reports/submit",
+    path: "/eod-reports",
     apiPath: "/api/eod-reports",
     module: "operations",
     label: "EOD Reports",

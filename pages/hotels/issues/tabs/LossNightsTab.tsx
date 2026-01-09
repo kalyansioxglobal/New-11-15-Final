@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTestMode } from "@/contexts/TestModeContext";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface Venture {
   id: number;
@@ -157,9 +158,7 @@ export default function LossNightsTab() {
       </div>
 
       {loading && (
-        <div className="py-8 flex justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-        </div>
+        <Skeleton className="w-full h-[85vh]" />
       )}
 
       {error && (

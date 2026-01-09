@@ -15,7 +15,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'GET') {
       const where: any = {
-        status: 'ACTIVE',
         ...(includeTest ? {} : { isTest: false }),
       };
 
@@ -25,15 +24,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         where.ventureId = { in: scope.ventureIds };
       }
 
-      const hotels = await prisma.hotelProperty.findMany({
-        where,
-        include: {
-          venture: { select: { id: true, name: true } },
-        },
-        orderBy: { name: 'asc' },
-      });
+      // Pagination parameters
+      const page = Number(req.query.page || 1);
+      const pageSize = Number(req.query.pageSize || 50);
 
-      return res.json(hotels);
+      const safePage = Number.isFinite(page) && page > 0 ? page : 1;
+      const safePageSize =
+        Number.isFinite(pageSize) && pageSize > 0 && pageSize <= 200 ? pageSize : 50;
+
+      const skip = (safePage - 1) * safePageSize;
+      const take = safePageSize;
+
+      const [total, hotels] = await Promise.all([
+        prisma.hotelProperty.count({ where }),
+        prisma.hotelProperty.findMany({
+          where,
+          include: {
+            venture: { select: { id: true, name: true } },
+          },
+          orderBy: { name: 'asc' },
+          skip,
+          take,
+        }),
+      ]);
+
+      return res.json({
+        items: hotels,
+        page: safePage,
+        pageSize: safePageSize,
+        total,
+        totalPages: Math.ceil(total / safePageSize) || 1,
+      });
     }
 
     if (req.method === 'POST') {

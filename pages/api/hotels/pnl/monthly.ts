@@ -5,6 +5,11 @@ import { logger } from '@/lib/logger';
 import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime/library';
 
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 // Validation schemas
 const GetPnlQuerySchema = z.object({
   hotelId: z.coerce.number().int().positive(),
@@ -265,6 +270,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const hotel = await prisma.hotelProperty.findUnique({ where: { id: hotelId } });
       if (!hotel) {
         return res.status(404).json({ error: 'Hotel not found' });
+      }
+
+      // Validate: Prevent saving for future months
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
+      
+      const isFutureMonth = year > currentYear || (year === currentYear && month > currentMonth);
+      if (isFutureMonth) {
+        return res.status(400).json({ 
+          error: `Cannot save P&L data for future months. The selected month (${MONTH_NAMES[month - 1]} ${year}) has not started yet.` 
+        });
       }
 
       // Upsert the monthly P&L record

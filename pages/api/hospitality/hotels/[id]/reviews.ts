@@ -57,10 +57,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ]);
 
     // Calculate summary
+    const reviewsWithRating = reviews.filter((r: any) => r.rating !== null && r.rating !== undefined);
     const summary = {
       total,
-      averageRating: reviews.length > 0
-        ? reviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviews.length
+      averageRating: reviewsWithRating.length > 0
+        ? reviewsWithRating.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviewsWithRating.length
         : 0,
       bySource: reviews.reduce((acc: Record<string, number>, r: any) => {
         const source = r.source || 'UNKNOWN';
@@ -74,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       reviews,
       summary,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Hotel reviews API error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }

@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Verify hotel exists and user has access
     const hotel = await prisma.hotelProperty.findUnique({
       where: { id: hotelId },
-      select: { ventureId: true },
+      select: { ventureId: true, isTest: true },
     });
 
     if (!hotel) {
@@ -38,10 +38,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(403).json({ error: 'Not authorized for this hotel' });
     }
 
-    // Get metrics
+    // Filter by hotel's isTest status if test mode is disabled
+    // Note: HotelKpiDaily doesn't have isTest field, so we filter by hotel's isTest status
+    if (!includeTest && hotel.isTest) {
+      return res.json({
+        metrics: [],
+        summary: {
+          totalRoomsAvailable: 0,
+          totalRoomsSold: 0,
+          occupancyPct: 0,
+          adr: 0,
+          revpar: 0,
+          totalRoomRevenue: 0,
+          lowOcc: false,
+          lowRevpar: false,
+        },
+      });
+    }
+
+    // Get metrics - HotelKpiDaily doesn't have isTest field, so we only filter by hotelId
     const where: any = {
       hotelId,
-      ...(includeTest ? {} : { isTest: false }),
     };
 
     const metrics = await prisma.hotelKpiDaily.findMany({

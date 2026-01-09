@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { GetServerSideProps } from "next";
+import Link from "next/link";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {} };
@@ -26,7 +27,15 @@ function HotelKpisPage() {
 
   return (
     <div className="p-4 md:p-6 space-y-4">
-      <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Hotel KPIs</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Hotel KPIs</h1>
+        <Link
+          href="/hotels/snapshot"
+          className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 border border-blue-600 dark:border-blue-500 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+        >
+          View Snapshot
+        </Link>
+      </div>
 
       <div className="border-b border-gray-200 dark:border-slate-700">
         <nav className="flex gap-4">

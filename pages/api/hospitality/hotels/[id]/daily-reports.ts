@@ -24,6 +24,8 @@ export default async function handler(
   try {
     const scope = getUserScope(user);
     const limit = Number(req.query.limit) || 30;
+    const from = req.query.from as string | undefined;
+    const to = req.query.to as string | undefined;
 
     // Verify hotel exists and user has access
     const hotel = await prisma.hotelProperty.findUnique({
@@ -39,8 +41,24 @@ export default async function handler(
       return res.status(403).json({ error: "Not authorized for this hotel" });
     }
 
+    // Build date filter
+    const where: any = { hotelId };
+    if (from || to) {
+      where.date = {};
+      if (from) {
+        const fromDate = new Date(from);
+        fromDate.setUTCHours(0, 0, 0, 0);
+        where.date.gte = fromDate;
+      }
+      if (to) {
+        const toDate = new Date(to);
+        toDate.setUTCHours(23, 59, 59, 999);
+        where.date.lte = toDate;
+      }
+    }
+
     const reports = await prisma.hotelDailyReport.findMany({
-      where: { hotelId },
+      where,
       orderBy: { date: "desc" },
       take: Math.min(limit, 200),
     });
