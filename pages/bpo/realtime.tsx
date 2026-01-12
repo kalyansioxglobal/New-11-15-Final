@@ -162,7 +162,7 @@ function BpoRealtimePage() {
           </label>
           <button
             onClick={fetchData}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+            className="btn"
           >
             Refresh Now
           </button>

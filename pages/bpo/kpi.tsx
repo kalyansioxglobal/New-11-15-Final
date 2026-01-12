@@ -1,4 +1,6 @@
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 type AgentKpi = {
   agentId: number;
@@ -93,13 +95,13 @@ function KpiTile({
   subLabel?: string;
 }) {
   return (
-    <div className="rounded-lg border bg-white p-4 shadow-sm">
-      <div className="text-xs font-medium uppercase tracking-wider text-gray-500">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+      <div className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
         {label}
       </div>
-      <div className="mt-1 text-2xl font-semibold text-gray-900">{value}</div>
+      <div className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{value}</div>
       {subLabel && (
-        <div className="mt-0.5 text-xs text-gray-500">{subLabel}</div>
+        <div className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{subLabel}</div>
       )}
     </div>
   );
@@ -116,7 +118,7 @@ function Th({
     <th
       scope="col"
       className={
-        "px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 " +
+        "px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300 " +
         className
       }
     >
@@ -132,7 +134,7 @@ function Td({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <td className={"px-4 py-2 " + className}>{children}</td>;
+  return <td className={"px-4 py-2 text-gray-900 dark:text-gray-300 " + className}>{children}</td>;
 }
 
 function BpoKpiPage() {
@@ -145,7 +147,6 @@ function BpoKpiPage() {
 
   const [data, setData] = useState<KpiResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
 
   const [selectedVentureId] = useState<number | undefined>(undefined);
   const [selectedOfficeId] = useState<number | undefined>(undefined);
@@ -154,7 +155,6 @@ function BpoKpiPage() {
 
   const fetchData = () => {
     setLoading(true);
-    setError(null);
 
     const params = new URLSearchParams();
     params.set("from", new Date(from).toISOString());
@@ -174,7 +174,7 @@ function BpoKpiPage() {
       })
       .catch((err: any) => {
         console.error(err);
-        setError(err.message || "Failed to load KPI data");
+        toast.error(err.message || "Failed to load KPI data");
       })
       .finally(() => setLoading(false));
   };
@@ -217,31 +217,31 @@ function BpoKpiPage() {
   const totals = data?.totals;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-semibold">BPO Agent KPIs</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">BPO Agent KPIs</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Full visibility into agent activity and outcomes.
           </p>
         </div>
 
         <div className="flex flex-col items-end gap-2">
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">
+          <div className="flex items-center gap-2 flex-wrap">
+            <label className="text-sm text-gray-600 dark:text-gray-300">
               From
               <input
                 type="date"
-                className="ml-2 rounded border px-2 py-1 text-sm"
+                className="ml-2 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
               />
             </label>
-            <label className="text-sm text-gray-600">
+            <label className="text-sm text-gray-600 dark:text-gray-300">
               To
               <input
                 type="date"
-                className="ml-2 rounded border px-2 py-1 text-sm"
+                className="ml-2 rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
               />
@@ -249,7 +249,7 @@ function BpoKpiPage() {
 
             <button
               onClick={fetchData}
-              className="rounded bg-blue-600 px-3 py-1 text-sm font-medium text-white hover:bg-blue-700"
+              className="btn"
             >
               Apply
             </button>
@@ -258,25 +258,25 @@ function BpoKpiPage() {
           <div className="flex flex-wrap items-center justify-end gap-2">
             <button
               onClick={() => handleQuickRange("today")}
-              className="rounded border px-2 py-1 text-xs text-gray-700 hover:bg-gray-100"
+              className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
             >
               Today
             </button>
             <button
               onClick={() => handleQuickRange("thisWeek")}
-              className="rounded border px-2 py-1 text-xs text-gray-700 hover:bg-gray-100"
+              className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
             >
               This Week
             </button>
             <button
               onClick={() => handleQuickRange("thisMonth")}
-              className="rounded border px-2 py-1 text-xs text-gray-700 hover:bg-gray-100"
+              className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
             >
               This Month
             </button>
             <button
               onClick={() => handleQuickRange("last7")}
-              className="rounded border px-2 py-1 text-xs text-gray-700 hover:bg-gray-100"
+              className="rounded border border-gray-300 dark:border-gray-600 px-2 py-1 text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
             >
               Last 7 Days
             </button>
@@ -316,20 +316,12 @@ function BpoKpiPage() {
       </div>
 
       {loading && (
-        <div className="rounded border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-          Loading BPO KPIs...
-        </div>
+        <Skeleton className="h-10 w-full" />
       )}
 
-      {error && (
-        <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
-
-      <div className="overflow-x-auto rounded-lg border bg-white">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+          <thead className="bg-gray-50 dark:bg-gray-900/50">
             <tr>
               <Th>Agent</Th>
               <Th>Campaign</Th>
@@ -345,7 +337,7 @@ function BpoKpiPage() {
               <Th className="text-right">Rev / Dial</Th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
             {(data?.agents ?? []).map((a) => {
               const connectRate =
                 a.totalDials > 0
@@ -363,16 +355,16 @@ function BpoKpiPage() {
                 a.totalDials > 0 ? a.totalRevenue / a.totalDials : 0;
 
               return (
-                <tr key={a.agentId} className="hover:bg-gray-50">
+                <tr key={a.agentId} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                   <Td>
                     <div className="flex flex-col">
-                      <span className="font-medium">{a.agentName}</span>
-                      <span className="text-xs text-gray-500">
+                      <span className="font-medium text-gray-900 dark:text-white">{a.agentName}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         ID: {a.agentId}
                       </span>
                     </div>
                   </Td>
-                  <Td>{a.campaignName || "-"}</Td>
+                  <Td className="text-gray-900 dark:text-gray-300">{a.campaignName || "-"}</Td>
                   <Td className="text-right">{a.totalDials}</Td>
                   <Td className="text-right">{a.totalConnects}</Td>
                   <Td className="text-right">
@@ -413,7 +405,7 @@ function BpoKpiPage() {
               <tr>
                 <td
                   colSpan={12}
-                  className="px-4 py-6 text-center text-sm text-gray-500"
+                  className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400"
                 >
                   No BPO activity found for this range.
                 </td>

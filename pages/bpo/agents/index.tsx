@@ -173,8 +173,8 @@ export default function BpoAgentsPage() {
     <div className="p-6 space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">BPO Agents</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">BPO Agents</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Manage BPO agents across campaigns and ventures
           </p>
         </div>
@@ -185,7 +185,7 @@ export default function BpoAgentsPage() {
               setVentureFilter(e.target.value);
               setCampaignFilter("");
             }}
-            className="border rounded px-2 py-1 text-sm"
+            className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-blue-400 dark:focus:ring-blue-500 focus:border-blue-400 dark:focus:border-blue-500"
           >
             <option value="">All Ventures</option>
             {bpoVentures.map((v) => (
@@ -198,7 +198,7 @@ export default function BpoAgentsPage() {
           <select
             value={campaignFilter}
             onChange={(e) => setCampaignFilter(e.target.value)}
-            className="border rounded px-2 py-1 text-sm"
+            className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-blue-400 dark:focus:ring-blue-500 focus:border-blue-400 dark:focus:border-blue-500"
           >
             <option value="">All Campaigns</option>
             {Array.isArray(campaigns) && campaigns.map((c) => (
@@ -210,8 +210,11 @@ export default function BpoAgentsPage() {
 
           <button
             onClick={() => setTestMode(!testMode)}
-            className={`px-3 py-1 rounded text-sm border ${testMode ? "bg-yellow-200 border-yellow-400" : "bg-gray-100"
-              }`}
+            className={`px-3 py-1 rounded text-sm border transition-colors ${
+              testMode 
+                ? "bg-yellow-200 dark:bg-yellow-900/30 border-yellow-400 dark:border-yellow-700 text-yellow-900 dark:text-yellow-300" 
+                : "bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-300"
+            }`}
           >
             Test: {testMode ? "ON" : "OFF"}
           </button>
@@ -219,7 +222,7 @@ export default function BpoAgentsPage() {
           {allowCreate && (
             <button
               onClick={() => setShowAddModal(true)}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+              className="btn"
             >
               + Add Agent
             </button>
@@ -228,7 +231,7 @@ export default function BpoAgentsPage() {
       </div>
 
       {error && (
-        <div className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
+        <div className="p-3 rounded bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm">
           {error}
         </div>
       )}
@@ -236,51 +239,52 @@ export default function BpoAgentsPage() {
       {loading ? (
         <Skeleton className="w-full h-[85vh]" />
       ) : agents.length === 0 ? (
-        <div className="text-center py-12 border rounded-xl bg-gray-50">
-          <div className="text-gray-500 text-sm">
+        <div className="text-center py-12 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+          <div className="text-gray-500 dark:text-gray-400 text-sm">
             No agents found.
             {allowCreate && " Add agents to start tracking BPO performance."}
           </div>
         </div>
       ) : (
-        <div className="border rounded-xl overflow-hidden bg-white">
+        <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-700">Agent</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-700">Venture</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-700">Campaign</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-700">Employee ID</th>
-                <th className="text-center px-4 py-3 font-medium text-gray-700">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-700 dark:text-gray-300">Agent</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-700 dark:text-gray-300">Venture</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-700 dark:text-gray-300">Campaign</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-700 dark:text-gray-300">Employee ID</th>
+                <th className="text-center px-4 py-3 font-medium text-gray-700 dark:text-gray-300">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {agents.map((agent) => (
-                <tr key={agent.id} className="hover:bg-gray-50">
+                <tr key={agent.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="font-medium">{agent.user.name || "Unnamed"}</div>
-                    <div className="text-xs text-gray-500">{agent.user.email}</div>
+                    <div className="font-medium text-gray-900 dark:text-white">{agent.user.name || "Unnamed"}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">{agent.user.email}</div>
                   </td>
-                  <td className="px-4 py-3 text-gray-700">{agent.venture.name}</td>
+                  <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{agent.venture.name}</td>
                   <td className="px-4 py-3">
                     {agent.campaign ? (
                       <Link
                         href={`/bpo/campaigns/${agent.campaign.id}`}
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-600 dark:text-blue-400 hover:underline"
                       >
                         {agent.campaign.name}
                       </Link>
                     ) : (
-                      <span className="text-gray-400">Unassigned</span>
+                      <span className="text-gray-400 dark:text-gray-500">Unassigned</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-gray-500">{agent.employeeId || "—"}</td>
+                  <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{agent.employeeId || "—"}</td>
                   <td className="px-4 py-3 text-center">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${agent.isActive
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-600"
-                        }`}
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        agent.isActive
+                          ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800"
+                          : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600"
+                      }`}
                     >
                       {agent.isActive ? "Active" : "Inactive"}
                     </span>
@@ -292,13 +296,13 @@ export default function BpoAgentsPage() {
         </div>
       )}
 
-      <p className="text-xs text-gray-400 pt-4">
+      <p className="text-xs text-gray-400 dark:text-gray-500 pt-4">
         Test Mode {testMode ? "ON" : "OFF"} – when OFF, test data is excluded.
       </p>
 
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-200 dark:border-slate-700">
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Add BPO Agent</h2>
               <button
@@ -308,7 +312,7 @@ export default function BpoAgentsPage() {
                   setFormError(null);
                   setFormData({ userId: "", ventureId: "", campaignId: "", employeeId: "" });
                 }}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -317,21 +321,21 @@ export default function BpoAgentsPage() {
             </div>
 
             {formError && (
-              <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+              <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm">
                 {formError}
               </div>
             )}
 
             <form onSubmit={handleAddAgent} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   User <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData.userId}
                   onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                 >
                   <option value="">Select a user</option>
                   {users.map((user) => (
@@ -343,7 +347,7 @@ export default function BpoAgentsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Venture <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -352,7 +356,7 @@ export default function BpoAgentsPage() {
                     setFormData({ ...formData, ventureId: e.target.value, campaignId: "" });
                   }}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                 >
                   <option value="">Select a venture</option>
                   {bpoVentures.map((venture) => (
@@ -364,14 +368,14 @@ export default function BpoAgentsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Campaign (Optional)
                 </label>
                 <select
                   value={formData.campaignId}
                   onChange={(e) => setFormData({ ...formData, campaignId: e.target.value })}
                   disabled={!formData.ventureId}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="">No campaign (unassigned)</option>
                   {formCampaigns.map((campaign) => (
@@ -383,7 +387,7 @@ export default function BpoAgentsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Employee ID (Optional)
                 </label>
                 <input
@@ -391,11 +395,11 @@ export default function BpoAgentsPage() {
                   value={formData.employeeId}
                   onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
                   placeholder="e.g. EMP001"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-slate-700">
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={() => {
@@ -403,16 +407,31 @@ export default function BpoAgentsPage() {
                     setFormError(null);
                     setFormData({ userId: "", ventureId: "", campaignId: "", employeeId: "" });
                   }}
-                  className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-slate-600 transition text-sm"
+                  className="px-5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors text-sm font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn flex items-center gap-2"
                 >
-                  {saving ? "Creating..." : "Create Agent"}
+                  {saving ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Create Agent
+                    </>
+                  )}
                 </button>
               </div>
             </form>

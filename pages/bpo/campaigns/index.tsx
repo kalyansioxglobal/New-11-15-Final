@@ -83,7 +83,7 @@ export default function CampaignsListPage() {
         {allowCreate && (
           <Link
             href="/bpo/campaigns/new"
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+            className="btn"
           >
             + New Campaign
           </Link>
@@ -133,8 +133,8 @@ export default function CampaignsListPage() {
                 <span
                   className={`px-2 py-1 text-xs rounded-full ${
                     c.isActive
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
+                      ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-300"
+                      : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
                   }`}
                 >
                   {c.isActive ? "Active" : "Inactive"}
