@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { isLeadership, isSuperAdmin } from "@/lib/permissions";
 import type { UserRole } from "@prisma/client";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type Load = {
   id: number;
@@ -273,7 +274,7 @@ export default function CustomerDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+        <Skeleton className="w-full h-[85vh]" />
       </div>
     );
   }

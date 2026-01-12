@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 type Venture = { id: number; name: string };
 type Office = { id: number; name: string; ventureId: number };
@@ -32,7 +33,6 @@ export default function NewLoadPage() {
   const [ventures, setVentures] = useState<Venture[]>([]);
   const [offices, setOffices] = useState<Office[]>([]);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     ventureId: "",
@@ -77,7 +77,6 @@ export default function NewLoadPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setError(null);
 
     try {
       const res = await fetch("/api/freight/loads", {
@@ -92,312 +91,322 @@ export default function NewLoadPage() {
 
       if (res.ok) {
         const load = await res.json();
+        toast.success("Load created successfully");
         router.push(`/freight/loads/${load.id}`);
       } else {
-        const data = await res.json();
-        setError(data.error || "Failed to create load");
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || "Failed to create load");
+        setSaving(false);
       }
     } catch (e: any) {
-      setError(e.message);
-    } finally {
+      toast.error(e.message || "Failed to create load");
       setSaving(false);
     }
   };
 
   return (
-    <div className="p-6 space-y-4 max-w-4xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">New Load</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Fast manual entry for loads from email / 3PI
-          </p>
-        </div>
-        <Link href="/freight/loads" className="text-sm text-gray-600 hover:underline">
-          Back to loads
-        </Link>
+    <div className="p-6 max-w-4xl mx-auto dark:bg-gray-900 min-h-screen">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Create New Load</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Fast manual entry for loads from email / 3PI</p>
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-          {error}
-        </div>
-      )}
-
-      <form
-        onSubmit={onSubmit}
-        className="bg-white rounded-xl border border-gray-200 p-6 space-y-6"
-      >
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Venture *
-            </label>
-            <select
-              className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-              required
-              value={form.ventureId}
-              onChange={(e) => onChange("ventureId", e.target.value)}
-            >
-              <option value="">Select venture</option>
-              {ventures.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Office
-            </label>
-            <select
-              className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-              value={form.officeId}
-              onChange={(e) => onChange("officeId", e.target.value)}
-            >
-              <option value="">Select office (optional)</option>
-              {filteredOffices.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="border-t border-gray-200 pt-4">
-          <h3 className="font-medium text-gray-900 mb-3">Location Info</h3>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Location Name
-              </label>
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                value={form.shipperName}
-                onChange={(e) => onChange("shipperName", e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Reference
-              </label>
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                placeholder="Customer / 3PI ref"
-                value={form.reference}
-                onChange={(e) => onChange("reference", e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Name
-              </label>
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                value={form.customerName}
-                onChange={(e) => onChange("customerName", e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="border-t border-gray-200 pt-4">
-          <h3 className="font-medium text-gray-900 mb-3">Pickup</h3>
-          <div className="grid grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                City *
-              </label>
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                required
-                value={form.pickupCity}
-                onChange={(e) => onChange("pickupCity", e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                State *
-              </label>
-              <select
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                required
-                value={form.pickupState}
-                onChange={(e) => onChange("pickupState", e.target.value)}
-              >
-                <option value="">Select</option>
-                {US_STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Zip
-              </label>
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                value={form.pickupZip}
-                onChange={(e) => onChange("pickupZip", e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Date *
-              </label>
-              <input
-                type="date"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                required
-                value={form.pickupDate}
-                onChange={(e) => onChange("pickupDate", e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="border-t border-gray-200 pt-4">
-          <h3 className="font-medium text-gray-900 mb-3">Drop</h3>
-          <div className="grid grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                City *
-              </label>
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                required
-                value={form.dropCity}
-                onChange={(e) => onChange("dropCity", e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                State *
-              </label>
-              <select
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                required
-                value={form.dropState}
-                onChange={(e) => onChange("dropState", e.target.value)}
-              >
-                <option value="">Select</option>
-                {US_STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Zip
-              </label>
-              <input
-                type="text"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                value={form.dropZip}
-                onChange={(e) => onChange("dropZip", e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Date
-              </label>
-              <input
-                type="date"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                value={form.dropDate}
-                onChange={(e) => onChange("dropDate", e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="border-t border-gray-200 pt-4">
-          <h3 className="font-medium text-gray-900 mb-3">Load Details</h3>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Equipment Type *
-              </label>
-              <select
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                required
-                value={form.equipmentType}
-                onChange={(e) => onChange("equipmentType", e.target.value)}
-              >
-                <option value="">Select</option>
-                {EQUIPMENT_TYPES.map((e) => (
-                  <option key={e} value={e}>
-                    {e}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Weight (lbs)
-              </label>
-              <input
-                type="number"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                value={form.weightLbs}
-                onChange={(e) => onChange("weightLbs", e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Rate ($)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-                value={form.rate}
-                onChange={(e) => onChange("rate", e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Notes
-          </label>
-          <textarea
-            className="border border-gray-300 rounded-lg px-3 py-2 w-full"
-            rows={3}
-            value={form.notes}
-            onChange={(e) => onChange("notes", e.target.value)}
-          />
-        </div>
-
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-          <Link
-            href="/freight/loads"
-            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="p-6">
+          <form
+            onSubmit={onSubmit}
+            className="space-y-6"
           >
-            Cancel
-          </Link>
-          <button
-            type="submit"
-            disabled={saving}
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50"
-          >
-            {saving ? "Creating..." : "Create Load"}
-          </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Venture <span className="text-red-500">*</span>
+                </label>
+                <select
+                  className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                  required
+                  value={form.ventureId}
+                  onChange={(e) => onChange("ventureId", e.target.value)}
+                >
+                  <option value="">Select venture...</option>
+                  {ventures.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Office
+                </label>
+                <select
+                  className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                  value={form.officeId}
+                  onChange={(e) => onChange("officeId", e.target.value)}
+                >
+                  <option value="">Select office (optional)</option>
+                  {filteredOffices.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-base">Location Info</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Location Name
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    value={form.shipperName}
+                    onChange={(e) => onChange("shipperName", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Reference
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    placeholder="Customer / 3PI ref"
+                    value={form.reference}
+                    onChange={(e) => onChange("reference", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Customer Name
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    value={form.customerName}
+                    onChange={(e) => onChange("customerName", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-base">Pickup</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    required
+                    value={form.pickupCity}
+                    onChange={(e) => onChange("pickupCity", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    State <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    required
+                    value={form.pickupState}
+                    onChange={(e) => onChange("pickupState", e.target.value)}
+                  >
+                    <option value="">Select state...</option>
+                    {US_STATES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Zip
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    value={form.pickupZip}
+                    onChange={(e) => onChange("pickupZip", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    required
+                    value={form.pickupDate}
+                    onChange={(e) => onChange("pickupDate", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-base">Drop</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    required
+                    value={form.dropCity}
+                    onChange={(e) => onChange("dropCity", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    State <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    required
+                    value={form.dropState}
+                    onChange={(e) => onChange("dropState", e.target.value)}
+                  >
+                    <option value="">Select state...</option>
+                    {US_STATES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Zip
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    value={form.dropZip}
+                    onChange={(e) => onChange("dropZip", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    value={form.dropDate}
+                    onChange={(e) => onChange("dropDate", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-base">Load Details</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Equipment Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    required
+                    value={form.equipmentType}
+                    onChange={(e) => onChange("equipmentType", e.target.value)}
+                  >
+                    <option value="">Select equipment...</option>
+                    {EQUIPMENT_TYPES.map((e) => (
+                      <option key={e} value={e}>
+                        {e}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Weight (lbs)
+                  </label>
+                  <input
+                    type="number"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    value={form.weightLbs}
+                    onChange={(e) => onChange("weightLbs", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Rate ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    value={form.rate}
+                    onChange={(e) => onChange("rate", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Notes
+              </label>
+              <textarea
+                className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 min-h-[100px] focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all resize-y"
+                rows={3}
+                placeholder="Additional notes about this load..."
+                value={form.notes}
+                onChange={(e) => onChange("notes", e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <button
+                type="button"
+                onClick={() => router.push("/freight/loads")}
+                className="px-5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="btn"
+              >
+                {saving ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Create Load
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

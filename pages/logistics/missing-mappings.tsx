@@ -9,7 +9,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
 type UserWithoutMapping = {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
   phone?: string | null;
   role: string;
@@ -114,7 +114,7 @@ export default function MissingMappingsPage() {
                     <tbody>
                       {data.usersWithoutMapping.map((u) => (
                         <tr key={u.id} className="border-t border-gray-800">
-                          <td className="px-4 py-2">{u.name || "-"}</td>
+                          <td className="px-4 py-2">{u.fullName || "-"}</td>
                           <td className="px-4 py-2">{u.email || "-"}</td>
                           <td className="px-4 py-2">{u.phone || "-"}</td>
                           <td className="px-4 py-2">{u.role || "-"}</td>

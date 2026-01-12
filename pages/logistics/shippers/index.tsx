@@ -4,6 +4,7 @@ import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { canCreateTasks } from "@/lib/permissions";
 import type { UserRole } from "@prisma/client";
 import { Skeleton } from "@/components/ui/Skeleton";
+import toast from "react-hot-toast";
 
 type Shipper = {
   id: number;
@@ -25,7 +26,6 @@ export default function ShippersListPage() {
   const [shippers, setShippers] = useState<Shipper[]>([]);
   const [ventureOptions, setVentureOptions] = useState<Venture[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [ventureFilter, setVentureFilter] = useState<string>("");
 
@@ -45,19 +45,23 @@ export default function ShippersListPage() {
     async function load() {
       try {
         setLoading(true);
-        setError(null);
 
         const params = new URLSearchParams();
         if (ventureFilter) params.set("ventureId", ventureFilter);
         if (searchQuery) params.set("q", searchQuery);
 
         const res = await fetch(`/api/logistics/shippers?${params.toString()}`);
-        if (!res.ok) throw new Error("Failed to load shippers");
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Failed to load shippers");
+        }
 
         const json = await res.json();
         if (!cancelled) setShippers(json.items || json || []);
       } catch (e: any) {
-        if (!cancelled) setError(e.message);
+        if (!cancelled) {
+          toast.error(e.message || "Failed to load shippers");
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -72,17 +76,17 @@ export default function ShippersListPage() {
 
   return (
     <div className="p-6 space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">Shippers (Locations)</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Shippers (Locations)</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Operational shipper locations linked to loads (city/state, churn tracking).
           </p>
         </div>
         {allowCreate && (
           <Link
             href="/logistics/shippers/new"
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+            className="btn"
           >
             + New Shipper
           </Link>
@@ -95,12 +99,12 @@ export default function ShippersListPage() {
           placeholder="Search by name, contact, or email..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm w-64"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm w-64 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
         />
         <select
           value={ventureFilter}
           onChange={(e) => setVentureFilter(e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
         >
           <option value="">All Ventures</option>
           {ventureOptions.map((v) => (
@@ -111,19 +115,15 @@ export default function ShippersListPage() {
         </select>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-50 text-red-700 rounded-lg">{error}</div>
-      )}
-
       {loading ? (
         <div className="flex justify-center p-8">
           <Skeleton className="w-full h-[85vh]" />
         </div>
       ) : shippers.length === 0 ? (
-        <div className="text-center py-12 border rounded-xl bg-gray-50">
-          <div className="text-gray-400 text-3xl mb-3">🏭</div>
-          <h3 className="text-gray-700 font-medium mb-1">No Shippers Found</h3>
-          <p className="text-sm text-gray-500 max-w-sm mx-auto">
+        <div className="text-center py-12 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+          <div className="text-gray-400 dark:text-gray-500 text-3xl mb-3">🏭</div>
+          <h3 className="text-gray-700 dark:text-gray-300 font-medium mb-1">No Shippers Found</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
             {searchQuery || ventureFilter
               ? "No shippers match your current filters."
               : "No shippers have been added yet. Add your first shipper to start tracking freight relationships."}
@@ -131,56 +131,56 @@ export default function ShippersListPage() {
           {allowCreate && !searchQuery && !ventureFilter && (
             <Link
               href="/logistics/shippers/new"
-              className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+              className="inline-block mt-4 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
             >
               + New Shipper
             </Link>
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-900/50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Shipper
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Contact
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Location
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Venture
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Loads
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {shippers.map((s) => (
-                <tr key={s.id} className="hover:bg-gray-50">
+                <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                   <td className="px-4 py-3">
                     <Link
                       href={`/logistics/shippers/${s.id}`}
-                      className="font-medium text-blue-600 hover:underline"
+                      className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
                     >
                       {s.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                     <div>{s.contactName || "-"}</div>
-                    <div className="text-gray-400">{s.email || ""}</div>
+                    <div className="text-gray-400 dark:text-gray-500">{s.email || ""}</div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                     {[s.city, s.state, s.country].filter(Boolean).join(", ") || "-"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                     {s.venture?.name || "-"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                     {s._count?.loads ?? 0}
                   </td>
                 </tr>

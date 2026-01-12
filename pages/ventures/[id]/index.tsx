@@ -441,10 +441,10 @@ function VentureDetailPage() {
                         <td className="px-6 py-4 text-center text-gray-700 dark:text-gray-300">{hotel.rooms?.toLocaleString() || 0}</td>
                         <td className="px-6 py-4 text-right">
                           <Link
-                            href={`/hotels/${hotel.id}`}
+                            href={`/hospitality/hotels/${hotel.id}`}
                             className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
                           >
-                            View KPIs
+                            View
                           </Link>
                         </td>
                       </tr>

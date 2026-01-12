@@ -47,44 +47,100 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       take: 100,
     });
 
-    const loadsWithOutreach = await Promise.all(
-      loads.map(async (load) => {
-        const lastMessage = await prisma.outreachMessage.findFirst({
-          where: { loadId: load.id },
-          orderBy: { createdAt: "desc" },
-          select: {
-            id: true,
-            channel: true,
-            status: true,
-            createdAt: true,
-            _count: { select: { recipients: true } },
-          },
-        });
+    // Optimize: Batch fetch all outreach messages and replies instead of querying per load
+    // This prevents N+1 query problem and connection pool exhaustion
+    const loadIds = loads.map((l) => l.id);
+    const lastMessagesByLoadId = new Map<number, any>();
+    const replyCountsByLoadId = new Map<number, number>();
+    
+    if (loadIds.length > 0) {
+      // Fetch all last outreach messages in one query
+      // Since we order by createdAt desc, we'll get the latest messages first
+      const allLastMessages = await prisma.outreachMessage.findMany({
+        where: {
+          loadId: { in: loadIds },
+        },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          loadId: true,
+          channel: true,
+          status: true,
+          createdAt: true,
+          _count: { select: { recipients: true } },
+        },
+      });
 
-        const unreadReplies = await prisma.outreachReply.count({
+      // Group by loadId and get the first (latest) message for each load
+      for (const msg of allLastMessages) {
+        if (!lastMessagesByLoadId.has(msg.loadId)) {
+          lastMessagesByLoadId.set(msg.loadId, msg);
+        }
+      }
+
+      // Batch fetch unread reply counts for all loads
+      const conversationsWithLoads = await prisma.outreachConversation.findMany({
+        where: {
+          loadId: { in: loadIds },
+        },
+        select: {
+          loadId: true,
+          id: true,
+        },
+      });
+
+      const conversationIds = conversationsWithLoads.map((c) => c.id);
+      const conversationIdToLoadId = new Map<number, number>();
+      conversationsWithLoads.forEach((c) => {
+        if (c.loadId) {
+          conversationIdToLoadId.set(c.id, c.loadId);
+        }
+      });
+
+      if (conversationIds.length > 0) {
+        const unreadRepliesCounts = await prisma.outreachReply.groupBy({
+          by: ["conversationId"],
           where: {
-            conversation: { loadId: load.id },
+            conversationId: { in: conversationIds },
             direction: "inbound",
           },
+          _count: {
+            id: true,
+          },
         });
 
-        return {
-          ...load,
-          minutesSincePosted: Math.floor(
-            (Date.now() - new Date(load.createdAt).getTime()) / 60000
-          ),
-          lastOutreach: lastMessage
-            ? {
-                channel: lastMessage.channel,
-                status: lastMessage.status,
-                recipientCount: lastMessage._count.recipients,
-                at: lastMessage.createdAt,
-              }
-            : null,
-          replyCount: unreadReplies,
-        };
-      })
-    );
+        // Map reply counts to loadIds
+        for (const count of unreadRepliesCounts) {
+          const loadId = conversationIdToLoadId.get(count.conversationId);
+          if (loadId) {
+            const current = replyCountsByLoadId.get(loadId) || 0;
+            replyCountsByLoadId.set(loadId, current + count._count.id);
+          }
+        }
+      }
+    }
+
+    // Map results back to loads
+    const loadsWithOutreach = loads.map((load) => {
+      const lastMessage = lastMessagesByLoadId.get(load.id);
+      const unreadReplies = replyCountsByLoadId.get(load.id) || 0;
+
+      return {
+        ...load,
+        minutesSincePosted: Math.floor(
+          (Date.now() - new Date(load.createdAt).getTime()) / 60000
+        ),
+        lastOutreach: lastMessage
+          ? {
+              channel: lastMessage.channel,
+              status: lastMessage.status,
+              recipientCount: lastMessage._count.recipients,
+              at: lastMessage.createdAt,
+            }
+          : null,
+        replyCount: unreadReplies,
+      };
+    });
 
     let selectedLoad = null;
     let recommendedCarriers: unknown[] = [];
