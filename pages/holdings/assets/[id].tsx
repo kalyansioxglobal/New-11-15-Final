@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { isSuperAdmin } from "@/lib/permissions";
 import type { UserRole } from "@prisma/client";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface Venture {
   id: number;
@@ -192,8 +193,8 @@ function AssetDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-      </div>
+        <Skeleton className="w-full h-[85vh]" />
+     </div>
     );
   }
 
@@ -227,7 +228,7 @@ function AssetDetailPage() {
           <div className="flex gap-2">
             <button
               onClick={() => setEditMode(true)}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+              className="btn"
             >
               Edit Asset
             </button>
@@ -431,7 +432,7 @@ function AssetDetailPage() {
             <div>
               <div className="text-sm text-gray-500">Status</div>
               <div className="font-medium mt-1">
-                <span className={`px-2 py-0.5 rounded-full text-xs ${asset?.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                <span className={`px-2 py-0.5 rounded-full text-xs ${asset?.isActive ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"}`}>
                   {asset?.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
@@ -451,7 +452,7 @@ function AssetDetailPage() {
         <h2 className="text-lg font-semibold mb-3">Documents</h2>
         <Link
           href={`/holdings/assets/${id}/documents`}
-          className="inline-block px-4 py-2 border rounded-lg text-sm hover:bg-gray-50"
+          className="inline-block px-4 py-2 border rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-900"
         >
           View Documents →
         </Link>

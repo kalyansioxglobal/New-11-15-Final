@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
-import { Alert } from "@/components/ui/Alert";
 import { Skeleton } from "@/components/ui/Skeleton";
+import toast from "react-hot-toast";
 
 const ASSET_TYPES = [
   "LAPTOP",
@@ -54,8 +54,10 @@ export default function AssetsTab() {
       setTotal(json.total || 0);
       setTotalPages(json.totalPages || 1);
     } catch (e: any) {
-      setError(e.message || "Unable to load assets");
+      const errorMessage = e.message || "Unable to load assets";
+      setError(errorMessage);
       setAssets([]);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -93,12 +95,12 @@ export default function AssetsTab() {
 
   const renderStatusBadge = (status: string) => {
     const s = (status || "").toUpperCase();
-    let color = "bg-gray-100 text-gray-800";
-    if (s === "AVAILABLE") color = "bg-emerald-100 text-emerald-800";
-    else if (s === "ASSIGNED") color = "bg-indigo-100 text-indigo-800";
-    else if (s === "REPAIR") color = "bg-amber-100 text-amber-800";
-    else if (s === "LOST") color = "bg-red-100 text-red-800";
-    else if (s === "RETIRED") color = "bg-gray-200 text-gray-600";
+    let color = "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300";
+    if (s === "AVAILABLE") color = "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300";
+    else if (s === "ASSIGNED") color = "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300";
+    else if (s === "REPAIR") color = "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300";
+    else if (s === "LOST") color = "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300";
+    else if (s === "RETIRED") color = "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
 
     return (
       <span
@@ -113,25 +115,23 @@ export default function AssetsTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Track hardware and equipment across ventures and offices.
           </p>
         </div>
-        <Link href="/it-assets/new" className="inline-flex">
-          <Button size="sm">+ Add Asset</Button>
+        <Link href="/it-assets/new" className="inline-flex btn">
+         + Add Asset
         </Link>
       </div>
 
-      {error && <Alert variant="error" message={error} />}
-
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
           {/* Search Bar */}
           <div className="w-full md:max-w-md relative">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -152,7 +152,7 @@ export default function AssetsTab() {
                 setPage(1);
                 setSearchQuery(e.target.value);
               }}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 text-sm transition-all"
             />
           </div>
 
@@ -196,7 +196,7 @@ export default function AssetsTab() {
                   setPage(1);
                   setSearchQuery("");
                 }}
-                className="px-3 py-1.5 text-xs text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Clear search
               </button>
@@ -211,72 +211,72 @@ export default function AssetsTab() {
           <Skeleton className="w-full h-[70vh]" />
         </div>
       ) : (
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <thead className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 border-b border-gray-200 dark:border-gray-700">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Tag
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Type
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Assigned To
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Venture
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Office
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Last Updated
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {assets.map((a, index) => (
                   <tr
                     key={a.id}
-                    className={`hover:bg-indigo-50/50 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                    className={`hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-colors ${index % 2 === 0 ? "bg-white dark:bg-gray-800" : "bg-gray-50/50 dark:bg-gray-800/50"
                       }`}
                   >
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="font-mono text-sm font-semibold text-gray-900">{a.tag}</div>
+                      <div className="font-mono text-sm font-semibold text-gray-900 dark:text-white">{a.tag}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="text-sm text-gray-700">{a.type}</div>
+                      <div className="text-sm text-gray-700 dark:text-gray-300">{a.type}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">{renderStatusBadge(a.status)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="text-sm text-gray-700">
+                      <div className="text-sm text-gray-700 dark:text-gray-300">
                         {a.assignedToUser?.fullName || (
-                          <span className="text-gray-400 italic">Unassigned</span>
+                          <span className="text-gray-400 dark:text-gray-500 italic">Unassigned</span>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="text-sm text-gray-700">{a.venture?.name || "-"}</div>
+                      <div className="text-sm text-gray-700 dark:text-gray-300">{a.venture?.name || "-"}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="text-sm text-gray-700">{a.office?.name || "-"}</div>
+                      <div className="text-sm text-gray-700 dark:text-gray-300">{a.office?.name || "-"}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="text-xs text-gray-500">{formatDateTime(a.updatedAt)}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">{formatDateTime(a.updatedAt)}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Link
                           href={`/it-assets/${a.id}`}
-                          className="p-2 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-colors"
+                          className="p-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
                           title="View"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,7 +286,7 @@ export default function AssetsTab() {
                         </Link>
                         <Link
                           href={`/it-assets/${a.id}?edit=true`}
-                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                          className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,16 +305,17 @@ export default function AssetsTab() {
                                 body: JSON.stringify({ isDeleted: true }),
                               });
                               if (res.ok) {
+                                toast.success(`Asset "${a.tag}" deleted successfully`);
                                 loadAssets(page);
                               } else {
                                 const data = await res.json().catch(() => ({}));
-                                alert(data.error || "Failed to delete asset");
+                                toast.error(data.error || data.detail || "Failed to delete asset");
                               }
                             } catch (err: any) {
-                              alert(err.message || "Failed to delete asset");
+                              toast.error(err.message || "Failed to delete asset");
                             }
                           }}
-                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                          className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                           title="Delete"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,10 +329,10 @@ export default function AssetsTab() {
 
                 {!loading && assets.length === 0 && !error && (
                   <tr>
-                    <td className="px-4 py-12 text-center text-gray-500 text-sm" colSpan={8}>
+                    <td className="px-4 py-12 text-center text-gray-500 dark:text-gray-400 text-sm" colSpan={8}>
                       <div className="flex flex-col items-center justify-center">
                         <svg
-                          className="w-12 h-12 text-gray-400 mb-3"
+                          className="w-12 h-12 text-gray-400 dark:text-gray-500 mb-3"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -343,8 +344,8 @@ export default function AssetsTab() {
                             d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
                           />
                         </svg>
-                        <p className="font-medium">No IT assets found</p>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="font-medium dark:text-gray-300">No IT assets found</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                           {searchQuery || statusFilter || typeFilter
                             ? "Try adjusting your filters"
                             : "Get started by creating a new asset"}
@@ -359,7 +360,7 @@ export default function AssetsTab() {
         </div>
       )}
 
-      <div className="flex items-center justify-between text-xs text-gray-600">
+      <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
         <div>
           Showing page {page} of {totalPages} ({total} assets)
         </div>

@@ -58,6 +58,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       where.officeId = { in: scope.officeIds };
     }
 
+    // Filter by assignedToId if provided
+    if (req.query.assignedToId) {
+      const assignedToId = Number(req.query.assignedToId);
+      if (!isNaN(assignedToId)) {
+        where.assignedTo = assignedToId;
+      }
+    }
+
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 50));
     const skip = (page - 1) * limit;
@@ -82,11 +90,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         tasks: tasks.map((t) => ({
           id: t.id,
           title: t.title,
+          description: t.description,
           status: t.status,
           priority: t.priority,
           dueDate: t.dueDate,
           ventureName: t.venture?.name ?? null,
           officeName: t.office?.name ?? null,
+          assignedToId: t.assignedTo,
           assignedToName: t.assignedUser?.fullName ?? null,
         })),
         page,
@@ -157,7 +167,84 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           assignedTo: assignedToId ? Number(assignedToId) : null,
           isTest: user.isTestUser,
         },
+        include: {
+          venture: { select: { id: true, name: true } },
+        },
       });
+
+      // Send notification when task is assigned to a user
+      if (assignedToId) {
+        const assignedUserId = Number(assignedToId);
+
+        try {
+          const assignedUser = await prisma.user.findUnique({
+            where: { id: assignedUserId },
+            select: { id: true, email: true, fullName: true },
+          });
+
+          if (assignedUser) {
+
+            // Create in-app notification
+            try {
+              const notification = await prisma.notification.create({
+                data: {
+                  userId: assignedUserId,
+                  title: `Task assigned: ${title}`,
+                  body: description ? description.slice(0, 200) : `You have been assigned a new task.${dueDate ? ` Due: ${new Date(dueDate).toLocaleDateString()}` : ''}`,
+                  type: 'task_assigned',
+                  entityType: 'Task',
+                  entityId: task.id,
+                },
+              });
+              
+              // Push via SSE
+              const { pushNotificationViaSSE, pushUnreadCountViaSSE } = await import("@/lib/notifications/push");
+              await pushNotificationViaSSE(assignedUserId, notification);
+              const unreadCount = await prisma.notification.count({
+                where: { userId: assignedUserId, isRead: false },
+              });
+              await pushUnreadCountViaSSE(assignedUserId, unreadCount);
+            } catch (notifErr: any) {
+              console.error('[task-create] Failed to create in-app notification:', notifErr);
+            }
+
+            // Send email notification
+            if (assignedUser.email) {
+              try {
+                const { sendAndLogEmail } = await import('@/lib/comms/email');
+                const { getTaskAssignmentEmailHTML } = await import('@/templates/emails/taskAssignment.html');
+                
+                const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://new-11-15-final.vercel.app';
+                const taskUrl = `${baseUrl}/tasks/${task.id}`;
+                const dueDateStr = dueDate ? new Date(dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : undefined;
+                const priorityLabel = priority || 'MEDIUM';
+
+                const html = getTaskAssignmentEmailHTML({
+                  taskTitle: title,
+                  taskDescription: description || undefined,
+                  priority: priorityLabel,
+                  dueDate: dueDateStr,
+                  ventureName: task.venture?.name,
+                  assignedUserName: assignedUser.fullName || 'there',
+                  taskUrl,
+                });
+
+                await sendAndLogEmail({
+                  to: assignedUser.email,
+                  subject: `Task Assigned: ${title}`,
+                  html,
+                  sentByUserId: user.id,
+                });
+              } catch (emailErr: any) {
+                console.error('[task-create] Failed to send email notification:', emailErr);
+              }
+            }
+          }
+        } catch (err: any) {
+          console.error('[task-create] Error in task assignment notification flow:', err);
+          // Don't fail the request if notification fails
+        }
+      }
 
       return res.status(201).json({ id: task.id });
     } catch (error: any) {

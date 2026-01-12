@@ -13,7 +13,11 @@ export default createApiHandler(
         throw new ApiError("Leadership access required", 403, "FORBIDDEN");
       }
 
-      const { ventureId, date, startDate, endDate } = req.query;
+      const { ventureId, date, startDate, endDate, page = "1", pageSize = "50" } = req.query;
+
+      const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
+      const limit = Math.min(200, Math.max(1, parseInt(pageSize as string, 10) || 50));
+      const skip = (pageNum - 1) * limit;
 
       let targetDate: Date;
       if (date) {
@@ -38,49 +42,95 @@ export default createApiHandler(
         };
       }
 
-      const teamMembers = await prisma.user.findMany({
+      // Get all team member IDs for summary calculation
+      const allTeamMemberIds = await prisma.user.findMany({
         where: teamWhere,
-        select: {
-          id: true,
-          fullName: true,
-          email: true,
-          role: true,
-          ventures: {
-            select: {
-              venture: { select: { id: true, name: true } },
-            },
-          },
-        },
-        orderBy: { fullName: "asc" },
+        select: { id: true },
       });
 
-      const attendanceWhere: any = {
+      // Get paginated team members for display
+      const [teamMembers, total] = await Promise.all([
+        prisma.user.findMany({
+          where: teamWhere,
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            role: true,
+            ventures: {
+              select: {
+                venture: { select: { id: true, name: true } },
+              },
+            },
+          },
+          orderBy: { fullName: "asc" },
+          skip,
+          take: limit,
+        }),
+        prisma.user.count({ where: teamWhere }),
+      ]);
+
+      // Get attendance records for all team members (for summary)
+      const allAttendanceWhere: any = {
+        userId: { in: allTeamMemberIds.map((m: { id: number }) => m.id) },
+        isTest: ctx.user.isTestUser,
+      };
+
+      if (startDate && endDate) {
+        allAttendanceWhere.date = {
+          gte: new Date(startDate as string),
+          lte: new Date(endDate as string),
+        };
+      } else {
+        allAttendanceWhere.date = targetDate;
+      }
+
+      // Get attendance records for paginated members (for display)
+      const paginatedAttendanceWhere: any = {
         userId: { in: teamMembers.map((m: { id: number }) => m.id) },
         isTest: ctx.user.isTestUser,
       };
 
       if (startDate && endDate) {
-        attendanceWhere.date = {
+        paginatedAttendanceWhere.date = {
           gte: new Date(startDate as string),
           lte: new Date(endDate as string),
         };
       } else {
-        attendanceWhere.date = targetDate;
+        paginatedAttendanceWhere.date = targetDate;
       }
 
-      const attendanceRecords = await prisma.attendance.findMany({
-        where: attendanceWhere,
-        select: {
-          userId: true,
-          date: true,
-          status: true,
-          notes: true,
-          ventureId: true,
-        },
-      });
+      const [allAttendanceRecords, paginatedAttendanceRecords] = await Promise.all([
+        // All records for summary
+        prisma.attendance.findMany({
+          where: allAttendanceWhere,
+          select: {
+            userId: true,
+            date: true,
+            status: true,
+            notes: true,
+            ventureId: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        }),
+        // Paginated records for display
+        prisma.attendance.findMany({
+          where: paginatedAttendanceWhere,
+          select: {
+            userId: true,
+            date: true,
+            status: true,
+            notes: true,
+            ventureId: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        }),
+      ]);
 
       const attendanceMap = new Map<string, any>();
-      for (const record of attendanceRecords) {
+      for (const record of paginatedAttendanceRecords) {
         const key = `${record.userId}-${record.date.toISOString().split("T")[0]}`;
         attendanceMap.set(key, record);
       }
@@ -97,15 +147,28 @@ export default createApiHandler(
         };
       });
 
+      // Calculate summary based on all team members
+      const allTeamWithAttendance = allTeamMemberIds.map((member: { id: number }) => {
+        const dateKey = `${member.id}-${targetDate.toISOString().split("T")[0]}`;
+        const attendance = allAttendanceRecords.find(
+          (r: { userId: number; date: Date }) =>
+            `${r.userId}-${r.date.toISOString().split("T")[0]}` === dateKey
+        );
+        return {
+          id: member.id,
+          hasMarkedToday: !!attendance,
+        };
+      });
+
       const summary = {
-        total: teamMembers.length,
-        marked: teamWithAttendance.filter((m: { hasMarkedToday: boolean }) => m.hasMarkedToday).length,
-        present: attendanceRecords.filter((r: { status: string }) => r.status === "PRESENT" || r.status === "REMOTE").length,
-        pto: attendanceRecords.filter((r: { status: string }) => r.status === "PTO").length,
-        halfDay: attendanceRecords.filter((r: { status: string }) => r.status === "HALF_DAY").length,
-        sick: attendanceRecords.filter((r: { status: string }) => r.status === "SICK").length,
-        late: attendanceRecords.filter((r: { status: string }) => r.status === "LATE").length,
-        notMarked: teamWithAttendance.filter((m: { hasMarkedToday: boolean }) => !m.hasMarkedToday).length,
+        total,
+        marked: allTeamWithAttendance.filter((m: { hasMarkedToday: boolean }) => m.hasMarkedToday).length,
+        present: allAttendanceRecords.filter((r: { status: string }) => r.status === "PRESENT" || r.status === "REMOTE").length,
+        pto: allAttendanceRecords.filter((r: { status: string }) => r.status === "PTO").length,
+        halfDay: allAttendanceRecords.filter((r: { status: string }) => r.status === "HALF_DAY").length,
+        sick: allAttendanceRecords.filter((r: { status: string }) => r.status === "SICK").length,
+        late: allAttendanceRecords.filter((r: { status: string }) => r.status === "LATE").length,
+        notMarked: allTeamWithAttendance.filter((m: { hasMarkedToday: boolean }) => !m.hasMarkedToday).length,
       };
 
       return {
@@ -113,6 +176,12 @@ export default createApiHandler(
           date: targetDate.toISOString().split("T")[0],
           team: teamWithAttendance,
           summary,
+          pagination: {
+            page: pageNum,
+            pageSize: limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+          },
         },
       };
     },

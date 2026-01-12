@@ -3,6 +3,9 @@ import prisma from '@/lib/prisma';
 import { requireUser } from '@/lib/apiAuth';
 import { getUserScope } from '@/lib/scope';
 import { ROLE_CONFIG } from '@/lib/permissions';
+import { logger } from '@/lib/logger';
+import { sendAndLogEmail } from '@/lib/comms/email';
+import { getEodReportNeedsAttentionEmailHTML } from '@/templates/emails/eodReportNeedsAttention.html';
 
 // Single EOD report handler
 // - GET: returns detailed information for a single EOD report.
@@ -118,7 +121,67 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const updated = await prisma.eodReport.update({
       where: { id: reportId },
       data: updateData,
+      include: {
+        user: { select: { id: true, fullName: true, email: true } },
+        venture: { select: { id: true, name: true } },
+        office: { select: { id: true, name: true } },
+        reviewedBy: { select: { id: true, fullName: true } },
+      },
     });
+
+    // Send email notification to employee when status is set to NEEDS_ATTENTION
+    if (canReview && status === 'NEEDS_ATTENTION' && updated.status === 'NEEDS_ATTENTION') {
+      try {
+        const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://new-11-15-final.vercel.app';
+        const reportUrl = `${baseUrl}/eod-reports/${reportId}`;
+        
+        const formattedDate = new Date(updated.date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+
+        const emailHTML = getEodReportNeedsAttentionEmailHTML({
+          employeeName: updated.user.fullName || updated.user.email,
+          managerName: updated.reviewedBy?.fullName || user.fullName || 'Manager',
+          ventureName: updated.venture.name,
+          officeName: updated.office?.name || undefined,
+          reportDate: formattedDate,
+          managerNotes: managerNotes || undefined,
+          reportUrl,
+        });
+
+        const emailResult = await sendAndLogEmail({
+          to: updated.user.email,
+          subject: `Your EOD Report Needs Attention - ${formattedDate}`,
+          html: emailHTML,
+          venture: updated.venture.name,
+          sentByUserId: user.id,
+        });
+
+        if (emailResult.status === 'SENT') {
+          logger.info('eod_report_needs_attention_email_sent', {
+            reportId: reportId,
+            employeeEmail: updated.user.email,
+            managerId: user.id,
+          });
+        } else {
+          logger.error('eod_report_needs_attention_email_failed', {
+            reportId: reportId,
+            employeeEmail: updated.user.email,
+            status: emailResult.status,
+            errorMessage: emailResult.errorMessage,
+          });
+        }
+      } catch (emailError: any) {
+        logger.error('eod_report_needs_attention_email_exception', {
+          reportId: reportId,
+          employeeEmail: updated.user.email,
+          error: emailError?.message || 'Unknown error',
+        });
+        // Don't fail the request if email fails - the status update succeeded
+      }
+    }
 
     return res.status(200).json({ id: updated.id });
   }

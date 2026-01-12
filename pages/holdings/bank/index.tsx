@@ -121,13 +121,13 @@ export default function BankSnapshotsPage() {
           <div className="flex gap-2">
             <button
               onClick={() => setShowAccountModal(true)}
-              className="px-4 py-2 rounded-lg border border-blue-600 text-blue-600 text-sm font-medium hover:bg-blue-50"
+              className="px-4 py-2 rounded-lg border border-blue-600 text-gray-900 dark:text-white text-sm font-medium hover:bg-blue-50 dark:hover:bg-blue-900/30"
             >
               + Add Account
             </button>
             <button
               onClick={() => setShowSnapshotModal(true)}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+              className="btn"
             >
               + New Snapshot
             </button>
@@ -216,7 +216,7 @@ export default function BankSnapshotsPage() {
           {allowCreate && accounts.length === 0 && (
             <button
               onClick={() => setShowAccountModal(true)}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+              className="btn"
             >
               + Add First Account
             </button>

@@ -11,29 +11,63 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!user) return;
 
   try {
-    const { notificationIds, markAll } = req.body;
+    const { notificationIds, ids, markAll } = req.body;
+
+    // Support both 'notificationIds' and 'ids' for backward compatibility
+    const targetIds = notificationIds || ids;
 
     if (markAll) {
-      await prisma.notification.updateMany({
+      const result = await prisma.notification.updateMany({
         where: { userId: user.id, isRead: false },
         data: { isRead: true },
       });
-      return res.json({ success: true, message: 'All notifications marked as read' });
+      
+      // Get updated unread count
+      const unreadCount = await prisma.notification.count({
+        where: { userId: user.id, isRead: false },
+      });
+      
+      // Push updated unread count via SSE
+      try {
+        const { pushUnreadCountViaSSE } = await import("@/lib/notifications/push");
+        await pushUnreadCountViaSSE(user.id, unreadCount);
+      } catch (sseErr) {
+        console.error("Failed to push unread count via SSE:", sseErr);
+      }
+      
+      return res.json({ success: true, message: 'All notifications marked as read', count: result.count, unreadCount });
     }
 
-    if (!notificationIds || !Array.isArray(notificationIds)) {
-      return res.status(400).json({ error: 'notificationIds array or markAll: true is required' });
+    if (!targetIds || !Array.isArray(targetIds)) {
+      return res.status(400).json({ error: 'notificationIds (or ids) array or markAll: true is required' });
     }
 
-    await prisma.notification.updateMany({
+    if (targetIds.length === 0) {
+      return res.status(400).json({ error: 'At least one notification ID is required' });
+    }
+
+    const result = await prisma.notification.updateMany({
       where: {
-        id: { in: notificationIds.map(Number) },
+        id: { in: targetIds.map(Number) },
         userId: user.id,
       },
       data: { isRead: true },
     });
 
-    return res.json({ success: true });
+    // Get updated unread count
+    const unreadCount = await prisma.notification.count({
+      where: { userId: user.id, isRead: false },
+    });
+
+    // Push updated unread count via SSE
+    try {
+      const { pushUnreadCountViaSSE } = await import("@/lib/notifications/push");
+      await pushUnreadCountViaSSE(user.id, unreadCount);
+    } catch (sseErr) {
+      console.error("Failed to push unread count via SSE:", sseErr);
+    }
+
+    return res.json({ success: true, count: result.count, unreadCount });
   } catch (err) {
     console.error('Mark notifications read API error:', err);
     return res.status(500).json({ error: 'Internal server error' });

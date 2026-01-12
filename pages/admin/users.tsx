@@ -4,6 +4,7 @@ import { getEffectiveUser } from '@/lib/effectiveUser';
 import { canManageUsers } from '@/lib/permissions';
 import type { UserRole } from '@/lib/permissions';
 import { Skeleton } from '@/components/ui/Skeleton';
+import toast from 'react-hot-toast';
 
 // Keep department as a simple string union for display/filtering purposes.
 type Department = string;
@@ -101,7 +102,6 @@ function UsersAdminPage() {
   const [, setEditingId] = useState<number | null>(null);
   const [editState, setEditState] = useState<UserRow | null>(null);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createForm, setCreateForm] = useState({
     name: '',
@@ -141,7 +141,7 @@ function UsersAdminPage() {
         setOffices(oJson);
         setJobDepartments(jJson);
       } catch (e: any) {
-        if (!cancelled) setError(e.message || 'Failed to load data');
+        if (!cancelled) toast.error(e.message || 'Failed to load data');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -186,7 +186,6 @@ function UsersAdminPage() {
     setEditingId(user.id);
     setEditState({ ...user });
     setManagerSearch('');
-    setError(null);
   }
 
   function closeEdit() {
@@ -202,7 +201,6 @@ function UsersAdminPage() {
   async function handleCreateUser(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    setError(null);
     try {
       const res = await fetch('/api/admin/users/create', {
         method: 'POST',
@@ -218,7 +216,9 @@ function UsersAdminPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.detail || data.error || 'Failed to create user');
+        toast.error(data.detail || data.error || 'Failed to create user');
+        setSaving(false);
+        return;
       }
 
       const data = await res.json();
@@ -248,11 +248,12 @@ function UsersAdminPage() {
         reportsToEmail: null,
       }]);
       
+      toast.success('User created successfully');
       setShowCreateModal(false);
       setCreateForm({ name: '', email: '', phone: '', role: 'EMPLOYEE', ventureIds: [] });
       setSaving(false);
     } catch (e: any) {
-      setError(e.message || 'Failed to create user');
+      toast.error(e.message || 'Failed to create user');
       setSaving(false);
     }
   }
@@ -260,7 +261,6 @@ function UsersAdminPage() {
   async function handleSave() {
     if (!editState) return;
     setSaving(true);
-    setError(null);
     try {
       const res = await fetch(`/api/admin/users/${editState.id}`, {
         method: 'PATCH',
@@ -287,7 +287,9 @@ function UsersAdminPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Save failed');
+        toast.error(data.error || 'Save failed');
+        setSaving(false);
+        return;
       }
 
       const selectedDept = jobDepartments.find((d) => d.id === editState.jobDepartmentId);
@@ -300,9 +302,10 @@ function UsersAdminPage() {
           jobRoleName: selectedRole?.name ?? null,
         } : u))
       );
+      toast.success('User updated successfully');
       closeEdit();
     } catch (e: any) {
-      setError(e.message || 'Save failed');
+      toast.error(e.message || 'Save failed');
       setSaving(false);
     }
   }
@@ -311,28 +314,25 @@ function UsersAdminPage() {
     <div className="p-2 sm:p-4 lg:p-6 flex flex-col lg:flex-row gap-4 lg:gap-6">
       <div className="flex-1 min-w-0">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-          <h1 className="text-lg sm:text-xl font-semibold">Admin - Users</h1>
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Admin - Users</h1>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 whitespace-nowrap"
+            className="btn"
           >
             + Add New User
           </button>
         </div>
 
         {loading && <Skeleton className="w-full h-[85vh]" />}
-        {error && !loading && (
-          <div className="mb-2 text-sm text-red-500">{error}</div>
-        )}
 
         {!loading && users.length === 0 && (
-          <div className="text-sm text-gray-400">No users found.</div>
+          <div className="text-sm text-gray-400 dark:text-gray-500">No users found.</div>
         )}
 
         {!loading && users.length > 0 && (
           <div className="overflow-x-auto -mx-2 sm:mx-0">
-            <table className="w-full text-sm border border-gray-200 bg-white rounded">
-              <thead className="bg-gray-50 text-gray-600">
+            <table className="w-full text-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded">
+              <thead className="bg-gray-50 dark:bg-gray-900/50 text-gray-600 dark:text-gray-300">
                 <tr>
                   <th className="px-2 sm:px-3 py-2 text-left font-medium">Name</th>
                   <th className="px-2 sm:px-3 py-2 text-left font-medium hidden sm:table-cell">Alias</th>
@@ -343,50 +343,50 @@ function UsersAdminPage() {
                   <th className="px-2 sm:px-3 py-2"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {users.map((u) => (
                   <tr
                     key={u.id}
-                    className="border-t border-gray-100 hover:bg-gray-50"
+                    className="border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
                     <td className="px-2 sm:px-3 py-2">
-                      <div className="truncate max-w-[100px] sm:max-w-none">{u.name || '-'}</div>
+                      <div className="truncate max-w-[100px] sm:max-w-none text-gray-900 dark:text-white">{u.name || '-'}</div>
                       {u.jobRoleName && (
-                        <div className="text-xs text-gray-400 truncate" title={u.jobDepartmentName ?? ''}>
+                        <div className="text-xs text-gray-400 dark:text-gray-500 truncate" title={u.jobDepartmentName ?? ''}>
                           {u.jobRoleName}
                         </div>
                       )}
-                      {!u.isActive && <span className="sm:hidden text-xs text-gray-400 block">Inactive</span>}
+                      {!u.isActive && <span className="sm:hidden text-xs text-gray-400 dark:text-gray-500 block">Inactive</span>}
                     </td>
-                    <td className="px-2 sm:px-3 py-2 text-gray-600 hidden sm:table-cell">{u.alias || '-'}</td>
-                    <td className="px-2 sm:px-3 py-2 text-gray-600 text-xs">
+                    <td className="px-2 sm:px-3 py-2 text-gray-600 dark:text-gray-300 hidden sm:table-cell">{u.alias || '-'}</td>
+                    <td className="px-2 sm:px-3 py-2 text-gray-600 dark:text-gray-300 text-xs">
                       <span className="truncate block max-w-[120px] sm:max-w-none">{u.email}</span>
                     </td>
                     <td className="px-2 sm:px-3 py-2 text-xs hidden md:table-cell">
                       {u.reportsToName ? (
                         <div>
-                          <div className="font-medium">{u.reportsToName}</div>
-                          <div className="text-gray-400 text-[10px]">{u.reportsToEmail}</div>
+                          <div className="font-medium text-gray-900 dark:text-white">{u.reportsToName}</div>
+                          <div className="text-gray-400 dark:text-gray-500 text-[10px]">{u.reportsToEmail}</div>
                         </div>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-gray-400 dark:text-gray-500">-</span>
                       )}
                     </td>
-                    <td className="px-2 sm:px-3 py-2 text-center text-xs">{u.role}</td>
+                    <td className="px-2 sm:px-3 py-2 text-center text-xs text-gray-900 dark:text-gray-300">{u.role}</td>
                     <td className="px-2 sm:px-3 py-2 text-center hidden sm:table-cell">
                       {u.isActive ? (
-                        <span className="text-green-600 text-xs">Active</span>
+                        <span className="text-green-600 dark:text-green-400 text-xs">Active</span>
                       ) : (
-                        <span className="text-gray-400 text-xs">Inactive</span>
+                        <span className="text-gray-400 dark:text-gray-500 text-xs">Inactive</span>
                       )}
                       {u.isTestUser && (
-                        <div className="text-amber-600 text-xs">Test</div>
+                        <div className="text-amber-600 dark:text-amber-400 text-xs">Test</div>
                       )}
                     </td>
                     <td className="px-2 sm:px-3 py-2 text-right">
                       <button
                         onClick={() => openEdit(u)}
-                        className="px-2 py-1 text-xs rounded border border-gray-300 hover:bg-gray-100"
+                        className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                       >
                         Edit
                       </button>
@@ -401,13 +401,13 @@ function UsersAdminPage() {
 
       {editState && (
         <>
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={closeEdit} />
-        <div className="fixed inset-x-0 bottom-0 top-14 lg:static lg:inset-auto z-50 lg:z-auto w-full lg:w-[360px] border-t lg:border border-gray-200 rounded-t-2xl lg:rounded-lg bg-white p-4 text-sm shadow-lg overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 z-40 lg:hidden" onClick={closeEdit} />
+        <div className="fixed inset-x-0 bottom-0 top-14 lg:static lg:inset-auto z-50 lg:z-auto w-full lg:w-[360px] border-t lg:border border-gray-200 dark:border-gray-700 rounded-t-2xl lg:rounded-lg bg-white dark:bg-gray-800 p-4 text-sm shadow-lg overflow-y-auto">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-base">Edit User</h2>
+            <h2 className="font-semibold text-base text-gray-900 dark:text-white">Edit User</h2>
             <button
               onClick={closeEdit}
-              className="text-xs text-gray-400 hover:text-gray-700"
+              className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             >
               Close
             </button>
@@ -415,31 +415,31 @@ function UsersAdminPage() {
 
           <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-1">
             <div>
-              <label className="block text-xs mb-1 text-gray-500">Name</label>
+              <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">Name</label>
               <input
                 type="text"
                 value={editState.name || ''}
                 onChange={(e) =>
                   setEditState((s) => s && { ...s, name: e.target.value })
                 }
-                className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs mb-1 text-gray-500">Email</label>
+              <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">Email</label>
               <input
                 type="email"
                 value={editState.email}
                 onChange={(e) =>
                   setEditState((s) => s && { ...s, email: e.target.value })
                 }
-                className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs mb-1 text-gray-500">Alias / Nickname</label>
+              <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">Alias / Nickname</label>
               <input
                 type="text"
                 value={editState.alias || ''}
@@ -447,18 +447,18 @@ function UsersAdminPage() {
                   setEditState((s) => s && { ...s, alias: e.target.value || null })
                 }
                 placeholder="Unique identifier"
-                className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
               />
             </div>
 
-            <div className="border-t border-gray-200 pt-3">
-              <label className="block text-xs mb-2 text-gray-600 font-medium">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+              <label className="block text-xs mb-2 text-gray-600 dark:text-gray-300 font-medium">
                 Contact Information
               </label>
               <div className="space-y-2">
                 <div className="grid grid-cols-3 gap-2">
                   <div className="col-span-2">
-                    <label className="block text-xs mb-1 text-gray-500">US Phone</label>
+                    <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">US Phone</label>
                     <input
                       type="tel"
                       value={editState.phoneUs || ''}
@@ -466,11 +466,11 @@ function UsersAdminPage() {
                         setEditState((s) => s && { ...s, phoneUs: e.target.value || null })
                       }
                       placeholder="+1 (555) 123-4567"
-                      className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                      className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs mb-1 text-gray-500">Extension</label>
+                    <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">Extension</label>
                     <input
                       type="text"
                       value={editState.extension || ''}
@@ -478,12 +478,12 @@ function UsersAdminPage() {
                         setEditState((s) => s && { ...s, extension: e.target.value || null })
                       }
                       placeholder="1234"
-                      className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                      className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs mb-1 text-gray-500">International Phone</label>
+                  <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">International Phone</label>
                   <input
                     type="tel"
                     value={editState.phoneIn || ''}
@@ -491,11 +491,11 @@ function UsersAdminPage() {
                       setEditState((s) => s && { ...s, phoneIn: e.target.value || null })
                     }
                     placeholder="+91 98765 43210"
-                    className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                    className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1 text-gray-500">Other Phone</label>
+                  <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">Other Phone</label>
                   <input
                     type="tel"
                     value={editState.phone || ''}
@@ -503,14 +503,14 @@ function UsersAdminPage() {
                       setEditState((s) => s && { ...s, phone: e.target.value || null })
                     }
                     placeholder="Alternative number"
-                    className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                    className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs mb-1 text-gray-500">System Role (permissions)</label>
+              <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">System Role (permissions)</label>
               <select
                 value={editState.role}
                 onChange={(e) =>
@@ -522,7 +522,7 @@ function UsersAdminPage() {
                       }
                   )
                 }
-                className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
               >
                 {ALL_ROLES.map((r) => (
                   <option key={r} value={r}>
@@ -532,13 +532,13 @@ function UsersAdminPage() {
               </select>
             </div>
 
-            <div className="border-t border-gray-200 pt-3">
-              <label className="block text-xs mb-2 text-gray-600 font-medium">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+              <label className="block text-xs mb-2 text-gray-600 dark:text-gray-300 font-medium">
                 Job Title (real-world role)
               </label>
               <div className="space-y-2">
                 <div>
-                  <label className="block text-xs mb-1 text-gray-500">Department</label>
+                  <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">Department</label>
                   <select
                     value={editState.jobDepartmentId ?? ''}
                     onChange={(e) => {
@@ -552,7 +552,7 @@ function UsersAdminPage() {
                           }
                       );
                     }}
-                    className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                    className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   >
                     <option value="">- Select department -</option>
                     {jobDepartments.map((d) => (
@@ -564,7 +564,7 @@ function UsersAdminPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs mb-1 text-gray-500">Job Role</label>
+                  <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">Job Role</label>
                   <select
                     value={editState.jobRoleId ?? ''}
                     onChange={(e) => {
@@ -578,7 +578,7 @@ function UsersAdminPage() {
                       );
                     }}
                     disabled={!editState.jobDepartmentId}
-                    className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm disabled:opacity-50"
+                    className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <option value="">- Select job role -</option>
                     {jobRolesForSelectedDepartment.map((r) => (
@@ -591,25 +591,25 @@ function UsersAdminPage() {
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-3">
-              <label className="block text-xs mb-2 text-gray-600 font-medium">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+              <label className="block text-xs mb-2 text-gray-600 dark:text-gray-300 font-medium">
                 Reporting Manager
               </label>
               <div className="space-y-2">
                 {editState.reportsToId && (
-                  <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded px-2 py-1.5">
+                  <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded px-2 py-1.5">
                     <div>
-                      <div className="text-sm font-medium text-blue-900">
+                      <div className="text-sm font-medium text-blue-900 dark:text-blue-200">
                         {editState.reportsToName || 'Unknown'}
                       </div>
-                      <div className="text-xs text-blue-600">
+                      <div className="text-xs text-blue-600 dark:text-blue-400">
                         {editState.reportsToEmail}
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => setEditState(s => s && { ...s, reportsToId: null, reportsToName: null, reportsToEmail: null })}
-                      className="text-xs text-red-600 hover:text-red-800"
+                      className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
                     >
                       Remove
                     </button>
@@ -621,11 +621,11 @@ function UsersAdminPage() {
                     value={managerSearch}
                     onChange={(e) => setManagerSearch(e.target.value)}
                     placeholder="Search managers by name or email..."
-                    className="w-full px-2 py-1 rounded bg-gray-50 border border-gray-300 text-sm"
+                    className="w-full px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   />
                 </div>
                 {managerSearch && managerOptions.length > 0 && (
-                  <div className="border border-gray-200 rounded max-h-32 overflow-y-auto bg-white">
+                  <div className="border border-gray-200 dark:border-gray-700 rounded max-h-32 overflow-y-auto bg-white dark:bg-gray-800">
                     {managerOptions.map((m) => (
                       <button
                         key={m.id}
@@ -639,34 +639,34 @@ function UsersAdminPage() {
                           });
                           setManagerSearch('');
                         }}
-                        className="w-full px-2 py-1.5 text-left text-xs hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                        className="w-full px-2 py-1.5 text-left text-xs hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 last:border-b-0 transition-colors"
                       >
-                        <div className="font-medium">{m.name || m.email}</div>
-                        <div className="text-gray-500">{m.role} - {m.email}</div>
+                        <div className="font-medium text-gray-900 dark:text-white">{m.name || m.email}</div>
+                        <div className="text-gray-500 dark:text-gray-400">{m.role} - {m.email}</div>
                       </button>
                     ))}
                   </div>
                 )}
                 {managerSearch && managerOptions.length === 0 && (
-                  <div className="text-xs text-gray-400 py-1">No managers found</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500 py-1">No managers found</div>
                 )}
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-400 dark:text-gray-500">
                   Cross-venture: Managers from any venture can be selected.
                 </p>
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-3">
-              <label className="block text-xs mb-1 text-gray-500 text-gray-400">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+              <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">
                 Legacy Department (read-only)
               </label>
-              <div className="text-sm text-gray-500 px-2 py-1">
+              <div className="text-sm text-gray-500 dark:text-gray-400 px-2 py-1 bg-gray-50 dark:bg-gray-700/50 rounded">
                 {editState.legacyDepartment || '-'}
               </div>
             </div>
 
             <div className="flex gap-4">
-              <label className="flex items-center gap-1 text-xs text-gray-600">
+              <label className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={editState.isActive}
@@ -675,10 +675,11 @@ function UsersAdminPage() {
                       (s) => s && { ...s, isActive: e.target.checked }
                     )
                   }
+                  className="rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700"
                 />
                 Active
               </label>
-              <label className="flex items-center gap-1 text-xs text-gray-600">
+              <label className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={editState.isTestUser}
@@ -687,20 +688,21 @@ function UsersAdminPage() {
                       (s) => s && { ...s, isTestUser: e.target.checked }
                     )
                   }
+                  className="rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700"
                 />
                 Test user
               </label>
             </div>
 
             <div>
-              <label className="block text-xs mb-1 text-gray-500">
+              <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">
                 Ventures (scope)
               </label>
-              <div className="border border-gray-200 rounded p-2 max-h-32 overflow-y-auto space-y-1 bg-gray-50">
+              <div className="border border-gray-200 dark:border-gray-700 rounded p-2 max-h-32 overflow-y-auto space-y-1 bg-gray-50 dark:bg-gray-700/50">
                 {ventures.map((v) => (
                   <label
                     key={v.id}
-                    className="flex items-center gap-2 text-xs text-gray-700"
+                    className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -714,6 +716,7 @@ function UsersAdminPage() {
                             }
                         )
                       }
+                      className="rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700"
                     />
                     {v.name}
                   </label>
@@ -722,19 +725,19 @@ function UsersAdminPage() {
             </div>
 
             <div>
-              <label className="block text-xs mb-1 text-gray-500">
+              <label className="block text-xs mb-1 text-gray-500 dark:text-gray-400">
                 Offices (scope)
               </label>
-              <div className="border border-gray-200 rounded p-2 max-h-32 overflow-y-auto space-y-1 bg-gray-50">
+              <div className="border border-gray-200 dark:border-gray-700 rounded p-2 max-h-32 overflow-y-auto space-y-1 bg-gray-50 dark:bg-gray-700/50">
                 {officesForSelectedVentures.length === 0 && (
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-400 dark:text-gray-500">
                     Select ventures first.
                   </div>
                 )}
                 {officesForSelectedVentures.map((o) => (
                   <label
                     key={o.id}
-                    className="flex items-center gap-2 text-xs text-gray-700"
+                    className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -748,6 +751,7 @@ function UsersAdminPage() {
                             }
                         )
                       }
+                      className="rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700"
                     />
                     {o.name}
                     {o.city ? ` - ${o.city}` : ''}
@@ -757,24 +761,30 @@ function UsersAdminPage() {
             </div>
           </div>
 
-          {error && (
-            <div className="mt-3 text-xs text-red-500">{error}</div>
-          )}
-
           <div className="mt-4 flex justify-end gap-2">
             <button
               onClick={closeEdit}
               disabled={saving}
-              className="px-3 py-1 text-xs rounded border border-gray-300 hover:bg-gray-100"
+              className="px-3 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-3 py-1 text-xs rounded bg-blue-600 text-white font-semibold disabled:opacity-60"
+              className="btn flex items-center gap-2 text-xs"
             >
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? (
+                <>
+                  <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                'Save'
+              )}
             </button>
           </div>
         </div>
@@ -782,71 +792,72 @@ function UsersAdminPage() {
       )}
 
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-4 sm:p-6 max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Add New User</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Add New User</h2>
               <button
                 onClick={() => {
                   setShowCreateModal(false);
-                  setError(null);
                 }}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               >
-                X
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
 
             <form onSubmit={handleCreateUser} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={createForm.name}
                   onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   placeholder="John Doe"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Email <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
                   value={createForm.email}
                   onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   placeholder="john@sioxglobal.com"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Phone (optional)
                 </label>
                 <input
                   type="tel"
                   value={createForm.phone}
                   onChange={(e) => setCreateForm((f) => ({ ...f, phone: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   placeholder="+1 555-123-4567"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Role
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Role <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={createForm.role}
                   onChange={(e) => setCreateForm((f) => ({ ...f, role: e.target.value as UserRole }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                 >
                   {ALL_ROLES.map((r) => (
                     <option key={r} value={r}>
@@ -857,14 +868,14 @@ function UsersAdminPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Assign to Ventures
                 </label>
-                <div className="border border-gray-200 rounded-lg p-2 max-h-32 overflow-y-auto space-y-1 bg-gray-50">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-2 max-h-32 overflow-y-auto space-y-1 bg-gray-50 dark:bg-gray-700/50">
                   {ventures.map((v) => (
                     <label
                       key={v.id}
-                      className="flex items-center gap-2 text-sm text-gray-700"
+                      className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer"
                     >
                       <input
                         type="checkbox"
@@ -875,6 +886,7 @@ function UsersAdminPage() {
                             ventureIds: toggleArrayId(f.ventureIds, v.id),
                           }))
                         }
+                        className="rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700"
                       />
                       {v.name}
                     </label>
@@ -882,29 +894,37 @@ function UsersAdminPage() {
                 </div>
               </div>
 
-              {error && (
-                <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
-                  {error}
-                </div>
-              )}
-
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={() => {
                     setShowCreateModal(false);
-                    setError(null);
                   }}
-                  className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  className="btn flex items-center gap-2 text-sm"
                 >
-                  {saving ? 'Creating...' : 'Create User'}
+                  {saving ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Create User
+                    </>
+                  )}
                 </button>
               </div>
             </form>

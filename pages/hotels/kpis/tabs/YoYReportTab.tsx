@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import useSWR from "swr";
+import toast from "react-hot-toast";
 import {
   LineChart,
   Line,
@@ -13,8 +13,14 @@ import {
   BarChart,
   Bar,
 } from "recharts";
+import { Skeleton } from "@/components/ui/Skeleton";
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = (url: string) => fetch(url).then((r) => {
+  if (!r.ok) {
+    throw new Error(`Failed to fetch: ${r.statusText}`);
+  }
+  return r.json();
+});
 
 type PeriodMetrics = {
   label: string;
@@ -62,6 +68,14 @@ type HotelProperty = {
   id: number;
   name: string;
   ventureId: number;
+};
+
+type HotelsResponse = {
+  items: HotelProperty[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
 };
 
 function formatCurrency(value: number) {
@@ -152,12 +166,11 @@ function MetricCard({
 type ActiveTab = "MTD" | "YTD";
 
 export default function YoYReportTab() {
-  const { status } = useSession();
   const [selectedHotelId, setSelectedHotelId] = useState<string>("");
   const [activeTab, setActiveTab] = useState<ActiveTab>("MTD");
 
-  const { data: hotels } = useSWR<HotelProperty[]>(
-    "/api/hospitality/hotels",
+  const { data: hotelsData, error: hotelsError, isLoading: hotelsLoading } = useSWR<HotelsResponse>(
+    "/api/hospitality/hotels?pageSize=200",
     fetcher
   );
 
@@ -170,19 +183,36 @@ export default function YoYReportTab() {
     fetcher
   );
 
-  if (status === "loading") {
-    return (
-      <div className="p-6 text-gray-600 dark:text-gray-300">Loading...</div>
-    );
-  }
+  // Debug: Log API response
+  useEffect(() => {
+    if (data && selectedHotelId) {
+      console.log('📊 YoY Report API Response:', {
+        mtd: data.mtd,
+        ytd: data.ytd,
+        dailyTrendCount: data.dailyTrend?.length,
+        apiUrl,
+      });
+    }
+  }, [data, selectedHotelId, apiUrl]);
 
-  if (status === "unauthenticated") {
-    return (
-      <div className="p-6 text-gray-600 dark:text-gray-300">Please sign in to view hotel KPI reports.</div>
-    );
-  }
+  // Extract hotels array from API response
+  const hotels = hotelsData?.items || [];
+
+  // Show toast on errors
+  useEffect(() => {
+    if (hotelsError) {
+      toast.error('Failed to load hotels. Please try again.');
+    }
+  }, [hotelsError]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error('Failed to load KPI comparison data. Please try again.');
+    }
+  }, [error]);
 
   const currentMonth = new Date().toLocaleString("default", { month: "long" });
+  const currentMonthIndex = new Date().getMonth(); // 0 = January, 11 = December
   const currentYear = new Date().getFullYear();
 
   return (
@@ -194,18 +224,23 @@ export default function YoYReportTab() {
             LYMTD and LYYTD comparison metrics
           </p>
         </div>
-        <select
-          value={selectedHotelId}
-          onChange={(e) => setSelectedHotelId(e.target.value)}
-          className="px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-        >
-          <option value="">Select a hotel...</option>
-          {hotels?.map((h) => (
-            <option key={h.id} value={h.id}>
-              {h.name}
-            </option>
-          ))}
-        </select>
+        {hotelsLoading ? (
+          <Skeleton className="h-10 w-64" />
+        ) : (
+          <select
+            value={selectedHotelId}
+            onChange={(e) => setSelectedHotelId(e.target.value)}
+            className="px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            disabled={hotelsError || hotels.length === 0}
+          >
+            <option value="">Select a hotel...</option>
+            {hotels.map((h) => (
+              <option key={h.id} value={h.id}>
+                {h.name}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {!selectedHotelId && (
@@ -217,21 +252,20 @@ export default function YoYReportTab() {
       )}
 
       {selectedHotelId && isLoading && (
-        <div className="animate-pulse space-y-4">
-          <div className="grid grid-cols-4 gap-4">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="h-28 bg-gray-200 dark:bg-slate-700 rounded-lg"
-              ></div>
+              <Skeleton key={i} className="h-28 rounded-lg" />
             ))}
           </div>
+          <Skeleton className="h-64 rounded-lg" />
         </div>
       )}
 
       {selectedHotelId && error && (
-        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg p-4 text-red-700 dark:text-red-300">
-          Error loading KPI data
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4">
+          <div className="text-red-700 dark:text-red-400 font-medium mb-1">Error loading KPI data</div>
+          <p className="text-sm text-red-600 dark:text-red-500">{error.message || 'Please try again.'}</p>
         </div>
       )}
 
@@ -266,6 +300,11 @@ export default function YoYReportTab() {
                 <p className="text-sm text-blue-400 mt-1">
                   Comparing {data.mtd.daysInPeriod} days this year to{" "}
                   {data.lyMtd.daysInPeriod} days last year
+                  {currentMonthIndex === 0 && (
+                    <span className="block mt-1 text-xs text-blue-300 italic">
+                      Note: In January, MTD and YTD show the same data since both start from Jan 1st.
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -308,7 +347,7 @@ export default function YoYReportTab() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rooms Sold</p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
                     {data.mtd.roomsSold.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-500">
@@ -317,7 +356,7 @@ export default function YoYReportTab() {
                 </div>
                 <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rooms Available</p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
                     {data.mtd.roomsAvailable.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-500">
@@ -337,6 +376,11 @@ export default function YoYReportTab() {
                 <p className="text-sm text-purple-400 mt-1">
                   Comparing {data.ytd.daysInPeriod} days this year to{" "}
                   {data.lyYtd.daysInPeriod} days last year
+                  {currentMonthIndex === 0 && (
+                    <span className="block mt-1 text-xs text-purple-300 italic">
+                      Note: In January, MTD and YTD show the same data since both start from Jan 1st.
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -379,7 +423,7 @@ export default function YoYReportTab() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rooms Sold</p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
                     {data.ytd.roomsSold.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-500">
@@ -388,7 +432,7 @@ export default function YoYReportTab() {
                 </div>
                 <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rooms Available</p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
                     {data.ytd.roomsAvailable.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-500">
@@ -400,7 +444,7 @@ export default function YoYReportTab() {
           )}
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               30-Day Trend: This Year vs Last Year
             </h3>
 
@@ -411,10 +455,11 @@ export default function YoYReportTab() {
                 </h4>
                 <ResponsiveContainer width="100%" height={250}>
                   <LineChart data={data.dailyTrend}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" className="dark:stroke-slate-600" />
                     <XAxis
                       dataKey="date"
-                      tick={{ fill: "#94a3b8", fontSize: 10 }}
+                      tick={{ fill: "#64748b", fontSize: 10 }}
+                      className="dark:[&>*]:fill-slate-400"
                       tickFormatter={(v) =>
                         new Date(v).toLocaleDateString("en-US", {
                           month: "short",
@@ -423,18 +468,21 @@ export default function YoYReportTab() {
                       }
                     />
                     <YAxis
-                      tick={{ fill: "#94a3b8", fontSize: 10 }}
+                      tick={{ fill: "#64748b", fontSize: 10 }}
+                      className="dark:[&>*]:fill-slate-400"
                       tickFormatter={(v) => `${v}%`}
                     />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "#1e293b",
                         border: "1px solid #475569",
+                        color: "#f1f5f9",
                       }}
+                      labelStyle={{ color: "#f1f5f9" }}
                       labelFormatter={(v) =>
                         new Date(v).toLocaleDateString()
                       }
-                      formatter={(value: number) => [`${value.toFixed(1)}%`]}
+                      formatter={(value: number) => [`${value.toFixed(1)}%`, "Occupancy"]}
                     />
                     <Legend />
                     <Line
@@ -464,10 +512,11 @@ export default function YoYReportTab() {
                 </h4>
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={data.dailyTrend}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" className="dark:stroke-slate-600" />
                     <XAxis
                       dataKey="date"
-                      tick={{ fill: "#94a3b8", fontSize: 10 }}
+                      tick={{ fill: "#64748b", fontSize: 10 }}
+                      className="dark:[&>*]:fill-slate-400"
                       tickFormatter={(v) =>
                         new Date(v).toLocaleDateString("en-US", {
                           month: "short",
@@ -476,18 +525,21 @@ export default function YoYReportTab() {
                       }
                     />
                     <YAxis
-                      tick={{ fill: "#94a3b8", fontSize: 10 }}
+                      tick={{ fill: "#64748b", fontSize: 10 }}
+                      className="dark:[&>*]:fill-slate-400"
                       tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
                     />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "#1e293b",
                         border: "1px solid #475569",
+                        color: "#f1f5f9",
                       }}
+                      labelStyle={{ color: "#f1f5f9" }}
                       labelFormatter={(v) =>
                         new Date(v).toLocaleDateString()
                       }
-                      formatter={(value: number) => [formatCurrency(value)]}
+                      formatter={(value: number, name: string) => [formatCurrency(value), name]}
                     />
                     <Legend />
                     <Bar
@@ -531,11 +583,13 @@ export default function YoYReportTab() {
                       contentStyle={{
                         backgroundColor: "#1e293b",
                         border: "1px solid #475569",
+                        color: "#f1f5f9",
                       }}
+                      labelStyle={{ color: "#f1f5f9" }}
                       labelFormatter={(v) =>
                         new Date(v).toLocaleDateString()
                       }
-                      formatter={(value: number) => [formatCurrency(value)]}
+                      formatter={(value: number, name: string) => [formatCurrency(value), name]}
                     />
                     <Legend />
                     <Line
@@ -584,11 +638,13 @@ export default function YoYReportTab() {
                       contentStyle={{
                         backgroundColor: "#1e293b",
                         border: "1px solid #475569",
+                        color: "#f1f5f9",
                       }}
+                      labelStyle={{ color: "#f1f5f9" }}
                       labelFormatter={(v) =>
                         new Date(v).toLocaleDateString()
                       }
-                      formatter={(value: number) => [formatCurrency(value)]}
+                      formatter={(value: number, name: string) => [formatCurrency(value), name]}
                     />
                     <Legend />
                     <Line

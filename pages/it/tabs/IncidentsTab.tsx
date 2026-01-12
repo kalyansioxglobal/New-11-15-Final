@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Select } from "@/components/ui/Select";
-// import { Alert } from "@/components/ui/Alert";
 import { Skeleton } from "@/components/ui/Skeleton";
+import toast from "react-hot-toast";
 
 type User = {
   id: number;
@@ -67,16 +67,25 @@ export default function IncidentsTab() {
     assignedToUserId: "",
   });
   const [submitting, setSubmitting] = useState(false);
-  const [formError, setFormError] = useState<string>("");
   const [assigningIncidents, setAssigningIncidents] = useState<Set<number>>(new Set());
   const [updatingStatus, setUpdatingStatus] = useState<Set<number>>(new Set());
 
-  const loadIncidents = async () => {
+  const loadIncidents = async (overrides?: {
+    statusGroup?: string;
+    statusFilter?: string;
+    severityFilter?: string;
+    meFilter?: "" | "reported" | "assigned";
+  }) => {
     const params = new URLSearchParams();
-    if (statusGroup) params.set("statusGroup", statusGroup);
-    if (statusFilter) params.set("status", statusFilter);
-    if (severityFilter) params.set("severity", severityFilter);
-    if (meFilter) params.set("me", meFilter);
+    const group = overrides?.statusGroup !== undefined ? overrides.statusGroup : statusGroup;
+    const status = overrides?.statusFilter !== undefined ? overrides.statusFilter : statusFilter;
+    const severity = overrides?.severityFilter !== undefined ? overrides.severityFilter : severityFilter;
+    const me = overrides?.meFilter !== undefined ? overrides.meFilter : meFilter;
+    
+    if (group) params.set("statusGroup", group);
+    if (status) params.set("status", status);
+    if (severity) params.set("severity", severity);
+    if (me) params.set("me", me);
     const query = params.toString() ? `?${params.toString()}` : "";
 
     const res = await fetch(`/api/it-incidents/list${query}`);
@@ -118,7 +127,6 @@ export default function IncidentsTab() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    setFormError("");
 
     try {
       const res = await fetch("/api/it-incidents/create", {
@@ -138,9 +146,10 @@ export default function IncidentsTab() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to create incident");
+        throw new Error(data.error || data.detail || "Failed to create incident");
       }
 
+      toast.success("Incident created successfully!");
       setShowCreateModal(false);
       setFormData({
         assetId: "",
@@ -150,9 +159,28 @@ export default function IncidentsTab() {
         severity: "LOW",
         assignedToUserId: "",
       });
-      loadIncidents();
+      
+      // Reset filters that might hide the new incident (new incidents are typically "OPEN")
+      // and reload with cleared filters to ensure it appears immediately
+      const newStatusGroup = statusGroup === "closed" ? "" : statusGroup;
+      const newStatusFilter = statusFilter && statusFilter !== "OPEN" ? "" : statusFilter;
+      
+      // Update filter state
+      if (newStatusGroup !== statusGroup) {
+        setStatusGroup(newStatusGroup);
+      }
+      if (newStatusFilter !== statusFilter) {
+        setStatusFilter(newStatusFilter);
+      }
+      
+      // Reload with cleared filters to ensure new incident appears
+      await loadIncidents({
+        statusGroup: newStatusGroup,
+        statusFilter: newStatusFilter,
+      });
     } catch (err: any) {
-      setFormError(err.message || "Failed to create incident");
+      const errorMessage = err.message || "Failed to create incident";
+      toast.error(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -172,6 +200,7 @@ export default function IncidentsTab() {
 
       if (res.ok) {
         const updated = await res.json();
+        toast.success("Incident assigned successfully!");
         loadIncidents();
         if (selectedIncident?.id === incidentId) {
           setSelectedIncident(updated);
@@ -179,11 +208,11 @@ export default function IncidentsTab() {
       } else {
         const error = await res.json().catch(() => ({ error: "Failed to assign incident" }));
         console.error("Assignment error:", error);
-        alert(error.error || "Failed to assign incident");
+        toast.error(error.error || error.detail || "Failed to assign incident");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Assignment error:", err);
-      alert("Failed to assign incident. Please try again.");
+      toast.error(err.message || "Failed to assign incident. Please try again.");
     } finally {
       setAssigningIncidents((prev) => {
         const next = new Set(prev);
@@ -204,6 +233,7 @@ export default function IncidentsTab() {
 
       if (res.ok) {
         const updated = await res.json();
+        toast.success("Status updated successfully!");
         loadIncidents();
         if (selectedIncident?.id === incidentId) {
           setSelectedIncident(updated);
@@ -211,11 +241,11 @@ export default function IncidentsTab() {
       } else {
         const error = await res.json().catch(() => ({ error: "Failed to update status" }));
         console.error("Status update error:", error);
-        alert(error.error || "Failed to update status");
+        toast.error(error.error || error.detail || "Failed to update status");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Status update error:", err);
-      alert("Failed to update status. Please try again.");
+      toast.error(err.message || "Failed to update status. Please try again.");
     } finally {
       setUpdatingStatus((prev) => {
         const next = new Set(prev);
@@ -258,8 +288,8 @@ export default function IncidentsTab() {
     <div className="space-y-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">IT Incidents</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">IT Incidents</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Track and manage incidents across IT assets and users.
           </p>
         </div>
@@ -267,7 +297,7 @@ export default function IncidentsTab() {
           <Button 
             size="sm" 
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all"
+            className="btn"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -278,23 +308,23 @@ export default function IncidentsTab() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
-          <div className="text-3xl font-bold text-gray-900">{openCounts.total}</div>
-          <div className="text-sm text-gray-600 font-medium mt-1">Total Incidents</div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div className="text-3xl font-bold text-gray-900 dark:text-white">{openCounts.total}</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">Total Incidents</div>
         </div>
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border border-blue-200 p-5 shadow-sm hover:shadow-md transition-shadow">
-          <div className="text-3xl font-bold text-blue-600">{openCounts.open}</div>
-          <div className="text-sm text-blue-700 font-medium mt-1">Open</div>
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/30 dark:to-blue-800/20 rounded-xl border border-blue-200 dark:border-blue-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{openCounts.open}</div>
+          <div className="text-sm text-blue-700 dark:text-blue-300 font-medium mt-1">Open</div>
         </div>
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl border border-purple-200 p-5 shadow-sm hover:shadow-md transition-shadow">
-          <div className="text-3xl font-bold text-purple-600">
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/30 dark:to-purple-800/20 rounded-xl border border-purple-200 dark:border-purple-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
             {openCounts.inProgress}
           </div>
-          <div className="text-sm text-purple-700 font-medium mt-1">In Progress</div>
+          <div className="text-sm text-purple-700 dark:text-purple-300 font-medium mt-1">In Progress</div>
         </div>
-        <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-xl border border-red-200 p-5 shadow-sm hover:shadow-md transition-shadow">
-          <div className="text-3xl font-bold text-red-600">{openCounts.critical}</div>
-          <div className="text-sm text-red-700 font-medium mt-1">Critical (Unresolved)</div>
+        <div className="bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-900/30 dark:to-red-800/20 rounded-xl border border-red-200 dark:border-red-800 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div className="text-3xl font-bold text-red-600 dark:text-red-400">{openCounts.critical}</div>
+          <div className="text-sm text-red-700 dark:text-red-300 font-medium mt-1">Critical (Unresolved)</div>
         </div>
       </div>
 
@@ -431,7 +461,7 @@ export default function IncidentsTab() {
                 Status
               </label>
               <Select
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100"
+                  className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -448,7 +478,7 @@ export default function IncidentsTab() {
                 Severity
               </label>
               <Select
-                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100"
+                  className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 value={severityFilter}
                 onChange={(e) => setSeverityFilter(e.target.value)}
               >
@@ -464,32 +494,32 @@ export default function IncidentsTab() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+          <thead className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 border-b border-gray-200 dark:border-gray-700">
             <tr>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">ID</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">Title</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">Asset</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">Type</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">Severity</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">Status</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">Assigned To</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">Created</th>
-              <th className="px-4 py-3 text-right font-semibold text-gray-700">Actions</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">ID</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Title</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Asset</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Type</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Severity</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Assigned To</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Created</th>
+              <th className="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
             {filteredIncidents.map((inc) => (
-              <tr key={inc.id} className="hover:bg-blue-50/50 transition-colors">
-                <td className="px-4 py-3 font-mono text-gray-500 text-xs">#{inc.id}</td>
+              <tr key={inc.id} className="hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors">
+                <td className="px-4 py-3 font-mono text-gray-500 dark:text-gray-400 text-xs">#{inc.id}</td>
                 <td className="px-4 py-3">
                   <button
                     onClick={() => {
                       setSelectedIncident(inc);
                       setShowDetailModal(true);
                     }}
-                    className="text-blue-600 hover:text-blue-700 hover:underline text-left text-sm font-semibold"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline text-left text-sm font-semibold transition-colors"
                   >
                     {inc.title}
                   </button>
@@ -498,15 +528,15 @@ export default function IncidentsTab() {
                   {inc.assetId ? (
                     <a
                       href={`/it-assets/${inc.assetId}`}
-                      className="text-blue-600 hover:text-blue-700 hover:underline text-sm font-medium"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline text-sm font-medium transition-colors"
                     >
                       {inc.asset?.tag || `Asset #${inc.assetId}`}
                     </a>
                   ) : (
-                    <span className="text-gray-400 text-sm">No asset</span>
+                    <span className="text-gray-400 dark:text-gray-500 text-sm">No asset</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-600">{inc.category || "-"}</td>
+                <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{inc.category || "-"}</td>
                 <td className="px-4 py-3">
                   <Badge variant="severity" value={inc.severity} />
                 </td>
@@ -516,7 +546,7 @@ export default function IncidentsTab() {
                       value={inc.status}
                       onChange={(e) => handleStatusChange(inc.id, e.target.value)}
                       disabled={updatingStatus.has(inc.id)}
-                      className={`w-40 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 ${
+                      className={`w-40 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white ${
                         updatingStatus.has(inc.id) ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                     >
@@ -528,7 +558,7 @@ export default function IncidentsTab() {
                     </Select>
                     {updatingStatus.has(inc.id) && (
                       <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                        <svg className="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-4 w-4 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -542,12 +572,12 @@ export default function IncidentsTab() {
                       value={inc.assignedToUserId || ""}
                       onChange={(e) => handleAssign(inc.id, e.target.value)}
                       disabled={assigningIncidents.has(inc.id)}
-                      className={`w-full max-w-[200px] border rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${
+                      className={`w-full max-w-[200px] border rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all ${
                         assigningIncidents.has(inc.id)
-                          ? "opacity-50 cursor-not-allowed border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-800"
+                          ? "opacity-50 cursor-not-allowed border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-gray-200"
                           : inc.assignedToUserId
                           ? "border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100 font-medium"
-                          : "border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100"
+                          : "border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                       }`}
                     >
                       <option value="">Unassigned</option>
@@ -559,7 +589,7 @@ export default function IncidentsTab() {
                     </Select>
                     {assigningIncidents.has(inc.id) && (
                       <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <svg className="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-4 w-4 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -574,7 +604,7 @@ export default function IncidentsTab() {
                     )}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-gray-500 text-xs">
+                <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">
                   {new Date(inc.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-3 text-right">
@@ -584,7 +614,7 @@ export default function IncidentsTab() {
                       setSelectedIncident(inc);
                       setShowDetailModal(true);
                     }}
-                    className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                   >
                     View
                   </button>
@@ -595,15 +625,15 @@ export default function IncidentsTab() {
             {filteredIncidents.length === 0 && (
               <tr>
                 <td colSpan={9} className="p-12 text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+                    <svg className="w-8 h-8 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
-                  <p className="text-gray-500 text-sm font-medium">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
                     {searchQuery.trim() ? "No incidents match your search" : "No incidents found"}
                   </p>
-                  <p className="text-gray-400 text-xs mt-1">
+                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
                     {searchQuery.trim() 
                       ? "Try adjusting your search terms or filters." 
                       : 'Click "New Incident" to create one.'}
@@ -617,8 +647,8 @@ export default function IncidentsTab() {
 
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
-            <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-2xl flex items-center justify-between">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="sticky top-0 z-10 text-white p-6 rounded-t-2xl flex items-center justify-between">
               <h2 className="text-xl font-bold">Log New Incident</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
@@ -630,17 +660,9 @@ export default function IncidentsTab() {
               </button>
             </div>
             <form onSubmit={handleCreate} className="p-6 space-y-5">
-              {formError && (
-                <div className="p-4 rounded-xl bg-red-50 border-l-4 border-red-500 text-red-700 text-sm flex items-start gap-3">
-                  <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                  <span>{formError}</span>
-                </div>
-              )}
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Asset Name<span className="text-red-500">*</span>
                 </label>
                 <Select
@@ -649,7 +671,7 @@ export default function IncidentsTab() {
                   onChange={(e) =>
                     setFormData({ ...formData, assetId: e.target.value })
                   }
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                 >
                   <option value="">Select an asset</option>
                   {assets.map((a) => (
@@ -661,7 +683,7 @@ export default function IncidentsTab() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Title <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -672,12 +694,12 @@ export default function IncidentsTab() {
                     setFormData({ ...formData, title: e.target.value })
                   }
                   placeholder="Brief description of the issue"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Description <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -688,13 +710,13 @@ export default function IncidentsTab() {
                     setFormData({ ...formData, description: e.target.value })
                   }
                   placeholder="Detailed description of the problem..."
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all resize-y"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Category
                   </label>
                   <Select
@@ -702,7 +724,7 @@ export default function IncidentsTab() {
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   >
                     {INCIDENT_CATEGORIES.map((t) => (
                       <option key={t} value={t}>
@@ -712,7 +734,7 @@ export default function IncidentsTab() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Severity
                   </label>
                   <Select
@@ -720,7 +742,7 @@ export default function IncidentsTab() {
                     onChange={(e) =>
                       setFormData({ ...formData, severity: e.target.value })
                     }
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   >
                     {SEVERITIES.map((s) => (
                       <option key={s} value={s}>
@@ -732,7 +754,7 @@ export default function IncidentsTab() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Assign To
                 </label>
                 <Select
@@ -740,18 +762,18 @@ export default function IncidentsTab() {
                   onChange={(e) =>
                     setFormData({ ...formData, assignedToUserId: e.target.value })
                   }
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                 >
-                  <option value="">Unassigned</option>
+                  <option value="" className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">Unassigned</option>
                   {users.map((u) => (
-                    <option key={u.id} value={u.id}>
+                    <option key={u.id} value={u.id} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                       {u.name}
                     </option>
                   ))}
                 </Select>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <Button
                   type="button"
                   variant="ghost"
@@ -765,7 +787,7 @@ export default function IncidentsTab() {
                   type="submit" 
                   size="sm" 
                   disabled={submitting}
-                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+                  className="btn"
                 >
                   {submitting ? (
                     <>
@@ -791,83 +813,124 @@ export default function IncidentsTab() {
       )}
 
       {showDetailModal && selectedIncident && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
-            <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-2xl flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">
-                  Incident #{selectedIncident.id}
-                </h2>
-                <p className="text-sm text-blue-100 mt-1">{selectedIncident.title}</p>
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header Card */}
+            <div className=" rounded-t-xl p-6 text-white">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-white/20 dark:bg-white/10 rounded-lg">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Incident #{selectedIncident.id}</h2>
+                    {/* <p className="text-indigo-100 dark:text-indigo-200 text-sm mt-1">{selectedIncident.title}</p> */}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowDetailModal(false)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-              <button
-                onClick={() => setShowDetailModal(false)}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
             </div>
 
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Asset
-                  </label>
-                  {selectedIncident.assetId ? (
-                    <a
-                      href={`/it-assets/${selectedIncident.assetId}`}
-                      className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline text-sm font-medium"
-                    >
+            {/* Content */}
+            <div className="overflow-y-auto flex-1 p-6 space-y-6">
+              {/* Main Details Card */}
+              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                       </svg>
-                      {selectedIncident.asset?.tag ||
-                        `Asset #${selectedIncident.assetId}`}
-                    </a>
-                  ) : (
-                    <span className="text-gray-400 text-sm">No asset</span>
-                  )}
+                      Asset
+                    </label>
+                    {selectedIncident.assetId ? (
+                      <a
+                        href={`/it-assets/${selectedIncident.assetId}`}
+                        className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline text-base font-medium transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        {selectedIncident.asset?.tag || `Asset #${selectedIncident.assetId}`}
+                      </a>
+                    ) : (
+                      <p className="text-base text-gray-400 dark:text-gray-500">Not specified</p>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Reported By
+                    </label>
+                    <p className="text-base text-gray-900 dark:text-white">
+                      {selectedIncident.reporterUser?.fullName || selectedIncident.reporterUser?.name || "Unknown"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Reported By
-                  </label>
-                  <span className="text-sm text-gray-900">
-                    {selectedIncident.reporterUser?.fullName || selectedIncident.reporterUser?.name || "Unknown"}
-                  </span>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Type
-                  </label>
-                  <span className="text-sm text-gray-600">{selectedIncident.category || "-"}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                      Type
+                    </label>
+                    <p className="text-base text-gray-900 dark:text-white">{selectedIncident.category || "-"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      Severity
+                    </label>
+                    <Badge variant="severity" value={selectedIncident.severity} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Status
+                    </label>
+                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-200 border border-blue-200 dark:border-blue-800">
+                      {selectedIncident.status.replace("_", " ")}
+                    </span>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Created
+                    </label>
+                    <p className="text-base text-gray-900 dark:text-white">
+                      {new Date(selectedIncident.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Severity
-                  </label>
-                  <Badge variant="severity" value={selectedIncident.severity} />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Status
-                  </label>
-                  <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                    {selectedIncident.status.replace("_", " ")}
-                  </span>
-                </div>
+
                 {selectedIncident.status === "RESOLVED" && selectedIncident.resolvedAt && (
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
                       Resolved At
                     </label>
-                    <span className="text-sm text-gray-600">
+                    <p className="text-base text-gray-900 dark:text-white">
                       {new Date(selectedIncident.resolvedAt).toLocaleString(undefined, {
                         year: 'numeric',
                         month: 'short',
@@ -875,48 +938,81 @@ export default function IncidentsTab() {
                         hour: '2-digit',
                         minute: '2-digit',
                         hour12: true,
-                        timeZoneName: 'short'
                       })}
-                    </span>
+                    </p>
                   </div>
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Description
-                </label>
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                    {selectedIncident.description || "No description provided."}
-                  </p>
+              {/* Description */}
+              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <svg className="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Description
+                  </h3>
+                </div>
+                <div className="p-6">
+                  <div className="bg-white dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                    <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+                      {selectedIncident.description || "No description provided."}
+                    </p>
+                  </div>
                 </div>
               </div>
 
+              {/* Resolution */}
               {selectedIncident.resolution && (
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Resolution
-                  </label>
-                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                      {selectedIncident.resolution}
-                    </p>
+                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  <div className="bg-gradient-to-r from-green-50 to-green-100/50 dark:from-green-900/30 dark:to-green-800/20 px-6 py-4 border-b border-green-200 dark:border-green-800">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                      <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Resolution
+                    </h3>
+                  </div>
+                  <div className="p-6">
+                    <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                      <p className="text-sm text-gray-700 dark:text-green-300 whitespace-pre-wrap leading-relaxed">
+                        {selectedIncident.resolution}
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowDetailModal(false)}
-                  className="px-5 py-2.5"
-                >
-                  Close
-                </Button>
-              </div>
+              {/* Assigned To */}
+              {selectedIncident.assignedToUser && (
+                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a2 2 0 11-4 0 2 2 0 014 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                      </svg>
+                      Assigned To
+                    </label>
+                    <p className="text-base text-gray-900 dark:text-white">
+                      {selectedIncident.assignedToUser?.fullName || selectedIncident.assignedToUser?.name || "Unknown"}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-gray-200 dark:border-gray-700 p-4 flex justify-end">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowDetailModal(false)}
+                className="px-5 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                Close
+              </Button>
             </div>
           </div>
         </div>

@@ -63,11 +63,11 @@ function SaasSubscriptionsPage() {
   }, [selectedVentureId]);
 
   const statusColors: Record<string, string> = {
-    ACTIVE: "bg-green-100 text-green-800",
-    TRIAL: "bg-blue-100 text-blue-800",
-    CANCELLED: "bg-red-100 text-red-800",
-    EXPIRED: "bg-gray-100 text-gray-600",
-    PAUSED: "bg-yellow-100 text-yellow-800",
+    ACTIVE: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800",
+    TRIAL: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800",
+    CANCELLED: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800",
+    EXPIRED: "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600",
+    PAUSED: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800",
   };
 
   const totalMrr = subscriptions.reduce((sum, s) => sum + (s.mrr || 0), 0);
@@ -75,10 +75,10 @@ function SaasSubscriptionsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">SaaS Subscriptions</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">SaaS Subscriptions</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Track subscription plans, MRR, and customer billing status.
           </p>
         </div>
@@ -86,7 +86,7 @@ function SaasSubscriptionsPage() {
           <select
             value={selectedVentureId || ""}
             onChange={(e) => setSelectedVentureId(Number(e.target.value) || null)}
-            className="px-3 py-1.5 border rounded text-sm"
+            className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
           >
             {saasVentures.length === 0 && <option value="">No SaaS ventures</option>}
             {saasVentures.map((v) => (
@@ -100,17 +100,17 @@ function SaasSubscriptionsPage() {
 
       {subscriptions.length > 0 && (
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="bg-white p-4 rounded-lg border">
-            <div className="text-sm text-gray-500">Total Subscriptions</div>
-            <div className="text-2xl font-semibold mt-1">{subscriptions.length}</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Total Subscriptions</div>
+            <div className="text-2xl font-semibold mt-1 text-gray-900 dark:text-white">{subscriptions.length}</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border">
-            <div className="text-sm text-gray-500">Active</div>
-            <div className="text-2xl font-semibold mt-1 text-green-600">{activeCount}</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Active</div>
+            <div className="text-2xl font-semibold mt-1 text-green-600 dark:text-green-400">{activeCount}</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border">
-            <div className="text-sm text-gray-500">Total MRR</div>
-            <div className="text-2xl font-semibold mt-1 text-blue-600">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Total MRR</div>
+            <div className="text-2xl font-semibold mt-1 text-blue-600 dark:text-blue-400">
               ${totalMrr.toLocaleString()}
             </div>
           </div>
@@ -118,7 +118,7 @@ function SaasSubscriptionsPage() {
       )}
 
       {error && (
-        <div className="p-4 bg-red-50 text-red-700 rounded-lg">{error}</div>
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg">{error}</div>
       )}
 
       {loading ? (
@@ -126,61 +126,61 @@ function SaasSubscriptionsPage() {
           <Skeleton className="w-full h-[85vh]" />
         </div>
       ) : subscriptions.length === 0 ? (
-        <div className="bg-gray-50 border rounded-xl p-8 text-center">
-          <div className="text-gray-400 text-4xl mb-4">📋</div>
-          <h2 className="text-lg font-medium text-gray-700 mb-2">No Subscriptions Yet</h2>
-          <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
+        <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-8 text-center">
+          <div className="text-gray-400 dark:text-gray-500 text-4xl mb-4">📋</div>
+          <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">No Subscriptions Yet</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-4">
             Subscriptions will appear here once customers are added and have active plans.
           </p>
           <Link
             href="/saas/customers"
-            className="inline-block px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+            className="btn"
           >
             View Customers
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-900/50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Customer
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Plan
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   MRR
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Start Date
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {subscriptions.map((s) => (
-                <tr key={s.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
                     {s.customerName}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{s.plan}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{s.plan}</td>
                   <td className="px-4 py-3 text-center">
                     <span
-                      className={`px-2 py-0.5 rounded text-xs ${
-                        statusColors[s.status] || "bg-gray-100"
+                      className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        statusColors[s.status] || "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600"
                       }`}
                     >
                       {s.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-green-600">
+                  <td className="px-4 py-3 text-right font-medium text-green-600 dark:text-green-400">
                     ${(s.mrr || 0).toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     {new Date(s.startDate).toLocaleDateString()}
                   </td>
                 </tr>

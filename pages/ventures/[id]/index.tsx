@@ -53,10 +53,10 @@ function MiniMetric({
   sub?: string;
 }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
-      <div className="text-[11px] text-gray-500">{label}</div>
-      <div className="text-sm font-semibold text-gray-900">{value}</div>
-      {sub && <div className="text-[11px] text-gray-400 mt-1">{sub}</div>}
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3">
+      <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{label}</div>
+      <div className="text-lg font-bold text-gray-900 dark:text-white">{value}</div>
+      {sub && <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">{sub}</div>}
     </div>
   );
 }
@@ -111,7 +111,19 @@ function VentureDetailPage() {
   }
 
   if (!venture) {
-    return <div className="p-4">Venture not found.</div>;
+    return (
+      <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+          <p className="text-gray-900 dark:text-white">Venture not found.</p>
+          <Link
+            href="/ventures"
+            className="mt-4 inline-block text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+          >
+            ← Back to Ventures
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const isFreight = venture.type === "LOGISTICS" || venture.type === "TRANSPORT";
@@ -128,30 +140,38 @@ function VentureDetailPage() {
     : approvals.filter((a: ApprovalRecord) => a.status === statusFilter);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">{venture.name}</h1>
-        <p className="text-sm text-gray-600">Type: {venture.type}</p>
+    <div className="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{venture.name}</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Type: {venture.type}</p>
+        </div>
+        <Link
+          href="/ventures"
+          className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+        >
+          ← Back to Ventures
+        </Link>
       </div>
 
-      <div className="border-b border-zinc-200">
-        <nav className="flex gap-4 text-sm">
+      <div className="border-b border-gray-200 dark:border-gray-700">
+        <nav className="flex gap-6 text-sm">
           <button
             onClick={() => setActiveTab("overview")}
-            className={`pb-2 border-b-2 ${
+            className={`pb-3 border-b-2 transition-colors ${
               activeTab === "overview"
-                ? "border-zinc-900 text-zinc-900 font-medium"
-                : "border-transparent text-zinc-500 hover:text-zinc-700"
+                ? "border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 font-semibold"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
           >
             Overview
           </button>
           <button
             onClick={() => setActiveTab("documents")}
-            className={`pb-2 border-b-2 ${
+            className={`pb-3 border-b-2 transition-colors ${
               activeTab === "documents"
-                ? "border-zinc-900 text-zinc-900 font-medium"
-                : "border-transparent text-zinc-500 hover:text-zinc-700"
+                ? "border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 font-semibold"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
           >
             Documents {documents.length > 0 && `(${documents.length})`}
@@ -159,10 +179,10 @@ function VentureDetailPage() {
           {isFreight && (
             <button
               onClick={() => setActiveTab("approvals")}
-              className={`pb-2 border-b-2 ${
+              className={`pb-3 border-b-2 transition-colors ${
                 activeTab === "approvals"
-                  ? "border-zinc-900 text-zinc-900 font-medium"
-                  : "border-transparent text-zinc-500 hover:text-zinc-700"
+                  ? "border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 font-semibold"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               }`}
             >
               Approvals {approvals.length > 0 && `(${approvals.length})`}
@@ -181,16 +201,16 @@ function VentureDetailPage() {
 
       {activeTab === "approvals" && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex gap-2">
               {["ALL", "PENDING", "APPROVED", "REJECTED"].map((status) => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
-                  className={`px-3 py-1 text-xs rounded-md border ${
+                  className={`px-4 py-2 text-xs font-medium rounded-lg border transition-colors ${
                     statusFilter === status
-                      ? "bg-zinc-900 text-white border-zinc-900"
-                      : "bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50"
+                      ? "bg-blue-600 dark:bg-blue-600 text-white border-blue-600 dark:border-blue-600"
+                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                 >
                   {status}
@@ -199,78 +219,101 @@ function VentureDetailPage() {
             </div>
             <Link
               href={`/logistics/ventures/${id}/customer-approval`}
-              className="px-3 py-1.5 text-xs bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 rounded-md"
+              className="btn text-sm"
             >
-              + New Approval
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              New Approval
             </Link>
           </div>
 
-          <div className="border border-zinc-200 rounded-lg overflow-hidden bg-white">
-            <table className="min-w-full text-sm">
-              <thead className="bg-zinc-50 border-b border-zinc-200 text-xs uppercase text-zinc-500">
-                <tr>
-                  <th className="px-4 py-2 text-left font-medium">Customer</th>
-                  <th className="px-4 py-2 text-left font-medium">Requested By</th>
-                  <th className="px-4 py-2 text-left font-medium">Status</th>
-                  <th className="px-4 py-2 text-left font-medium">Notes</th>
-                  <th className="px-4 py-2 text-left font-medium">Created</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredApprovals?.map((approval) => (
-                  <tr key={approval.id} className="border-b border-zinc-100">
-                    <td className="px-4 py-2 font-medium text-zinc-900">
-                      {approval.customer.name}
-                    </td>
-                    <td className="px-4 py-2 text-zinc-600">
-                      {approval.requestedBy.name || approval.requestedBy.email}
-                    </td>
-                    <td className="px-4 py-2">
-                      <span
-                        className={`px-2 py-0.5 rounded text-xs font-medium ${
-                          approval.status === "PENDING"
-                            ? "bg-amber-100 text-amber-700"
-                            : approval.status === "APPROVED"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
-                      >
-                        {approval.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 text-zinc-500 text-xs max-w-[200px] truncate">
-                      {approval.notes || "—"}
-                    </td>
-                    <td className="px-4 py-2 text-zinc-500 text-xs">
-                      {new Date(approval.createdAt).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-                {filteredApprovals.length === 0 && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-sm text-zinc-500">
-                      No approvals found.
-                    </td>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Customer</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Requested By</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Notes</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Created</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {filteredApprovals?.map((approval) => (
+                    <tr key={approval.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                        {approval.customer.name}
+                      </td>
+                      <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
+                        {approval.requestedBy.name || approval.requestedBy.email}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                            approval.status === "PENDING"
+                              ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
+                              : approval.status === "APPROVED"
+                              ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+                              : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
+                          }`}
+                        >
+                          {approval.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs max-w-[200px] truncate">
+                        {approval.notes || "—"}
+                      </td>
+                      <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs">
+                        {new Date(approval.createdAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredApprovals.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-12 text-center">
+                        <div className="flex flex-col items-center justify-center">
+                          <svg
+                            className="w-12 h-12 text-gray-400 dark:text-gray-500 mb-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">No approvals found</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {statusFilter === "ALL" ? "No approvals have been created yet." : `No ${statusFilter.toLowerCase()} approvals found.`}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {activeTab === "overview" && summary && (
-        <div className="rounded-xl border border-gray-200 bg-white p-4 text-xs flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <div className="font-semibold text-gray-700">Workforce snapshot</div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Workforce Snapshot</h2>
             <Link
               href={`/ventures/${id}/people`}
-              className="text-[11px] text-blue-600 hover:underline"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
             >
-              View People KPIs
+              View People KPIs →
             </Link>
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <MiniMetric
               label="FTE (approx)"
               value={summary.headcountFte ? summary.headcountFte.toFixed(1) : "—"}
@@ -298,89 +341,117 @@ function VentureDetailPage() {
 
       {activeTab === "overview" && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="border rounded-lg p-4 bg-white shadow-sm">
-              <h2 className="text-lg font-semibold mb-2">Offices</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Offices</h2>
               {venture.offices.length === 0 ? (
-                <p className="text-sm text-gray-500">No offices created yet.</p>
+                <div className="flex flex-col items-center justify-center py-8">
+                  <svg
+                    className="w-12 h-12 text-gray-400 dark:text-gray-500 mb-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
+                  </svg>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">No offices created yet.</p>
+                </div>
               ) : (
-                <ul className="space-y-1 text-sm">
+                <ul className="space-y-2">
                   {venture.offices.map((office: any) => (
-                    <li key={office.id}>
-                      <Link
-                        href={`/offices/${office.id}`}
-                        className="font-medium text-blue-600 hover:underline"
-                      >
-                        {office.name}
-                      </Link>{" "}
-                      <span className="text-gray-500">
-                        ({office.city || "No location set"})
-                      </span>
+                    <li key={office.id} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <div>
+                        <Link
+                          href={`/offices/${office.id}`}
+                          className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                        >
+                          {office.name}
+                        </Link>
+                        <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                          ({office.city || "No location set"})
+                        </span>
+                      </div>
                     </li>
                   ))}
                 </ul>
               )}
             </div>
 
-            <div className="border rounded p-4">
-              <h2 className="text-lg font-semibold mb-3">Quick Links</h2>
-              <div className="space-y-2">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h2>
+              <div className="space-y-3">
                 <Link
                   href={`/ventures/${id}/people`}
-                  className="block text-sm text-blue-600 hover:underline"
+                  className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
                 >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
                   View People KPIs
                 </Link>
                 {isFreight && (
                   <Link
                     href={`/ventures/${id}/freight`}
-                    className="block text-sm text-blue-600 hover:underline"
+                    className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
                   >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                     View Freight KPIs
                   </Link>
                 )}
                 {isHotel && (
-                  <>
-                    <Link
-                      href={`/ventures/${id}/hotels`}
-                      className="block text-sm text-blue-600 hover:underline"
-                    >
-                      View Hotel Properties
-                    </Link>
-                  </>
+                  <Link
+                    href={`/ventures/${id}/hotels`}
+                    className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    View Hotel Properties
+                  </Link>
                 )}
               </div>
             </div>
           </div>
 
           {isHotel && venture.hotels && venture.hotels.length > 0 && (
-            <div className="border rounded p-4">
-              <h2 className="text-lg font-semibold mb-3">Hotel Properties</h2>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b bg-gray-50">
-                    <th className="p-2 text-left">Property Name</th>
-                    <th className="p-2 text-center">Total Rooms</th>
-                    <th className="p-2 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {venture.hotels.map((hotel) => (
-                    <tr key={hotel.id} className="border-b">
-                      <td className="p-2">{hotel.name}</td>
-                      <td className="p-2 text-center">{hotel.rooms || 0}</td>
-                      <td className="p-2 text-right">
-                        <Link
-                          href={`/hotels/${hotel.id}`}
-                          className="text-xs text-blue-600 hover:underline"
-                        >
-                          View KPIs
-                        </Link>
-                      </td>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Hotel Properties</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Property Name</th>
+                      <th className="px-6 py-3 text-center text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Total Rooms</th>
+                      <th className="px-6 py-3 text-right text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    {venture.hotels.map((hotel) => (
+                      <tr key={hotel.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{hotel.name}</td>
+                        <td className="px-6 py-4 text-center text-gray-700 dark:text-gray-300">{hotel.rooms?.toLocaleString() || 0}</td>
+                        <td className="px-6 py-4 text-right">
+                          <Link
+                            href={`/hospitality/hotels/${hotel.id}`}
+                            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
+                          >
+                            View
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </>

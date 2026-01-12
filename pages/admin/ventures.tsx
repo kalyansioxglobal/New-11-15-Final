@@ -133,7 +133,7 @@ function AdminVentures({ ventures, ventureTypes }: Props) {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow-sm hover:shadow"
+          className="btn"
         >
           + Create Venture
         </button>

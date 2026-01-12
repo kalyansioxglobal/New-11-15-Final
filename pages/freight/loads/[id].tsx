@@ -99,14 +99,14 @@ type MatchedCarrier = {
 const STATUS_OPTIONS = ["OPEN", "WORKING", "COVERED", "IN_TRANSIT", "DELIVERED", "LOST", "DORMANT", "MAYBE"];
 
 const STATUS_COLORS: Record<string, string> = {
-  OPEN: "bg-blue-100 text-blue-800 border-blue-200",
-  WORKING: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  COVERED: "bg-green-100 text-green-800 border-green-200",
-  IN_TRANSIT: "bg-indigo-100 text-indigo-800 border-indigo-200",
-  DELIVERED: "bg-emerald-100 text-emerald-800 border-emerald-200",
-  LOST: "bg-red-100 text-red-800 border-red-200",
-  DORMANT: "bg-gray-100 text-gray-800 border-gray-200",
-  MAYBE: "bg-purple-100 text-purple-800 border-purple-200",
+  OPEN: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+  WORKING: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800",
+  COVERED: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800",
+  IN_TRANSIT: "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800",
+  DELIVERED: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+  LOST: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-200 dark:border-red-800",
+  DORMANT: "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600",
+  MAYBE: "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-800",
 };
 
 function StatusActionsCard({
@@ -176,11 +176,11 @@ function StatusActionsCard({
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <h2 className="font-semibold text-lg mb-4">Status & Actions</h2>
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+      <h2 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">Status & Actions</h2>
       <div className="mb-2">
-        <span className="text-xs text-gray-500">Current Status: </span>
-        <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_COLORS[currentStatus] || "bg-gray-100"}`}>
+        <span className="text-xs text-gray-500 dark:text-gray-400">Current Status: </span>
+        <span className={`px-2 py-1 rounded text-xs font-medium border ${STATUS_COLORS[currentStatus] || "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600"}`}>
           {currentStatus}
         </span>
       </div>
@@ -197,8 +197,8 @@ function StatusActionsCard({
                 isCurrent
                   ? STATUS_COLORS[status]
                   : isValidNext
-                  ? "bg-white border-blue-300 text-blue-700 hover:bg-blue-50"
-                  : "bg-white border-gray-200 text-gray-400 cursor-not-allowed"
+                  ? "bg-white dark:bg-gray-700 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  : "bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed"
               } disabled:opacity-50`}
               title={isCurrent ? "Current status" : isValidNext ? "Click to change status" : "Invalid transition"}
             >
@@ -209,11 +209,11 @@ function StatusActionsCard({
       </div>
 
       {showLostForm && (
-        <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 space-y-3">
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Lost Reason Category</label>
+            <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Lost Reason Category</label>
             <select
-              className="border border-gray-300 rounded-lg px-3 py-2 w-full text-sm"
+              className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 w-full text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
               value={lostReasonCategory}
               onChange={(e) => setLostReasonCategory(e.target.value)}
             >
@@ -225,18 +225,18 @@ function StatusActionsCard({
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">
+            <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">
               Lost Reason Details{" "}
-              <span className="text-xs text-gray-400">(what actually happened?)</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500">(what actually happened?)</span>
             </label>
             <textarea
-              className="border border-gray-300 rounded-lg px-3 py-2 w-full text-sm min-h-[80px]"
+              className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 w-full text-sm min-h-[80px] bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
               value={lostReason}
               onChange={(e) => setLostReason(e.target.value)}
               placeholder="Example: Shipper had another carrier at $2.10/mile, we were at $2.35; they confirmed via email at 3:42 PM."
             />
           </div>
-          {warning && <p className="text-sm text-red-600">{warning}</p>}
+          {warning && <p className="text-sm text-red-600 dark:text-red-400">{warning}</p>}
           {pendingStatus === "LOST" && (
             <div className="flex gap-2">
               <button
@@ -248,7 +248,7 @@ function StatusActionsCard({
               </button>
               <button
                 onClick={() => setPendingStatus(null)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200"
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 Cancel
               </button>
@@ -258,7 +258,7 @@ function StatusActionsCard({
             <button
               onClick={() => onUpdateLoad({ lostReasonCategory, lostReason } as any)}
               disabled={updating}
-              className="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 disabled:opacity-50"
+              className="px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-900 dark:hover:bg-gray-600 disabled:opacity-50"
             >
               {updating ? "Saving..." : "Update Reason"}
             </button>
@@ -267,11 +267,11 @@ function StatusActionsCard({
       )}
 
       {showDormantForm && (
-        <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 space-y-3">
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Dormant Reason</label>
+            <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">Dormant Reason</label>
             <textarea
-              className="border border-gray-300 rounded-lg px-3 py-2 w-full text-sm min-h-[60px]"
+              className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 w-full text-sm min-h-[60px] bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
               value={dormantReason}
               onChange={(e) => setDormantReason(e.target.value)}
               placeholder="Why is this load on hold?"
@@ -282,13 +282,13 @@ function StatusActionsCard({
               <button
                 onClick={handleSaveDormantReason}
                 disabled={updating}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-700 disabled:opacity-50"
+                className="px-4 py-2 bg-gray-600 dark:bg-gray-700 text-white dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-700 dark:hover:bg-gray-600 disabled:opacity-50"
               >
                 {updating ? "Saving..." : "Mark as Dormant"}
               </button>
               <button
                 onClick={() => setPendingStatus(null)}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200"
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 Cancel
               </button>
@@ -298,7 +298,7 @@ function StatusActionsCard({
             <button
               onClick={() => onUpdateLoad({ dormantReason } as any)}
               disabled={updating}
-              className="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 disabled:opacity-50"
+              className="px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-900 dark:hover:bg-gray-600 disabled:opacity-50"
             >
               {updating ? "Saving..." : "Update Reason"}
             </button>
@@ -439,9 +439,9 @@ export default function LoadDetailPage() {
 
   if (error || !load) {
     return (
-      <div className="p-6">
-        <p className="text-red-600">{error || "Load not found"}</p>
-        <Link href="/freight/loads" className="text-blue-600 underline text-sm mt-2 inline-block">
+      <div className="p-6 dark:bg-gray-900 min-h-screen">
+        <p className="text-red-600 dark:text-red-400">{error || "Load not found"}</p>
+        <Link href="/freight/loads" className="text-blue-600 dark:text-blue-400 underline text-sm mt-2 inline-block">
           Back to loads
         </Link>
       </div>
@@ -453,22 +453,22 @@ export default function LoadDetailPage() {
   const canNotify = ["OPEN", "WORKING", "AT_RISK", "MAYBE"].includes(currentLoadStatus) && !load.carrier;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 dark:bg-gray-900 min-h-screen">
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold">
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
               {load.reference || `Load #${load.id}`}
             </h1>
             <span
               className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                STATUS_COLORS[currentLoadStatus] || "bg-gray-100"
+                STATUS_COLORS[currentLoadStatus] || "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600"
               }`}
             >
               {currentLoadStatus}
             </span>
           </div>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {load.venture.name}
             {load.office && ` / ${load.office.name}`}
           </p>
@@ -477,13 +477,13 @@ export default function LoadDetailPage() {
           {canNotify && (
             <Link
               href={`/freight/loads/${id}/find-carriers`}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2"
+              className="btn"
               title="Find and queue carriers for this load"
             >
               📋 Queue Carriers
             </Link>
           )}
-          <Link href="/freight/loads" className="text-sm text-gray-600 hover:underline">
+          <Link href="/freight/loads" className="text-sm text-gray-600 dark:text-gray-400 hover:underline">
             Back to loads
           </Link>
         </div>
@@ -493,8 +493,8 @@ export default function LoadDetailPage() {
         <div
           className={`p-4 rounded-lg ${
             notifyResult.error && notifyResult.sent === 0
-              ? "bg-red-50 border border-red-200 text-red-700"
-              : "bg-green-50 border border-green-200 text-green-700"
+              ? "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300"
+              : "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300"
           }`}
         >
           {notifyResult.sent > 0 ? (
@@ -515,58 +515,58 @@ export default function LoadDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="font-semibold text-lg mb-4">Load Details</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+            <h2 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">Load Details</h2>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <div className="text-gray-500">Lane</div>
-                <div className="font-medium">
+                <div className="text-gray-500 dark:text-gray-400">Lane</div>
+                <div className="font-medium text-gray-900 dark:text-white">
                   {load.pickupCity}, {load.pickupState} {load.pickupZip || ""}
                 </div>
-                <div className="text-gray-500">to</div>
-                <div className="font-medium">
+                <div className="text-gray-500 dark:text-gray-400">to</div>
+                <div className="font-medium text-gray-900 dark:text-white">
                   {load.dropCity}, {load.dropState} {load.dropZip || ""}
                 </div>
               </div>
               <div>
-                <div className="text-gray-500">Pickup Date</div>
-                <div className="font-medium">
+                <div className="text-gray-500 dark:text-gray-400">Pickup Date</div>
+                <div className="font-medium text-gray-900 dark:text-white">
                   {new Date(load.pickupDate).toLocaleDateString()}
                 </div>
                 {load.dropDate && (
                   <>
-                    <div className="text-gray-500 mt-2">Drop Date</div>
-                    <div className="font-medium">
+                    <div className="text-gray-500 dark:text-gray-400 mt-2">Drop Date</div>
+                    <div className="font-medium text-gray-900 dark:text-white">
                       {new Date(load.dropDate).toLocaleDateString()}
                     </div>
                   </>
                 )}
               </div>
               <div>
-                <div className="text-gray-500">Equipment</div>
-                <div className="font-medium">{load.equipmentType}</div>
+                <div className="text-gray-500 dark:text-gray-400">Equipment</div>
+                <div className="font-medium text-gray-900 dark:text-white">{load.equipmentType}</div>
               </div>
               <div>
-                <div className="text-gray-500">Weight</div>
-                <div className="font-medium">
+                <div className="text-gray-500 dark:text-gray-400">Weight</div>
+                <div className="font-medium text-gray-900 dark:text-white">
                   {load.weightLbs ? `${load.weightLbs.toLocaleString()} lbs` : "-"}
                 </div>
               </div>
               <div>
-                <div className="text-gray-500">Rate</div>
-                <div className="font-medium text-lg text-green-700">
+                <div className="text-gray-500 dark:text-gray-400">Rate</div>
+                <div className="font-medium text-lg text-green-700 dark:text-green-400">
                   {load.rate ? `$${load.rate.toLocaleString()}` : "-"}
                 </div>
               </div>
               <div>
-                <div className="text-gray-500">Location</div>
-                <div className="font-medium">{load.shipperName || "-"}</div>
+                <div className="text-gray-500 dark:text-gray-400">Location</div>
+                <div className="font-medium text-gray-900 dark:text-white">{load.shipperName || "-"}</div>
               </div>
             </div>
             {load.notes && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="text-gray-500 text-sm">Notes</div>
-                <div className="text-sm mt-1">{load.notes}</div>
+              <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div className="text-gray-500 dark:text-gray-400 text-sm">Notes</div>
+                <div className="text-sm mt-1 text-gray-900 dark:text-white">{load.notes}</div>
               </div>
             )}
           </div>
@@ -578,27 +578,27 @@ export default function LoadDetailPage() {
           />
 
           {load.carrier && (
-            <div className="bg-green-50 rounded-xl border border-green-200 p-6">
-              <h2 className="font-semibold text-lg mb-2">Assigned Carrier</h2>
+            <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 p-6 shadow-sm">
+              <h2 className="font-semibold text-lg mb-2 text-green-800 dark:text-green-300">Assigned Carrier</h2>
               <div className="flex items-center justify-between">
                 <div>
                   <Link
                     href={`/freight/carriers/${load.carrier.id}`}
-                    className="font-medium text-green-800 hover:underline"
+                    className="font-medium text-green-800 dark:text-green-300 hover:underline"
                   >
                     {load.carrier.name}
                   </Link>
                   {load.carrier.mcNumber && (
-                    <span className="text-sm text-green-600 ml-2">MC# {load.carrier.mcNumber}</span>
+                    <span className="text-sm text-green-600 dark:text-green-400 ml-2">MC# {load.carrier.mcNumber}</span>
                   )}
-                  <div className="text-sm text-green-700 mt-1">
+                  <div className="text-sm text-green-700 dark:text-green-300 mt-1">
                     {load.carrier.email && <span>{load.carrier.email}</span>}
                     {load.carrier.phone && <span className="ml-3">{load.carrier.phone}</span>}
                   </div>
                 </div>
                 <button
                   onClick={() => updateLoad({ carrierId: null, status: "OPEN" })}
-                  className="text-sm text-red-600 hover:underline"
+                  className="text-sm text-red-600 dark:text-red-400 hover:underline"
                 >
                   Unassign
                 </button>
@@ -607,24 +607,24 @@ export default function LoadDetailPage() {
           )}
 
           {load.contacts.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="font-semibold text-lg mb-4">Contact History</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+              <h2 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">Contact History</h2>
               <div className="space-y-3">
                 {load.contacts.map((contact) => (
-                  <div key={contact.id} className="border-l-2 border-gray-200 pl-4 py-2">
+                  <div key={contact.id} className="border-l-2 border-gray-200 dark:border-gray-600 pl-4 py-2">
                     <div className="flex items-center gap-2 text-sm">
-                      <span className="font-medium">{contact.carrier.name}</span>
-                      <span className="text-gray-400">via {contact.channel}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{contact.carrier.name}</span>
+                      <span className="text-gray-400 dark:text-gray-500">via {contact.channel}</span>
                       {contact.outcome && (
-                        <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">
+                        <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs">
                           {contact.outcome}
                         </span>
                       )}
                     </div>
                     {contact.subject && (
-                      <div className="text-sm text-gray-600 mt-1">{contact.subject}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{contact.subject}</div>
                     )}
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                       by {contact.madeBy.name} on {new Date(contact.createdAt).toLocaleString()}
                     </div>
                   </div>
@@ -635,41 +635,41 @@ export default function LoadDetailPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="font-semibold text-lg mb-4">Carrier Matching</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+            <h2 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">Carrier Matching</h2>
             {matchedCarriers.length === 0 ? (
-              <p className="text-sm text-gray-500">No matching carriers found.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">No matching carriers found.</p>
             ) : (
               <div className="space-y-3 max-h-[500px] overflow-y-auto">
                 {matchedCarriers.map((carrier) => (
                   <div
                     key={carrier.id}
-                    className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50"
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
                     <div className="flex items-start justify-between">
                       <div>
                         <Link
                           href={`/freight/carriers/${carrier.id}`}
-                          className="font-medium text-blue-600 hover:underline"
+                          className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
                         >
                           {carrier.name}
                         </Link>
                         {carrier.mcNumber && (
-                          <span className="text-xs text-gray-500 ml-2">MC# {carrier.mcNumber}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">MC# {carrier.mcNumber}</span>
                         )}
                         {carrier.rating != null && (
-                          <div className="text-xs text-yellow-600 mt-0.5">
+                          <div className="text-xs text-yellow-600 dark:text-yellow-400 mt-0.5">
                             {"★".repeat(Math.max(0, Math.min(5, Math.round(carrier.rating))))}{"☆".repeat(Math.max(0, 5 - Math.max(0, Math.min(5, Math.round(carrier.rating)))))}
                           </div>
                         )}
                       </div>
                       <div className="text-right">
-                        <div className="text-xs text-gray-500">Score: {carrier.score}</div>
-                        <div className="text-xs text-gray-400">{carrier.loadCount} loads</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Score: {carrier.score}</div>
+                        <div className="text-xs text-gray-400 dark:text-gray-500">{carrier.loadCount} loads</div>
                       </div>
                     </div>
                     {carrier.matchReason.length > 0 && (
-                      <div className="text-xs text-gray-500 mt-2">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                         {carrier.matchReason.join(" | ")}
                       </div>
                     )}
@@ -677,7 +677,7 @@ export default function LoadDetailPage() {
                       {carrier.email && (
                         <a
                           href={`mailto:${carrier.email}`}
-                          className="text-xs text-blue-600 hover:underline"
+                          className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
                         >
                           Email
                         </a>
@@ -685,20 +685,20 @@ export default function LoadDetailPage() {
                       {carrier.phone && (
                         <a
                           href={`tel:${carrier.phone}`}
-                          className="text-xs text-blue-600 hover:underline"
+                          className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
                         >
                           Call
                         </a>
                       )}
                       <button
                         onClick={() => openBreakdown(carrier)}
-                        className="text-xs text-indigo-600 hover:underline ml-2"
+                        className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline ml-2"
                       >
                         View Breakdown
                       </button>
                       <button
                         onClick={() => assignCarrier(carrier.id)}
-                        className="text-xs text-green-600 hover:underline ml-auto"
+                        className="text-xs text-green-600 dark:text-green-400 hover:underline ml-auto"
                       >
                         Assign
                       </button>
@@ -709,7 +709,7 @@ export default function LoadDetailPage() {
             )}
             <Link
               href="/freight/carriers"
-              className="text-sm text-blue-600 hover:underline mt-4 inline-block"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-4 inline-block"
             >
               Browse all carriers
             </Link>

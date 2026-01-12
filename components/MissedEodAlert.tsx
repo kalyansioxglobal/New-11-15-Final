@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Skeleton } from './ui/Skeleton';
 
 interface MissedCheckResponse {
@@ -24,9 +24,23 @@ export default function MissedEodAlert({ ventureId, onExplanationRequired, onExp
   const [explanation, setExplanation] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const previousVentureIdRef = useRef<number | undefined>(ventureId);
+  
+  // Use refs to store callbacks so they don't trigger re-fetches
+  const onExplanationRequiredRef = useRef(onExplanationRequired);
+  const onExplanationProvidedRef = useRef(onExplanationProvided);
+  
+  // Update refs when callbacks change
+  useEffect(() => {
+    onExplanationRequiredRef.current = onExplanationRequired;
+    onExplanationProvidedRef.current = onExplanationProvided;
+  }, [onExplanationRequired, onExplanationProvided]);
 
-  const fetchMissedStatus = useCallback(async () => {
+  const fetchMissedStatus = useCallback(async (showLoading: boolean = false) => {
     try {
+      if (showLoading) {
+        setLoading(true);
+      }
       const url = ventureId 
         ? `/api/eod-reports/missed-check?ventureId=${ventureId}`
         : '/api/eod-reports/missed-check';
@@ -34,20 +48,39 @@ export default function MissedEodAlert({ ventureId, onExplanationRequired, onExp
       if (res.ok) {
         const result = await res.json();
         setData(result);
-        if (onExplanationRequired && result.requiresExplanation && !result.hasExplanation) {
-          onExplanationRequired(result);
+        // Call onExplanationRequired if explanation is needed
+        if (onExplanationRequiredRef.current && result.requiresExplanation && !result.hasExplanation) {
+          onExplanationRequiredRef.current(result);
+        }
+        // Call onExplanationProvided if no explanation is needed (clears the flag)
+        if (onExplanationProvidedRef.current && (!result.requiresExplanation || result.hasExplanation)) {
+          onExplanationProvidedRef.current();
         }
       }
     } catch (err) {
       console.error('Failed to check missed EOD reports:', err);
+      // On error, clear the requirement flag
+      if (onExplanationProvidedRef.current) {
+        onExplanationProvidedRef.current();
+      }
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
-  }, [ventureId, onExplanationRequired]);
+  }, [ventureId]);
 
   useEffect(() => {
-    fetchMissedStatus();
-  }, [fetchMissedStatus]);
+    // Only show loading when venture changes or on initial load
+    const ventureChanged = previousVentureIdRef.current !== ventureId;
+    const isInitialLoad = !data;
+    
+    previousVentureIdRef.current = ventureId;
+    
+    // Only show loading skeleton on initial load or when venture changes
+    fetchMissedStatus(isInitialLoad || ventureChanged);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ventureId]); // Only re-fetch when ventureId changes
 
   const handleSubmitExplanation = async () => {
     if (!ventureId || explanation.trim().length < 10) {
@@ -92,8 +125,20 @@ export default function MissedEodAlert({ ventureId, onExplanationRequired, onExp
 
       setShowModal(false);
       setExplanation('');
-      fetchMissedStatus();
-      onExplanationProvided?.();
+      // Refresh status after submitting explanation
+      const url = ventureId 
+        ? `/api/eod-reports/missed-check?ventureId=${ventureId}`
+        : '/api/eod-reports/missed-check';
+      fetch(url)
+        .then((res) => res.json())
+        .then((result) => {
+          setData(result);
+          if (onExplanationProvidedRef.current) {
+            onExplanationProvidedRef.current();
+          }
+        })
+        .catch((err) => console.error('Failed to refresh status:', err));
+      onExplanationProvidedRef.current?.();
     } catch (err: any) {
       setError(err.message);
     } finally {

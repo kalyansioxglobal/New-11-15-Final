@@ -26,12 +26,12 @@ type Summary = {
 type Venture = { id: number; name: string };
 
 const ASSET_TYPE_COLORS: Record<string, string> = {
-  "real_estate": "bg-blue-100 text-blue-800",
-  "vehicle": "bg-green-100 text-green-800",
-  "equipment": "bg-yellow-100 text-yellow-800",
-  "investment": "bg-purple-100 text-purple-800",
-  "intellectual_property": "bg-pink-100 text-pink-800",
-  "other": "bg-gray-100 text-gray-800",
+  "real_estate": "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800",
+  "vehicle": "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800",
+  "equipment": "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800",
+  "investment": "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800",
+  "intellectual_property": "bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300 border border-pink-200 dark:border-pink-800",
+  "other": "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600",
 };
 
 export default function AssetsListPage() {
@@ -105,17 +105,17 @@ export default function AssetsListPage() {
 
   return (
     <div className="p-6 space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">Holdings Assets</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Holdings Assets</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Track and manage company assets
           </p>
         </div>
         {allowCreate && (
           <Link
             href="/holdings/assets/new"
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+            className="btn"
           >
             + New Asset
           </Link>
@@ -124,19 +124,19 @@ export default function AssetsListPage() {
 
       {summary && (
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="bg-white p-4 rounded-lg border">
-            <div className="text-sm text-gray-500">Total Assets</div>
-            <div className="text-2xl font-semibold mt-1">{summary.totalAssets}</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Total Assets</div>
+            <div className="text-2xl font-semibold mt-1 text-gray-900 dark:text-white">{summary.totalAssets}</div>
           </div>
-          <div className="bg-white p-4 rounded-lg border">
-            <div className="text-sm text-gray-500">Total Value</div>
-            <div className="text-2xl font-semibold mt-1 text-green-600">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Total Value</div>
+            <div className="text-2xl font-semibold mt-1 text-green-600 dark:text-green-400">
               ${summary.totalValue.toLocaleString()}
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg border">
-            <div className="text-sm text-gray-500">Asset Types</div>
-            <div className="text-2xl font-semibold mt-1">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-500 dark:text-gray-400">Asset Types</div>
+            <div className="text-2xl font-semibold mt-1 text-gray-900 dark:text-white">
               {Object.keys(summary.byType).length}
             </div>
           </div>
@@ -147,7 +147,7 @@ export default function AssetsListPage() {
         <select
           value={ventureFilter}
           onChange={(e) => setVentureFilter(e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
         >
           <option value="">All Ventures</option>
           {holdingsVentures.map((v) => (
@@ -159,7 +159,7 @@ export default function AssetsListPage() {
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
         >
           <option value="">All Types</option>
           {assetTypes.map((t) => (
@@ -171,22 +171,22 @@ export default function AssetsListPage() {
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 text-red-700 rounded-lg">{error}</div>
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg">{error}</div>
       )}
 
       {loading ? (
        <Skeleton className="w-full h-[85vh]" />
       ) : assets.length === 0 ? (
-        <div className="text-center py-12 border rounded-xl bg-gray-50">
-          <div className="text-gray-400 text-3xl mb-3">🏠</div>
-          <h3 className="text-gray-700 font-medium mb-1">No Assets Found</h3>
-          <p className="text-sm text-gray-500 max-w-sm mx-auto mb-4">
+        <div className="text-center py-12 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+          <div className="text-gray-400 dark:text-gray-500 text-3xl mb-3">🏠</div>
+          <h3 className="text-gray-700 dark:text-gray-300 font-medium mb-1">No Assets Found</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-4">
             {ventureFilter || typeFilter 
               ? "No assets match your current filters. Try adjusting the filters above."
               : "No company assets have been recorded yet."}
           </p>
           {allowCreate && !ventureFilter && !typeFilter && (
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-400 dark:text-gray-500">
               Assets are typically populated from integrations or added by administrators.
             </p>
           )}
@@ -197,13 +197,13 @@ export default function AssetsListPage() {
             <Link
               key={a.id}
               href={`/holdings/assets/${a.id}`}
-              className="block p-4 bg-white rounded-lg border hover:shadow-md transition-shadow"
+              className="block p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-gray-900/50 transition-all"
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-medium text-gray-900">{a.name}</h3>
+                  <h3 className="font-medium text-gray-900 dark:text-white">{a.name}</h3>
                   <span
-                    className={`inline-block px-2 py-0.5 text-xs rounded-full mt-1 ${
+                    className={`inline-block px-2 py-0.5 text-xs rounded-full mt-1 font-medium ${
                       ASSET_TYPE_COLORS[a.type] || ASSET_TYPE_COLORS.other
                     }`}
                   >
@@ -211,16 +211,16 @@ export default function AssetsListPage() {
                   </span>
                 </div>
                 {a.valueEstimate && (
-                  <span className="text-lg font-semibold text-green-600">
+                  <span className="text-lg font-semibold text-green-600 dark:text-green-400">
                     ${a.valueEstimate.toLocaleString()}
                   </span>
                 )}
               </div>
               {a.location && (
-                <p className="text-sm text-gray-600 mt-2">{a.location}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{a.location}</p>
               )}
               {a.venture && (
-                <div className="mt-2 text-xs text-gray-400">
+                <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                   {a.venture.name}
                 </div>
               )}

@@ -3,6 +3,7 @@ import type { GetServerSideProps } from "next";
 import { getEffectiveUser } from "@/lib/effectiveUser";
 import { isSuperAdmin } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
+import toast from "react-hot-toast";
 
 type Venture = { id: number; name: string };
 
@@ -27,7 +28,6 @@ export default function AdminOfficesPage({ offices: initialOffices, ventures }: 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -41,7 +41,6 @@ export default function AdminOfficesPage({ offices: initialOffices, ventures }: 
     setForm({ name: "", ventureId: "", city: "", country: "", timezone: "" });
     setEditingId(null);
     setShowForm(false);
-    setError(null);
   };
 
   const handleEdit = (office: Office) => {
@@ -58,10 +57,9 @@ export default function AdminOfficesPage({ offices: initialOffices, ventures }: 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
 
     if (!form.name.trim() || !form.ventureId) {
-      setError("Name and venture are required");
+      toast.error("Office name and venture are required");
       return;
     }
 
@@ -85,7 +83,9 @@ export default function AdminOfficesPage({ offices: initialOffices, ventures }: 
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to save office");
+        toast.error(data.error || "Failed to save office");
+        setLoading(false);
+        return;
       }
 
       const savedOffice = await res.json();
@@ -94,13 +94,15 @@ export default function AdminOfficesPage({ offices: initialOffices, ventures }: 
         setOffices((prev) =>
           prev.map((o) => (o.id === editingId ? savedOffice : o))
         );
+        toast.success("Office updated successfully");
       } else {
         setOffices((prev) => [...prev, savedOffice]);
+        toast.success("Office created successfully");
       }
 
       resetForm();
     } catch (e: any) {
-      setError(e.message);
+      toast.error(e.message || "Failed to save office");
     } finally {
       setLoading(false);
     }
@@ -111,189 +113,221 @@ export default function AdminOfficesPage({ offices: initialOffices, ventures }: 
 
     try {
       const res = await fetch(`/api/admin/offices/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete office");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || "Failed to delete office");
+        return;
+      }
       setOffices((prev) => prev.filter((o) => o.id !== id));
+      toast.success("Office deleted successfully");
     } catch (e: any) {
-      alert(e.message);
+      toast.error(e.message || "Failed to delete office");
     }
   };
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">Offices</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage physical locations across ventures</p>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Offices</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage physical locations across ventures</p>
         </div>
         <button
-          onClick={() => setShowForm(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+          onClick={() => {
+            resetForm();
+            setShowForm(true);
+          }}
+          className="btn"
         >
           + New Office
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-white rounded-lg border p-6">
-          <h2 className="text-lg font-semibold mb-4">
-            {editingId ? "Edit Office" : "New Office"}
-          </h2>
-
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Office Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  placeholder="e.g., Chicago Sales Office"
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Venture <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={form.ventureId}
-                  onChange={(e) => setForm((f) => ({ ...f, ventureId: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                  required
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {editingId ? "Edit Office" : "New Office"}
+                </h2>
+                <button
+                  onClick={resetForm}
+                  className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 >
-                  <option value="">Select venture...</option>
-                  {ventures.map((v) => (
-                    <option key={v.id} value={v.id}>
-                      {v.name}
-                    </option>
-                  ))}
-                </select>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-            </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  City
-                </label>
-                <input
-                  type="text"
-                  value={form.city}
-                  onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
-                  placeholder="e.g., Chicago"
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Country
-                </label>
-                <input
-                  type="text"
-                  value={form.country}
-                  onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
-                  placeholder="e.g., India"
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Timezone
-                </label>
-                <input
-                  type="text"
-                  value={form.timezone}
-                  onChange={(e) => setForm((f) => ({ ...f, timezone: e.target.value }))}
-                  placeholder="e.g., Asia/Kolkata"
-                  className="w-full px-3 py-2 border rounded-lg text-sm"
-                />
-              </div>
-            </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      Office Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={form.name}
+                      onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                      placeholder="e.g., Chicago Sales Office"
+                      className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      Venture <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={form.ventureId}
+                      onChange={(e) => setForm((f) => ({ ...f, ventureId: e.target.value }))}
+                      className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                      required
+                    >
+                      <option value="">Select venture...</option>
+                      {ventures.map((v) => (
+                        <option key={v.id} value={v.id}>
+                          {v.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-            <div className="flex gap-3 pt-2">
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
-              >
-                {loading ? "Saving..." : editingId ? "Save Changes" : "Create Office"}
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="px-6 py-2 border rounded-lg text-sm font-medium hover:bg-gray-50"
-              >
-                Cancel
-              </button>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      value={form.city}
+                      onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
+                      placeholder="e.g., Chicago"
+                      className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      Country
+                    </label>
+                    <input
+                      type="text"
+                      value={form.country}
+                      onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
+                      placeholder="e.g., India"
+                      className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      Timezone
+                    </label>
+                    <input
+                      type="text"
+                      value={form.timezone}
+                      onChange={(e) => setForm((f) => ({ ...f, timezone: e.target.value }))}
+                      placeholder="e.g., Asia/Kolkata"
+                      className="w-full px-4 py-2.5 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <button
+                    type="button"
+                    onClick={resetForm}
+                    className="px-5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                    disabled={loading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn flex items-center gap-2"
+                  >
+                    {loading ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        {editingId ? "Save Changes" : "Create Office"}
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       )}
 
-      <div className="bg-white rounded-lg border overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-900/50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Office
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Location
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Venture
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Users
               </th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {offices.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                   No offices found. Create your first office to get started.
                 </td>
               </tr>
             ) : (
               offices.map((office) => (
-                <tr key={office.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                <tr key={office.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
                     {office.name}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                     {[office.city, office.country]
                       .filter(Boolean)
                       .join(", ") || "-"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                     {office.venture?.name || "-"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                     {office._count?.users ?? 0}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => handleEdit(office)}
-                      className="text-blue-600 hover:underline text-sm mr-3"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline text-sm mr-3 transition-colors"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(office.id)}
-                      className="text-red-600 hover:underline text-sm"
+                      className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:underline text-sm transition-colors"
                     >
                       Delete
                     </button>

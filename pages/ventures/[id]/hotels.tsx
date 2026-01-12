@@ -169,10 +169,10 @@ function VentureHotelsPage() {
                 <span className="font-medium">{hotel.rooms || 0}</span> rooms
               </p>
               <Link
-                href={`/hotels/${hotel.id}`}
+                href={`/hospitality/hotels/${hotel.id}`}
                 className="mt-3 inline-block text-sm text-blue-600 hover:underline"
               >
-                View KPIs
+                View
               </Link>
             </div>
           ))}

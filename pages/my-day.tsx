@@ -266,7 +266,12 @@ function TaskSection({
                 <div className="text-[11px] text-gray-500 dark:text-gray-400">
                   {t.venture?.name}
                   {t.dueDate &&
-                    ` · Due ${new Date(t.dueDate).toLocaleDateString("en-US")}`}
+                    ` · Due ${new Date(t.dueDate).toLocaleDateString(undefined, {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })
+                    }`}
                 </div>
               </div>
               <div className="text-[11px] uppercase text-gray-400 dark:text-gray-500">{t.status}</div>

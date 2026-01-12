@@ -118,6 +118,32 @@ export default async function handler(
       }),
     ]);
 
+    // Debug logging - check what data was found
+    if (mtdData.length > 0) {
+      const sample = mtdData[0];
+      console.log('🔍 KPI Comparison Query Debug:', {
+        hotelId: where.hotelId,
+        currentDate: now.toISOString(),
+        mtdRange: { from: mtdStart.toISOString(), to: mtdEnd.toISOString() },
+        ytdRange: { from: ytdStart.toISOString(), to: ytdEnd.toISOString() },
+        last30Range: { from: last30Start.toISOString(), to: now.toISOString() },
+        mtdDataCount: mtdData.length,
+        ytdDataCount: ytdData.length,
+        last30DataCount: last30Data.length,
+        mtdSampleDates: mtdData.slice(0, 3).map(r => r.date.toISOString().split('T')[0]),
+        last30SampleDates: last30Data.slice(0, 5).map(r => r.date.toISOString().split('T')[0]),
+        sampleRecord: {
+          date: sample.date.toISOString().split('T')[0],
+          hasBaseFields: sample.roomRevenue > 0 || sample.roomsSold > 0,
+          roomRevenue: sample.roomRevenue,
+          roomsSold: sample.roomsSold,
+          occupancyPct: sample.occupancyPct,
+          adr: sample.adr,
+          revpar: sample.revpar,
+        },
+      });
+    }
+
     const aggregatePeriod = (
       data: typeof mtdData,
       label: string
@@ -138,12 +164,48 @@ export default async function handler(
 
       const roomsSold = data.reduce((sum, r) => sum + r.roomsSold, 0);
       const roomsAvailable = data.reduce((sum, r) => sum + r.roomsAvailable, 0);
-      const roomRevenue = data.reduce((sum, r) => sum + r.roomRevenue, 0);
+      let roomRevenue = data.reduce((sum, r) => sum + r.roomRevenue, 0);
       const totalRevenue = data.reduce((sum, r) => sum + r.totalRevenue, 0);
-      const occupancyPct =
-        roomsAvailable > 0 ? (roomsSold / roomsAvailable) * 100 : 0;
-      const adr = roomsSold > 0 ? roomRevenue / roomsSold : 0;
-      const revpar = roomsAvailable > 0 ? roomRevenue / roomsAvailable : 0;
+      
+      // Check if we have base fields (Night Audit data) or only calculated fields (STR data)
+      const hasBaseFields = roomRevenue > 0 || roomsSold > 0 || roomsAvailable > 0;
+      
+      let occupancyPct: number;
+      let adr: number;
+      let revpar: number;
+      
+      if (hasBaseFields) {
+        // Night Audit data - calculate from base fields
+        occupancyPct = roomsAvailable > 0 ? (roomsSold / roomsAvailable) * 100 : 0;
+        adr = roomsSold > 0 ? roomRevenue / roomsSold : 0;
+        revpar = roomsAvailable > 0 ? roomRevenue / roomsAvailable : 0;
+      } else {
+        // STR data - use stored calculated values (weighted average)
+        // Calculate averages of the stored occupancyPct, adr, revpar
+        const validOccupancy = data.filter(r => r.occupancyPct > 0);
+        const validAdr = data.filter(r => r.adr > 0);
+        const validRevpar = data.filter(r => r.revpar > 0);
+        
+        occupancyPct = validOccupancy.length > 0
+          ? validOccupancy.reduce((sum, r) => sum + r.occupancyPct, 0) / validOccupancy.length
+          : 0;
+        adr = validAdr.length > 0
+          ? validAdr.reduce((sum, r) => sum + r.adr, 0) / validAdr.length
+          : 0;
+        revpar = validRevpar.length > 0
+          ? validRevpar.reduce((sum, r) => sum + r.revpar, 0) / validRevpar.length
+          : 0;
+        
+        // Estimate roomRevenue from revpar for summary purposes
+        // revpar = revenue / available, so if we have revpar, estimate revenue
+        // Use average rooms available from Night Audit data if available, otherwise assume 150
+        if (revpar > 0) {
+          const avgAvailable = roomsAvailable > 0 
+            ? roomsAvailable / data.length 
+            : (data.find(r => r.roomsAvailable > 0)?.roomsAvailable || 150);
+          roomRevenue = revpar * avgAvailable * data.length;
+        }
+      }
 
       return {
         label,

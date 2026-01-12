@@ -2,6 +2,17 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useTestMode } from '../../../contexts/TestModeContext';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { useEffectiveUser } from '@/hooks/useEffectiveUser';
+import { canCreateTasks } from '@/lib/permissions';
+import type { UserRole } from '@prisma/client';
+import toast from 'react-hot-toast';
+import EditHotelModal from '@/components/hospitality/hotels/EditHotelModal';
+import DeleteHotelModal from '@/components/hospitality/hotels/DeleteHotelModal';
+import ReviewsTab from '@/components/hospitality/hotels/ReviewsTab';
+import AddReviewModal from '@/components/hospitality/hotels/AddReviewModal';
+import OverviewTab from '@/components/hospitality/hotels/OverviewTab';
+import DailyReportsTab from '@/components/hospitality/hotels/DailyReportsTab';
 
 interface Hotel {
   id: number;
@@ -16,44 +27,6 @@ interface Hotel {
   venture: { id: number; name: string };
 }
 
-interface Metric {
-  id: number;
-  date: string;
-  roomsAvailable: number;
-  roomsSold: number;
-  occupancyPct: number;
-  adr: number;
-  revpar: number;
-  totalRevenue: number;
-  roomsOutOfOrder: number;
-}
-
-interface DailyReport {
-  id: number;
-  date: string;
-  roomSold: number | null;
-  totalRoom: number | null;
-  cash: number | null;
-  credit: number | null;
-  online: number | null;
-  refund: number | null;
-  total: number | null;
-  dues: number | null;
-  lostDues: number | null;
-  occupancy: number | null;
-  adr: number | null;
-  revpar: number | null;
-  highLossFlag: boolean;
-}
-
-interface MetricsSummary {
-  avgOcc: number;
-  avgAdr: number;
-  avgRevpar: number;
-  totalRevenue7d: number;
-  daysWithData: number;
-}
-
 interface Review {
   id: number;
   source: string;
@@ -66,23 +39,15 @@ interface Review {
   reviewDate: string | null;
   responseText: string | null;
   respondedAt: string | null;
-  respondedBy: { id: number; name: string } | null;
+  respondedBy: { id: number; fullName?: string; name?: string } | null;
 }
 
 interface ReviewsSummary {
   total: number;
-  avgRating: number;
-  unrespondedCount: number;
-  sourceCounts: Record<string, number>;
+  averageRating: number;
+  unresponded: number;
+  bySource: Record<string, number>;
 }
-
-const SOURCE_COLORS: Record<string, string> = {
-  GOOGLE: 'bg-blue-100 text-blue-800',
-  TRIPADVISOR: 'bg-green-100 text-green-800',
-  BOOKING: 'bg-indigo-100 text-indigo-800',
-  EXPEDIA: 'bg-yellow-100 text-yellow-800',
-  INTERNAL: 'bg-gray-100 text-gray-800',
-};
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -98,51 +63,56 @@ function formatDate(dateStr: string | null): string {
   return new Date(dateStr).toLocaleDateString();
 }
 
+type Venture = { id: number; name: string; type: string };
+
 export default function HotelDetailPage() {
   const router = useRouter();
   const { id } = router.query;
   const { testMode } = useTestMode();
+  const { effectiveUser } = useEffectiveUser();
+  const role = (effectiveUser?.role || 'EMPLOYEE') as UserRole;
+  const allowEdit = canCreateTasks(role);
 
   const [hotel, setHotel] = useState<Hotel | null>(null);
-  const [metrics, setMetrics] = useState<Metric[]>([]);
-  const [metricsSummary, setMetricsSummary] = useState<MetricsSummary | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsSummary, setReviewsSummary] = useState<ReviewsSummary | null>(null);
-  const [dailyReports, setDailyReports] = useState<DailyReport[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
   const [tab, setTab] = useState<'overview' | 'reports' | 'reviews'>('overview');
+  
+  // Edit/Delete modal state
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [ventures, setVentures] = useState<Venture[]>([]);
+  
+  // Pagination state
+  const [metricsPage, setMetricsPage] = useState(1);
+  const [reportsPage, setReportsPage] = useState(1);
+  const [reviewsPage, setReviewsPage] = useState(1);
+  const [reviewsTotal, setReviewsTotal] = useState(0);
+  const ITEMS_PER_PAGE = 50;
+
+  useEffect(() => {
+    if (allowEdit && testMode !== undefined) {
+      fetch(`/api/ventures?types=HOSPITALITY&includeTest=${testMode}`)
+        .then((r) => r.json())
+        .then((d) => {
+          setVentures(d as Venture[]);
+        })
+        .catch(() => {});
+    }
+  }, [allowEdit, testMode]);
 
   const loadHotel = async () => {
     if (!id) return;
     setLoading(true);
     try {
-      const [hRes, mRes, rRes, drRes] = await Promise.all([
-        fetch(`/api/hospitality/hotels/${id}`),
-        fetch(`/api/hospitality/hotels/${id}/metrics?limit=30&includeTest=${testMode}`),
-        fetch(`/api/hospitality/hotels/${id}/reviews?limit=100&includeTest=${testMode}`),
-        fetch(`/api/hospitality/hotels/${id}/daily-reports?limit=30`),
-      ]);
-
+      // Fetch hotel info
+      const hRes = await fetch(`/api/hospitality/hotels/${id}`);
       if (hRes.ok) {
         const h = await hRes.json();
         setHotel(h);
-      }
-
-      if (mRes.ok) {
-        const m = await mRes.json();
-        setMetrics(m.metrics || []);
-        setMetricsSummary(m.summary || null);
-      }
-
-      if (rRes.ok) {
-        const r = await rRes.json();
-        setReviews(r.reviews || []);
-        setReviewsSummary(r.summary || null);
-      }
-
-      if (drRes.ok) {
-        const dr = await drRes.json();
-        setDailyReports(dr.reports || []);
       }
     } catch (e) {
       console.error(e);
@@ -151,36 +121,85 @@ export default function HotelDetailPage() {
     }
   };
 
+  const loadReviews = async () => {
+    if (!id) return;
+    setReviewsLoading(true);
+    try {
+      // Fetch more items for pagination (backend limit is 200)
+      const limit = Math.min(ITEMS_PER_PAGE * reviewsPage, 200);
+      const rRes = await fetch(`/api/hospitality/hotels/${id}/reviews?limit=${limit}&includeTest=${testMode}`);
+      if (rRes.ok) {
+        const r = await rRes.json();
+        const allReviews = r.reviews || [];
+        setReviewsTotal(allReviews.length);
+        // Frontend pagination
+        const startIndex = (reviewsPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        setReviews(allReviews.slice(startIndex, endIndex));
+        setReviewsSummary(r.summary || null);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadHotel();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, testMode]);
 
+  useEffect(() => {
+    if (id && tab === 'reviews') {
+      loadReviews();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, testMode, tab, reviewsPage]);
+
+  // Reset pagination when switching tabs
+  useEffect(() => {
+    if (tab === 'overview') {
+      setMetricsPage(1);
+    } else if (tab === 'reports') {
+      setReportsPage(1);
+    } else if (tab === 'reviews') {
+      setReviewsPage(1);
+    }
+  }, [tab]);
+
+  const handleEdit = () => {
+    setShowEditModal(true);
+  };
+
+  const handleHotelUpdate = (updatedHotel: Hotel) => {
+    setHotel(updatedHotel);
+  };
+
   if (loading && !hotel) {
     return (
-      <div className="p-6">
-        <p className="text-sm text-gray-500">Loading hotel...</p>
-      </div>
+     <Skeleton className="w-full h-[85vh]" />
     );
   }
 
   if (!hotel) {
     return (
       <div className="p-6">
-        <p className="text-sm text-red-600">Hotel not found.</p>
-        <Link href="/hospitality/hotels" className="text-blue-600 underline text-sm mt-2 inline-block">
+        <p className="text-sm text-red-600 dark:text-red-400">Hotel not found.</p>
+        <Link href="/hospitality/hotels" className="text-blue-600 dark:text-blue-400 underline text-sm mt-2 inline-block">
           Back to Hotels
         </Link>
       </div>
     );
   }
 
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-semibold">{hotel.name}</h1>
-          <p className="text-sm text-gray-600">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">{hotel.name}</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             {[hotel.brand, hotel.city, hotel.state, hotel.country]
               .filter(Boolean)
               .join(' | ')}
@@ -188,346 +207,125 @@ export default function HotelDetailPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {allowEdit && (
+            <>
+              <button
+                onClick={handleEdit}
+                className="px-3 py-1 rounded border border-blue-300 dark:border-blue-600 text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="px-3 py-1 rounded border border-red-300 dark:border-red-600 text-sm bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
+              >
+                Delete
+              </button>
+            </>
+          )}
           <Link
             href="/hospitality/hotels"
-            className="px-3 py-1 rounded border text-sm bg-white hover:bg-gray-50"
+            className="px-3 py-1 rounded border border-gray-300 dark:border-gray-600 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
           >
             Back to Hotels
           </Link>
           <Link
             href="/hospitality/dashboard"
-            className="px-3 py-1 rounded border text-sm bg-white hover:bg-gray-50"
+            className="px-3 py-1 rounded border border-gray-300 dark:border-gray-600 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
           >
             Dashboard
           </Link>
         </div>
       </div>
 
-      <div className="border-b text-sm flex gap-4">
+      <div className="border-b border-gray-200 dark:border-gray-700 text-sm flex gap-4">
         <button
           onClick={() => setTab('overview')}
-          className={`pb-2 ${
+          className={`pb-2 transition-colors ${
             tab === 'overview'
-              ? 'border-b-2 border-black font-semibold'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-b-2 border-black dark:border-white font-semibold text-gray-900 dark:text-white'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
           }`}
         >
           Overview
         </button>
         <button
           onClick={() => setTab('reports')}
-          className={`pb-2 ${
+          className={`pb-2 transition-colors ${
             tab === 'reports'
-              ? 'border-b-2 border-black font-semibold'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-b-2 border-black dark:border-white font-semibold text-gray-900 dark:text-white'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
           }`}
         >
-          Daily Reports ({dailyReports.length})
+          Daily Reports
         </button>
         <button
           onClick={() => setTab('reviews')}
-          className={`pb-2 ${
+          className={`pb-2 transition-colors ${
             tab === 'reviews'
-              ? 'border-b-2 border-black font-semibold'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'border-b-2 border-black dark:border-white font-semibold text-gray-900 dark:text-white'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
           }`}
         >
-          Reviews ({reviewsSummary?.total ?? reviews.length})
+          Reviews ({reviewsSummary?.total ?? reviewsTotal})
         </button>
       </div>
 
-      {tab === 'overview' && (
-        <>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">Rooms</div>
-              <div className="font-semibold text-lg">{hotel.rooms ?? '—'}</div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">Occ% (7d)</div>
-              <div className="font-semibold text-lg">
-                {metricsSummary?.avgOcc?.toFixed(1) ?? '--'}%
-              </div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">ADR (7d)</div>
-              <div className="font-semibold text-lg">
-                ${metricsSummary?.avgAdr?.toFixed(2) ?? '--'}
-              </div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">RevPAR (7d)</div>
-              <div className="font-semibold text-lg text-green-700">
-                ${metricsSummary?.avgRevpar?.toFixed(2) ?? '--'}
-              </div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">Revenue (7d)</div>
-              <div className="font-semibold text-lg text-blue-700">
-                {metricsSummary?.totalRevenue7d
-                  ? formatCurrency(metricsSummary.totalRevenue7d)
-                  : '--'}
-              </div>
-            </div>
-          </div>
-
-          <div className="border rounded-xl bg-white">
-            <div className="px-4 py-3 border-b flex items-center justify-between">
-              <h2 className="font-semibold">Daily Metrics</h2>
-              {loading && <span className="text-xs text-gray-500">Loading...</span>}
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-xs">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-3 py-2 text-left font-medium">Date</th>
-                    <th className="px-3 py-2 text-right font-medium">Available</th>
-                    <th className="px-3 py-2 text-right font-medium">Sold</th>
-                    <th className="px-3 py-2 text-right font-medium">Occ%</th>
-                    <th className="px-3 py-2 text-right font-medium">ADR</th>
-                    <th className="px-3 py-2 text-right font-medium">RevPAR</th>
-                    <th className="px-3 py-2 text-right font-medium">Revenue</th>
-                    <th className="px-3 py-2 text-right font-medium">OOO</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {metrics.length ? (
-                    metrics.map(m => (
-                      <tr key={m.id} className="border-t hover:bg-gray-50">
-                        <td className="px-3 py-2">{formatDate(m.date)}</td>
-                        <td className="px-3 py-2 text-right">{m.roomsAvailable}</td>
-                        <td className="px-3 py-2 text-right">{m.roomsSold}</td>
-                        <td className="px-3 py-2 text-right">{m.occupancyPct.toFixed(1)}%</td>
-                        <td className="px-3 py-2 text-right">${m.adr.toFixed(2)}</td>
-                        <td className="px-3 py-2 text-right">${m.revpar.toFixed(2)}</td>
-                        <td className="px-3 py-2 text-right">{formatCurrency(m.totalRevenue)}</td>
-                        <td className="px-3 py-2 text-right text-gray-500">{m.roomsOutOfOrder}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={8} className="px-3 py-6 text-center text-gray-500">
-                        No metrics found. Import PMS data for this hotel.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </>
+      {tab === 'overview' && hotel && (
+        <OverviewTab
+          hotelId={Array.isArray(id) ? id[0] : id}
+          testMode={testMode || false}
+          hotelRooms={hotel.rooms}
+          metricsPage={metricsPage}
+          onPageChange={setMetricsPage}
+        />
       )}
 
       {tab === 'reports' && (
-        <>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">Lost Dues Today</div>
-              <div className="font-semibold text-lg text-red-700">
-                {(() => {
-                  const today = new Date().toDateString();
-                  const todayReport = dailyReports.find(r => new Date(r.date).toDateString() === today);
-                  return todayReport?.lostDues != null ? formatCurrency(todayReport.lostDues) : '$0';
-                })()}
-              </div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">30-Day Lost Dues</div>
-              <div className="font-semibold text-lg text-red-700">
-                {formatCurrency(dailyReports.reduce((sum, r) => sum + (r.lostDues ?? 0), 0))}
-              </div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">30-Day Dues</div>
-              <div className="font-semibold text-lg text-amber-600">
-                {formatCurrency(dailyReports.reduce((sum, r) => sum + (r.dues ?? 0), 0))}
-              </div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">Lost Revenue %</div>
-              <div className="font-semibold text-lg text-red-700">
-                {(() => {
-                  const totalRevenue = dailyReports.reduce((sum, r) => sum + (r.total ?? 0), 0);
-                  const totalLostDues = dailyReports.reduce((sum, r) => sum + (r.lostDues ?? 0), 0);
-                  const lostRevenuePercent = totalRevenue > 0 ? (totalLostDues / totalRevenue) * 100 : 0;
-                  return `${lostRevenuePercent.toFixed(1)}%`;
-                })()}
-              </div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">High Loss Days</div>
-              <div className={`font-semibold text-lg ${dailyReports.filter(r => r.highLossFlag).length > 0 ? 'text-red-700' : 'text-green-600'}`}>
-                {dailyReports.filter(r => r.highLossFlag).length} of {dailyReports.length}
-              </div>
-            </div>
-          </div>
-
-          <div className="border rounded-xl bg-white">
-            <div className="px-4 py-3 border-b flex items-center justify-between">
-              <h2 className="font-semibold">Daily Reports</h2>
-              {loading && <span className="text-xs text-gray-500">Loading...</span>}
-            </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-xs">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-3 py-2 text-center font-medium">Flag</th>
-                  <th className="px-3 py-2 text-left font-medium">Date</th>
-                  <th className="px-3 py-2 text-right font-medium">Rooms</th>
-                  <th className="px-3 py-2 text-right font-medium">Sold</th>
-                  <th className="px-3 py-2 text-right font-medium">Cash</th>
-                  <th className="px-3 py-2 text-right font-medium">Credit</th>
-                  <th className="px-3 py-2 text-right font-medium">Online</th>
-                  <th className="px-3 py-2 text-right font-medium">Refund</th>
-                  <th className="px-3 py-2 text-right font-medium">Total</th>
-                  <th className="px-3 py-2 text-right font-medium">Dues</th>
-                  <th className="px-3 py-2 text-right font-medium">Lost Dues</th>
-                  <th className="px-3 py-2 text-right font-medium">Lost %</th>
-                  <th className="px-3 py-2 text-right font-medium">Occ%</th>
-                  <th className="px-3 py-2 text-right font-medium">ADR (Net)</th>
-                  <th className="px-3 py-2 text-right font-medium">RevPAR</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dailyReports.length ? (
-                  dailyReports.map(r => (
-                    <tr key={r.id} className={`border-t hover:bg-gray-50 ${r.highLossFlag ? 'bg-red-50' : ''}`}>
-                      <td className="px-3 py-2 text-center">{r.highLossFlag ? '🚨' : ''}</td>
-                      <td className="px-3 py-2">{formatDate(r.date)}</td>
-                      <td className="px-3 py-2 text-right">{r.totalRoom ?? '—'}</td>
-                      <td className="px-3 py-2 text-right">{r.roomSold ?? '—'}</td>
-                      <td className="px-3 py-2 text-right">{r.cash != null ? formatCurrency(r.cash) : '—'}</td>
-                      <td className="px-3 py-2 text-right">{r.credit != null ? formatCurrency(r.credit) : '—'}</td>
-                      <td className="px-3 py-2 text-right">{r.online != null ? formatCurrency(r.online) : '—'}</td>
-                      <td className="px-3 py-2 text-right text-red-600">{r.refund != null ? formatCurrency(r.refund) : '—'}</td>
-                      <td className="px-3 py-2 text-right font-medium">{r.total != null ? formatCurrency(r.total) : '—'}</td>
-                      <td className="px-3 py-2 text-right text-amber-600">{r.dues != null ? formatCurrency(r.dues) : '—'}</td>
-                      <td className="px-3 py-2 text-right text-red-700">{r.lostDues ?? "-"}</td>
-                      <td className="px-3 py-2 text-right text-red-700">
-                        {r.lostDues != null && r.total != null && r.total > 0 
-                          ? `${((r.lostDues / r.total) * 100).toFixed(1)}%` 
-                          : '—'}
-                      </td>
-                      <td className="px-3 py-2 text-right">{r.occupancy != null ? `${r.occupancy.toFixed(1)}%` : '—'}</td>
-                      <td className="px-3 py-2 text-right">{r.adr != null ? `$${r.adr.toFixed(2)}` : '—'}</td>
-                      <td className="px-3 py-2 text-right">{r.revpar != null ? `$${r.revpar.toFixed(2)}` : '—'}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={15} className="px-3 py-6 text-center text-gray-500">
-                      No daily reports found. Upload data via /api/hotels/upload.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        </>
+        <DailyReportsTab
+          hotelId={Array.isArray(id) ? id[0] : id}
+          reportsPage={reportsPage}
+          onPageChange={setReportsPage}
+        />
       )}
 
       {tab === 'reviews' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">Total Reviews</div>
-              <div className="font-semibold text-lg">{reviewsSummary?.total ?? reviews.length}</div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">Avg Rating</div>
-              <div className="font-semibold text-lg">
-                {reviewsSummary?.avgRating ? reviewsSummary.avgRating.toFixed(1) : '—'}
-              </div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">Unresponded</div>
-              <div className={`font-semibold text-lg ${
-                (reviewsSummary?.unrespondedCount ?? 0) > 0 ? 'text-red-600' : 'text-green-600'
-              }`}>
-                {reviewsSummary?.unrespondedCount ?? 0}
-              </div>
-            </div>
-            <div className="border rounded-lg p-3 bg-white">
-              <div className="text-xs text-gray-500 mb-1">Sources</div>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {reviewsSummary?.sourceCounts &&
-                  Object.entries(reviewsSummary.sourceCounts).map(([src, cnt]) => (
-                    <span key={src} className={`px-1.5 py-0.5 rounded text-xs ${SOURCE_COLORS[src] || 'bg-gray-100'}`}>
-                      {src}: {cnt}
-                    </span>
-                  ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="border rounded-xl bg-white">
-            <div className="px-4 py-3 border-b">
-              <h2 className="font-semibold">Latest Reviews</h2>
-            </div>
-            <div className="divide-y">
-              {reviews.length ? (
-                reviews.map(r => (
-                  <div key={r.id} className="p-4 hover:bg-gray-50">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`px-2 py-0.5 rounded text-xs font-medium ${SOURCE_COLORS[r.source] || 'bg-gray-100'}`}>
-                            {r.source}
-                          </span>
-                          {r.rating && (
-                            <span className="text-sm font-semibold">
-                              {'★'.repeat(Math.round(r.rating))}{'☆'.repeat(5 - Math.round(r.rating))}
-                              <span className="text-gray-600 ml-1">{r.rating.toFixed(1)}</span>
-                            </span>
-                          )}
-                          <span className="text-xs text-gray-500">
-                            {formatDate(r.reviewDate)}
-                          </span>
-                        </div>
-                        {r.title && (
-                          <div className="font-medium text-sm mb-1">{r.title}</div>
-                        )}
-                        {r.comment && (
-                          <p className="text-sm text-gray-700 line-clamp-3">{r.comment}</p>
-                        )}
-                        {r.reviewerName && (
-                          <div className="text-xs text-gray-500 mt-1">— {r.reviewerName}</div>
-                        )}
-                      </div>
-                      <div className="text-right text-xs">
-                        {r.responseText ? (
-                          <span className="text-green-600">Responded</span>
-                        ) : (
-                          <Link
-                            href={`/hospitality/reviews?id=${r.id}`}
-                            className="text-blue-600 hover:underline"
-                          >
-                            Respond
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                    {r.responseText && (
-                      <div className="mt-3 ml-4 pl-3 border-l-2 border-gray-200">
-                        <div className="text-xs text-gray-500 mb-1">
-                          Response by {r.respondedBy?.name || 'Staff'}
-                          {r.respondedAt && ` on ${formatDate(r.respondedAt)}`}
-                        </div>
-                        <p className="text-sm text-gray-600">{r.responseText}</p>
-                      </div>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div className="p-6 text-center text-gray-500 text-sm">
-                  No reviews found for this hotel.
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <ReviewsTab
+          reviews={reviews}
+          reviewsSummary={reviewsSummary}
+          reviewsTotal={reviewsTotal}
+          reviewsPage={reviewsPage}
+          onAddReview={() => setShowReviewModal(true)}
+          onPageChange={setReviewsPage}
+          loading={reviewsLoading}
+        />
       )}
+
+      {/* Add Review Modal */}
+      {id && (
+        <AddReviewModal
+          isOpen={showReviewModal}
+          onClose={() => setShowReviewModal(false)}
+          hotelId={Number(id)}
+          testMode={testMode || false}
+          onSuccess={loadReviews}
+        />
+      )}
+
+      {/* Edit Modal */}
+      <EditHotelModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        hotel={hotel}
+        onSuccess={handleHotelUpdate}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteHotelModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        hotel={hotel}
+      />
     </div>
   );
 }

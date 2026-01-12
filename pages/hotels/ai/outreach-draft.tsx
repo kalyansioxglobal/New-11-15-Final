@@ -174,7 +174,7 @@ const HotelOutreachDraftPage: NextPage = () => {
         {error && <p className="text-sm text-red-600">{error}</p>}
 
         <div className="flex items-center gap-3">
-          <Button onClick={handleGenerate} disabled={loading}>
+          <Button onClick={handleGenerate} disabled={loading} className="btn">
             {loading ? "Generating..." : "Generate Draft"}
           </Button>
           {draft && (

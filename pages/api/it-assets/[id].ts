@@ -84,6 +84,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         isDeleted,
       } = req.body;
 
+      // Validation: If assigned to a user, status cannot be AVAILABLE
+      const finalStatus = status !== undefined ? status.toUpperCase() : existing.status;
+      const finalAssignedToUserId = assignedToUserId !== undefined 
+        ? (assignedToUserId ? Number(assignedToUserId) : null)
+        : existing.assignedToUserId;
+      
+      if (finalAssignedToUserId && finalStatus === 'AVAILABLE') {
+        return res.status(400).json({
+          error: "VALIDATION_ERROR",
+          detail: "Status cannot be AVAILABLE when asset is assigned to a user. Please change the status to ASSIGNED or another appropriate status.",
+        });
+      }
+
       const data: any = {};
       if (tag !== undefined) data.tag = tag;
       if (type !== undefined) data.type = type;
@@ -100,15 +113,80 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (notes !== undefined) data.notes = notes || null;
       if (isDeleted !== undefined) data.isDeleted = Boolean(isDeleted);
 
+      // Track assignment changes for history and notifications
+      const assignmentChanged = assignedToUserId !== undefined && 
+        existing.assignedToUserId !== (assignedToUserId ? Number(assignedToUserId) : null);
+      const oldAssigneeId = existing.assignedToUserId;
+      
       if (assignedToUserId !== undefined) {
-        data.assignedToUserId = assignedToUserId ? Number(assignedToUserId) : null;
-        data.assignedSince = assignedSince ? new Date(assignedSince) : new Date();
+        const newAssigneeId = assignedToUserId ? Number(assignedToUserId) : null;
+        data.assignedToUserId = newAssigneeId;
+        
+        if (newAssigneeId) {
+          // Asset is being assigned or reassigned
+          data.assignedSince = assignedSince ? new Date(assignedSince) : new Date();
+          // Ensure status is not AVAILABLE when assigned
+          if (!data.status || data.status === 'AVAILABLE') {
+            data.status = 'ASSIGNED';
+          }
+          
+          // Create history entry
+          data.history = {
+            create: {
+              action: oldAssigneeId ? "REASSIGNED" : "ASSIGNED",
+              fromUserId: oldAssigneeId,
+              toUserId: newAssigneeId,
+            },
+          };
+        } else {
+          // Asset is being unassigned
+          data.assignedSince = null;
+          
+          // Create history entry
+          data.history = {
+            create: {
+              action: "RETURNED",
+              fromUserId: oldAssigneeId,
+              toUserId: null,
+            },
+          };
+        }
       }
 
       const updated = await prisma.iTAsset.update({
         where: { id },
         data,
+        include: {
+          assignedToUser: { select: { id: true, fullName: true } },
+        },
       });
+
+      // Create notification if assignment changed
+      if (assignmentChanged && updated.assignedToUserId) {
+        try {
+          const notification = await prisma.notification.create({
+            data: {
+              userId: updated.assignedToUserId,
+              title: "IT Asset Assigned",
+              body: `You have been assigned the IT asset: ${updated.tag} (${updated.type})${updated.make && updated.model ? ` - ${updated.make} ${updated.model}` : ''}`,
+              type: "info",
+              entityType: "IT_ASSET",
+              entityId: updated.id,
+            },
+          });
+          
+          // Push via SSE
+          const { pushNotificationViaSSE, pushUnreadCountViaSSE } = await import("@/lib/notifications/push");
+          await pushNotificationViaSSE(updated.assignedToUserId, notification);
+          const unreadCount = await prisma.notification.count({
+            where: { userId: updated.assignedToUserId, isRead: false },
+          });
+          await pushUnreadCountViaSSE(updated.assignedToUserId, unreadCount);
+        } catch (notifErr) {
+          // Don't fail the update if notification creation fails
+          console.error("Failed to create notification for asset assignment:", notifErr);
+        }
+      }
 
       await logAuditEvent(req, user, {
         domain: "admin",

@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 type AttendanceStatus = "PRESENT" | "PTO" | "HALF_DAY" | "SICK" | "REMOTE" | "LATE";
 
@@ -12,6 +13,8 @@ type TeamMember = {
   attendance: {
     status: AttendanceStatus;
     notes: string | null;
+    createdAt: string;
+    updatedAt: string;
   } | null;
   hasMarkedToday: boolean;
 };
@@ -34,12 +37,12 @@ type TeamData = {
 };
 
 const STATUS_CONFIG: Record<AttendanceStatus, { label: string; emoji: string; bgColor: string; textColor: string }> = {
-  PRESENT: { label: "Present", emoji: "✓", bgColor: "bg-green-100", textColor: "text-green-800" },
-  REMOTE: { label: "Remote", emoji: "🏠", bgColor: "bg-blue-100", textColor: "text-blue-800" },
-  PTO: { label: "PTO", emoji: "🌴", bgColor: "bg-purple-100", textColor: "text-purple-800" },
-  HALF_DAY: { label: "Half Day", emoji: "½", bgColor: "bg-amber-100", textColor: "text-amber-800" },
-  SICK: { label: "Sick", emoji: "🤒", bgColor: "bg-red-100", textColor: "text-red-800" },
-  LATE: { label: "Late", emoji: "⏰", bgColor: "bg-orange-100", textColor: "text-orange-800" },
+  PRESENT: { label: "Present", emoji: "✓", bgColor: "bg-green-100 dark:bg-green-900/30", textColor: "text-green-800 dark:text-green-300" },
+  REMOTE: { label: "Remote", emoji: "🏠", bgColor: "bg-blue-100 dark:bg-blue-900/30", textColor: "text-blue-800 dark:text-blue-300" },
+  PTO: { label: "PTO", emoji: "🌴", bgColor: "bg-purple-100 dark:bg-purple-900/30", textColor: "text-purple-800 dark:text-purple-300" },
+  HALF_DAY: { label: "Half Day", emoji: "½", bgColor: "bg-amber-100 dark:bg-amber-900/30", textColor: "text-amber-800 dark:text-amber-300" },
+  SICK: { label: "Sick", emoji: "🤒", bgColor: "bg-red-100 dark:bg-red-900/30", textColor: "text-red-800 dark:text-red-300" },
+  LATE: { label: "Late", emoji: "⏰", bgColor: "bg-orange-100 dark:bg-orange-900/30", textColor: "text-orange-800 dark:text-orange-300" },
 };
 
 const ALL_STATUSES: AttendanceStatus[] = ["PRESENT", "REMOTE", "PTO", "HALF_DAY", "SICK", "LATE"];
@@ -47,7 +50,6 @@ const ALL_STATUSES: AttendanceStatus[] = ["PRESENT", "REMOTE", "PTO", "HALF_DAY"
 function TeamAttendancePage() {
   const [data, setData] = useState<TeamData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split("T")[0];
@@ -57,26 +59,46 @@ function TeamAttendancePage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<AttendanceStatus | null>(null);
   const [reason, setReason] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
+  const [pagination, setPagination] = useState<{
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  } | null>(null);
 
   useEffect(() => {
     fetchTeamAttendance();
+  }, [selectedDate, page, pageSize]);
+
+  // Reset to page 1 when date changes
+  useEffect(() => {
+    setPage(1);
   }, [selectedDate]);
 
   async function fetchTeamAttendance() {
     setLoading(true);
-    setError(null);
     try {
-      const res = await fetch(`/api/attendance/team?date=${selectedDate}`);
+      const params = new URLSearchParams({
+        date: selectedDate,
+        page: String(page),
+        pageSize: String(pageSize),
+      });
+      const res = await fetch(`/api/attendance/team?${params.toString()}`);
       if (!res.ok) {
         if (res.status === 403) {
-          throw new Error("You don't have permission to view team attendance");
+          toast.error("You don't have permission to view team attendance");
+        } else {
+          toast.error("Failed to load team attendance");
         }
-        throw new Error("Failed to load team attendance");
+        return;
       }
       const json = await res.json();
       setData(json.data);
+      setPagination(json.data.pagination || null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      toast.error("An error occurred");
     } finally {
       setLoading(false);
     }
@@ -101,12 +123,11 @@ function TeamAttendancePage() {
 
   async function updateMemberStatus() {
     if (!editingMember || !selectedStatus) {
-      setError("Please select a status");
+      toast.error("Please select a status");
       return;
     }
 
     setSaving(true);
-    setError(null);
     try {
       const res = await fetch("/api/attendance/team", {
         method: "POST",
@@ -122,60 +143,36 @@ function TeamAttendancePage() {
       const json = await res.json();
       
       if (!res.ok) {
-        // Show the specific error message from the API
         const errorMessage = json?.error?.message || "Failed to update attendance";
-        setError(errorMessage);
+        toast.error(errorMessage);
         return;
       }
       
       await fetchTeamAttendance();
+      toast.success("Attendance updated successfully");
       handleCloseModal();
     } catch (err: any) {
       console.error("Failed to update attendance:", err);
-      setError(err?.message || "An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setSaving(false);
     }
   }
 
-  // Show full-page error only for access/permission errors
-  if (error && (error.includes("permission") || error.includes("Access Denied") || error.includes("FORBIDDEN"))) {
-    return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6">
-        <h2 className="text-lg font-semibold text-red-800 mb-2">Access Denied</h2>
-        <p className="text-red-700">{error}</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-          <div className="flex items-center justify-between">
-            <p className="text-red-800">{error}</p>
-            <button
-              onClick={() => setError(null)}
-              className="text-red-600 hover:text-red-800"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
-      
+    <div className="space-y-6 dark:bg-gray-900 min-h-screen p-6 text-gray-900 dark:text-white">
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Team Attendance</h1>
-          <p className="text-sm text-gray-500 mt-1">View and manage your team&apos;s attendance</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Team Attendance</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">View and manage your team&apos;s attendance</p>
         </div>
         <div className="flex items-center gap-3">
-          <label className="text-sm text-gray-600">Date:</label>
+          <label className="text-sm text-gray-600 dark:text-gray-400">Date:</label>
           <input
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
           />
         </div>
       </header>
@@ -198,29 +195,29 @@ function TeamAttendancePage() {
             />
           </section>
 
-          <section className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+          <section className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Employee
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Venture
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Action
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                   {data.team.map((member) => {
                     const statusInfo = member.attendance?.status
                       ? STATUS_CONFIG[member.attendance.status]
@@ -228,28 +225,52 @@ function TeamAttendancePage() {
                     const isEditing = editingMember === member.id;
 
                     return (
-                      <tr key={member.id} className="hover:bg-gray-50">
+                      <tr key={member.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td className="px-4 py-3">
-                          <div className="font-medium text-gray-900">{member.fullName}</div>
-                          <div className="text-sm text-gray-500">{member.email}</div>
+                          <div className="font-medium text-gray-900 dark:text-white">{member.fullName}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{member.email}</div>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                           {member.role.replace(/_/g, " ")}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                           {member.ventures.map((v) => v.name).join(", ") || "-"}
                         </td>
                         <td className="px-4 py-3">
                           <div className="space-y-1">
                             {member.attendance?.status && statusInfo ? (
-                              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.textColor}`}>
-                                {statusInfo.emoji} {statusInfo.label}
-                              </span>
+                              <>
+                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.textColor}`}>
+                                  {statusInfo.emoji} {statusInfo.label}
+                                </span>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                  Marked: {new Date(member.attendance.createdAt).toLocaleString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                    hour12: true
+                                  })}
+                                  {member.attendance.updatedAt && 
+                                    member.attendance.updatedAt !== member.attendance.createdAt && (
+                                      <span className="block text-gray-400 dark:text-gray-500">
+                                        Updated: {new Date(member.attendance.updatedAt).toLocaleString('en-US', {
+                                          month: 'short',
+                                          day: 'numeric',
+                                          hour: 'numeric',
+                                          minute: '2-digit',
+                                          hour12: true
+                                        })}
+                                      </span>
+                                    )
+                                  }
+                                </div>
+                              </>
                             ) : (
-                              <span className="text-sm text-gray-400 italic">Not marked</span>
+                              <span className="text-sm text-gray-400 dark:text-gray-500 italic">Not marked</span>
                             )}
                             {member.attendance?.notes && (
-                              <div className="text-xs text-gray-500 mt-1 italic">
+                              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
                                 Reason: {member.attendance.notes}
                               </div>
                             )}
@@ -258,7 +279,7 @@ function TeamAttendancePage() {
                         <td className="px-4 py-3 text-right">
                           <button
                             onClick={() => handleEditClick(member.id)}
-                            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
                           >
                             {member.hasMarkedToday ? "Edit" : "Set Status"}
                           </button>
@@ -271,11 +292,57 @@ function TeamAttendancePage() {
             </div>
             
             {data.team.length === 0 && (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                 No team members found
               </div>
             )}
           </section>
+
+          {/* Pagination */}
+          {pagination && pagination.totalPages > 1 && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-lg">
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-gray-700 dark:text-gray-300">
+                  Showing {((pagination.page - 1) * pagination.pageSize) + 1} to {Math.min(pagination.page * pagination.pageSize, pagination.total)} of {pagination.total} results
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-600 dark:text-gray-400">Per page:</label>
+                  <select
+                    value={pageSize}
+                    onChange={(e) => {
+                      setPageSize(Number(e.target.value));
+                      setPage(1);
+                    }}
+                    className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPage(page - 1)}
+                  disabled={page === 1}
+                  className="px-3 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-colors"
+                >
+                  Previous
+                </button>
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+                <button
+                  onClick={() => setPage(page + 1)}
+                  disabled={page >= pagination.totalPages}
+                  className="px-3 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </>
       ) : null}
 
@@ -283,7 +350,7 @@ function TeamAttendancePage() {
       {showEditModal && editingMember && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md mx-4 shadow-2xl border border-gray-200 dark:border-slate-700">
-            <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-2xl flex items-center justify-between">
+            <div className="text-white p-6 rounded-t-2xl flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold">Update Attendance</h2>
                 <p className="text-sm text-blue-100 mt-1">
@@ -323,8 +390,8 @@ function TeamAttendancePage() {
                         onClick={() => setSelectedStatus(status)}
                         className={`px-4 py-3 rounded-lg text-sm font-medium transition-all border-2 ${
                           isSelected
-                            ? `${info.bgColor} ${info.textColor} border-blue-500 shadow-md`
-                            : "bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-blue-300"
+                            ? `${info.bgColor} ${info.textColor} border-blue-500 dark:border-blue-400 shadow-md`
+                            : "bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500"
                         }`}
                       >
                         <span className="text-lg mr-2">{info.emoji}</span>
@@ -352,16 +419,6 @@ function TeamAttendancePage() {
                 </p>
               </div>
 
-              {/* Error Display */}
-              {error && (
-                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-300 text-sm flex items-start gap-3">
-                  <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                  <span>{error}</span>
-                </div>
-              )}
-
               {/* Action Buttons */}
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-slate-700">
                 <button
@@ -375,8 +432,8 @@ function TeamAttendancePage() {
                 <button
                   type="submit"
                   disabled={saving || !selectedStatus}
-                  className="px-6 py-2.5 text-sm font-semibold rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 disabled:opacity-60 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
-                >
+                  className="btn"
+               >
                   {saving ? (
                     <>
                       <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -411,18 +468,18 @@ type SummaryCardProps = {
 
 function SummaryCard({ label, value, variant = "default" }: SummaryCardProps) {
   const colorClasses = {
-    default: "text-gray-900",
-    success: "text-green-700",
-    warning: "text-amber-700",
-    danger: "text-red-700",
-    purple: "text-purple-700",
-    orange: "text-orange-700",
-    muted: "text-gray-400",
+    default: "text-gray-900 dark:text-white",
+    success: "text-green-700 dark:text-green-400",
+    warning: "text-amber-700 dark:text-amber-400",
+    danger: "text-red-700 dark:text-red-400",
+    purple: "text-purple-700 dark:text-purple-400",
+    orange: "text-orange-700 dark:text-orange-400",
+    muted: "text-gray-400 dark:text-gray-500",
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 p-3 bg-white shadow-sm">
-      <div className="text-xs text-gray-500 mb-1">{label}</div>
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-gray-800 shadow-sm">
+      <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</div>
       <div className={`text-xl font-semibold ${colorClasses[variant]}`}>{value}</div>
     </div>
   );

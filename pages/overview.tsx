@@ -84,8 +84,8 @@ function OverviewPage() {
 
   if (ventures.length === 0) {
     return (
-      <p className="text-gray-600">
-        No active ventures yet. Add some in <strong>Admin → Ventures</strong>.
+      <p className="text-gray-600 dark:text-gray-400">
+        No active ventures yet. Add some in <strong className="font-semibold dark:text-gray-300">Admin → Ventures</strong>.
       </p>
     );
   }
@@ -119,11 +119,11 @@ function OverviewPage() {
 
       <div className="space-y-6">
         <header>
-          <h1 className="text-2xl font-bold text-gray-900">Siox Command Center</h1>
-          <p className="text-sm text-gray-500 italic mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Siox Command Center</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 italic mt-1">
             Architected, Designed & Engineered by Herry Chokshi
           </p>
-          <p className="text-xs text-slate-400/70 italic mt-1">
+          <p className="text-xs text-slate-400/70 dark:text-slate-500/70 italic mt-1">
             &quot;Look up. Refuse to look down.&quot; – SIOX
           </p>
         </header>
@@ -213,15 +213,15 @@ type SummaryCardProps = {
 
 function SummaryCard({ label, value, variant = "default" }: SummaryCardProps) {
   const valueColors = {
-    default: "text-gray-900",
-    healthy: "text-green-700",
-    attention: "text-amber-700",
-    critical: "text-red-700",
+    default: "text-gray-900 dark:text-white",
+    healthy: "text-green-700 dark:text-green-400",
+    attention: "text-amber-700 dark:text-amber-400",
+    critical: "text-red-700 dark:text-red-400",
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 p-4 bg-white shadow-sm h-full">
-      <div className="text-sm text-gray-500 mb-1">{label}</div>
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800 shadow-sm h-full">
+      <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{label}</div>
       <div className={`text-2xl font-semibold ${valueColors[variant]}`}>
         {value}
       </div>
@@ -231,9 +231,9 @@ function SummaryCard({ label, value, variant = "default" }: SummaryCardProps) {
 
 function VentureCard({ venture }: { venture: VentureSummaryWithAggregates }) {
   const badgeClasses: Record<VentureHealth, string> = {
-    Healthy: "bg-green-100 text-green-800",
-    Attention: "bg-amber-100 text-amber-800",
-    Critical: "bg-red-100 text-red-800",
+    Healthy: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800",
+    Attention: "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800",
+    Critical: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800",
   };
   const badgeClass = badgeClasses[venture.health];
 
@@ -248,14 +248,14 @@ function VentureCard({ venture }: { venture: VentureSummaryWithAggregates }) {
   return (
     <Link
       href={`/ventures/${venture.id}`}
-      className={`block rounded-xl border border-gray-200 p-4 bg-white ${cardShadow} hover:shadow-lg hover:border-gray-300 transition-all duration-200 cursor-pointer h-full`}
+      className={`block rounded-xl border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800 ${cardShadow} hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 cursor-pointer h-full`}
     >
       <div className="flex justify-between items-start gap-2 mb-3">
         <div className="min-w-0 flex-1">
-          <div className="font-semibold text-lg text-gray-900 hover:text-blue-600 transition-colors truncate">
+          <div className="font-semibold text-lg text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">
             {venture.name}
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
             {venture.category} {venture.roleLabel !== "—" && `• ${venture.roleLabel}`}
           </div>
         </div>
@@ -267,11 +267,11 @@ function VentureCard({ venture }: { venture: VentureSummaryWithAggregates }) {
       </div>
 
       {topReason && (
-        <div className="text-sm text-gray-600 mb-3">
+        <div className="text-sm text-gray-600 dark:text-gray-300 mb-3">
           <span className="font-medium">Why: </span>
           {topReason.message}
           {venture.reasons.length > 1 && (
-            <span className="text-gray-400">
+            <span className="text-gray-400 dark:text-gray-500">
               {" "}
               (+{venture.reasons.length - 1} more)
             </span>
@@ -279,7 +279,7 @@ function VentureCard({ venture }: { venture: VentureSummaryWithAggregates }) {
         </div>
       )}
 
-      <div className="flex items-center text-sm text-gray-600 mb-3">
+      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-3">
         <span className="font-medium mr-1">Offices:</span>
         <span>{venture.officesCount}</span>
       </div>
@@ -289,8 +289,8 @@ function VentureCard({ venture }: { venture: VentureSummaryWithAggregates }) {
         {isHospitality && <HotelMiniKpi ventureId={venture.id} />}
       </div>
 
-      <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
-        <span className="text-xs text-blue-600 font-medium">
+      <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+        <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
           View Details →
         </span>
         {isHospitality && (
@@ -300,7 +300,7 @@ function VentureCard({ venture }: { venture: VentureSummaryWithAggregates }) {
               e.stopPropagation();
               window.location.href = `/hotel/${venture.id}`;
             }}
-            className="text-xs text-blue-600 hover:text-blue-800 underline cursor-pointer"
+            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline cursor-pointer"
           >
             Hotel dashboard
           </span>

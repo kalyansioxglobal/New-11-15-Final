@@ -97,6 +97,16 @@ export default createApiHandler(
           },
         });
 
+        // Push notification via SSE if available
+        const { pushNotificationViaSSE, pushUnreadCountViaSSE } = await import("@/lib/notifications/push");
+        await pushNotificationViaSSE(notifyUserId, notification);
+        
+        // Also update unread count
+        const unreadCount = await prisma.notification.count({
+          where: { userId: notifyUserId, isRead: false },
+        });
+        await pushUnreadCountViaSSE(notifyUserId, unreadCount);
+
         return res.status(201).json(notification);
       } catch (err) {
         const error = err as Error;

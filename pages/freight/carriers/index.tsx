@@ -5,6 +5,7 @@ import Link from "next/link";
 import CarrierFmcsaImportForm from "@/components/CarrierFmcsaImportForm";
 import type { PageWithLayout } from "@/types/page";
 import { Skeleton } from "@/components/ui/Skeleton";
+import toast from "react-hot-toast";
 
 type CarrierDispatcher = {
   userId: number;
@@ -240,6 +241,10 @@ function CarrierListTab() {
   const [syncStats, setSyncStats] = useState<{ syncedCount: number; totalWithMc: number; lastSyncAt: string | null } | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncingCarrierId, setSyncingCarrierId] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(50);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   const userRole = (session?.user as any)?.role;
   const isAdmin = userRole === "ADMIN" || userRole === "CEO";
@@ -264,12 +269,26 @@ function CarrierListTab() {
       if (filters.active) params.set("active", filters.active);
       if (filters.state) params.set("state", filters.state);
       if (filters.dispatcherId) params.set("dispatcherId", String(filters.dispatcherId));
+      params.set("page", String(page));
+      params.set("limit", String(pageSize));
 
-      const res = await fetch(`/api/freight/carriers?${params.toString()}`);
-      const data = await res.json();
-      if (!cancelled) {
-        setCarriers(data.carriers || []);
-        setLoading(false);
+      try {
+        const res = await fetch(`/api/freight/carriers?${params.toString()}`);
+        if (!res.ok) {
+          throw new Error("Failed to load carriers");
+        }
+        const data = await res.json();
+        if (!cancelled) {
+          setCarriers(data.carriers || []);
+          setTotalCount(data.totalCount || 0);
+          setTotalPages(data.totalPages || 0);
+          setLoading(false);
+        }
+      } catch (err: any) {
+        if (!cancelled) {
+          toast.error(err.message || "Failed to load carriers");
+          setLoading(false);
+        }
       }
     }
 
@@ -277,7 +296,7 @@ function CarrierListTab() {
     return () => {
       cancelled = true;
     };
-  }, [filters, refreshKey]);
+  }, [filters, refreshKey, page, pageSize]);
 
   const handleCarrierSaved = () => {
     setShowImport(false);
@@ -304,10 +323,16 @@ function CarrierListTab() {
     try {
       const res = await fetch("/api/jobs/fmcsa-sync", { method: "POST" });
       if (res.ok) {
+        toast.success("FMCSA sync started successfully");
         setRefreshKey((k) => k + 1);
+      } else {
+        toast.error("Failed to start FMCSA sync");
       }
-    } catch {}
-    setSyncing(false);
+    } catch (err: any) {
+      toast.error("Failed to start FMCSA sync");
+    } finally {
+      setSyncing(false);
+    }
   };
 
   const handleCarrierFmcsaSync = async (carrierId: number) => {
@@ -324,11 +349,63 @@ function CarrierListTab() {
               : c
           )
         );
+        toast.success("Carrier FMCSA status updated");
+      } else {
+        toast.error("Failed to sync carrier FMCSA status");
       }
     } catch (err) {
       console.error("FMCSA sync error:", err);
+      toast.error("Failed to sync carrier FMCSA status");
+    } finally {
+      setSyncingCarrierId(null);
     }
-    setSyncingCarrierId(null);
+  };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [filters]);
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          Showing <span className="font-medium text-gray-900 dark:text-white">{(page - 1) * pageSize + 1}</span> to{" "}
+          <span className="font-medium text-gray-900 dark:text-white">{Math.min(page * pageSize, totalCount)}</span> of{" "}
+          <span className="font-medium text-gray-900 dark:text-white">{totalCount}</span> carriers
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition ${
+              page === 1
+                ? "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-600 cursor-not-allowed"
+                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-600 dark:text-gray-400">
+            Page <span className="font-medium text-gray-900 dark:text-white">{page}</span> of{" "}
+            <span className="font-medium text-gray-900 dark:text-white">{totalPages}</span>
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition ${
+              page === totalPages
+                ? "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-600 cursor-not-allowed"
+                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -346,8 +423,8 @@ function CarrierListTab() {
               disabled={syncing}
               className={`px-4 py-2 rounded-lg text-sm font-medium border transition ${
                 syncing
-                  ? "bg-gray-200 border-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-amber-500 text-white border-amber-500 hover:bg-amber-600"
+                  ? "bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  : "bg-amber-500 dark:bg-amber-600 text-white border-amber-500 dark:border-amber-600 hover:bg-amber-600 dark:hover:bg-amber-700"
               }`}
             >
               {syncing ? "Syncing..." : "Sync FMCSA"}
@@ -357,15 +434,15 @@ function CarrierListTab() {
             onClick={() => setShowImport(!showImport)}
             className={`px-4 py-2 rounded-lg text-sm font-medium border transition ${
               showImport
-                ? "bg-gray-100 border-gray-300 text-gray-700"
-                : "bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700"
+                ? "bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                : "bg-emerald-600 dark:bg-emerald-700 text-white border-emerald-600 dark:border-emerald-700 hover:bg-emerald-700 dark:hover:bg-emerald-800"
             }`}
           >
             {showImport ? "Hide Import" : "Import from FMCSA"}
           </button>
           <Link
             href="/freight/carriers/new"
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+            className="px-4 py-2 rounded-lg bg-blue-600 dark:bg-blue-700 text-white text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-800"
           >
             + New Carrier
           </Link>
@@ -408,7 +485,7 @@ function CarrierListTab() {
           />
           {filters.dispatcherId && (
             <button
-              className="text-xs text-blue-600 hover:underline"
+              className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
               onClick={() => {
                 setFilters((prev) => ({ ...prev, dispatcherId: null }));
                 setDispatcherQuery("");
@@ -486,9 +563,9 @@ function CarrierListTab() {
                   <th className="px-4 py-3 text-left font-semibold">FMCSA</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {carriers.map((carrier) => (
-                  <tr key={carrier.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <tr key={carrier.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                     <td className="px-4 py-3">
                       <Link
                         href={`/freight/carriers/${carrier.id}`}
@@ -600,6 +677,7 @@ function CarrierListTab() {
               </tbody>
             </table>
           </div>
+          {renderPagination()}
         </div>
       )}
     </div>
@@ -619,23 +697,21 @@ function FindCarriersTab() {
 
   const [result, setResult] = useState<SearchResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
   const [showNewCarriers, setShowNewCarriers] = useState(false);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!originZip && !originCity) {
-      setError("Please enter origin city or ZIP code");
+      toast.error("Please enter origin city or ZIP code");
       return;
     }
     if (!destZip && !destCity) {
-      setError("Please enter destination city or ZIP code");
+      toast.error("Please enter destination city or ZIP code");
       return;
     }
 
     setLoading(true);
-    setError(null);
     setSearched(true);
 
     try {
@@ -662,8 +738,9 @@ function FindCarriersTab() {
 
       const data = await res.json();
       setResult(data);
+      toast.success(`Found ${data.recommendedCarriers.length + data.newCarriers.length} carriers`);
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message || "Search failed");
       setResult(null);
     } finally {
       setLoading(false);
@@ -747,15 +824,13 @@ function FindCarriersTab() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+              className="w-full px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Searching..." : "Search Carriers"}
             </button>
           </div>
         </div>
       </form>
-
-      {error && <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm">{error}</div>}
 
       {searched && !loading && result && (
         <>
@@ -866,7 +941,7 @@ function FindCarriersTab() {
                 <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
                   {result.newCarriers.length} available
                 </span>
-                <span className="text-gray-400">{showNewCarriers ? "▲" : "▼"}</span>
+                <span className="text-gray-400 dark:text-gray-500">{showNewCarriers ? "▲" : "▼"}</span>
               </div>
             </button>
             
@@ -883,7 +958,7 @@ function FindCarriersTab() {
                         <div className="flex-1">
                           <div className="flex items-center gap-3">
                             <Link href={`/freight/carriers/${c.id}`} className="font-medium text-blue-600 dark:text-blue-400 hover:underline">{c.name}</Link>
-                            {c.mcNumber && <span className="text-xs text-gray-400">MC# {c.mcNumber}</span>}
+                            {c.mcNumber && <span className="text-xs text-gray-400 dark:text-gray-500">MC# {c.mcNumber}</span>}
                           </div>
                           <div className="flex flex-wrap items-center gap-2 mt-2">
                             <span className={`px-2 py-0.5 text-xs rounded ${
@@ -939,7 +1014,7 @@ function FindCarriersTab() {
         </>
       )}
 
-      {searched && !loading && !result && !error && (
+      {searched && !loading && !result && (
         <div className="text-center py-12 text-gray-500 dark:text-gray-400">
           No results found. Try adjusting your search criteria.
         </div>
@@ -972,7 +1047,7 @@ function CarriersPage() {
   ];
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-6 space-y-4 dark:bg-gray-900 min-h-screen">
       <div>
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Carriers</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -988,8 +1063,8 @@ function CarriersPage() {
               onClick={() => handleTabChange(tab.id)}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? "border-blue-600 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300"
+                  ? "border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
               }`}
             >
               <span className="mr-2">{tab.icon}</span>

@@ -25,19 +25,22 @@ export async function sendAndLogEmail(params: SendEmailParams) {
     subject,
     html,
     text,
-    from = "noreply@sioxglobal.com",
+    from = process.env.SENDGRID_FROM_EMAIL || "itsupport@sioxglobal.com",
     venture,
     relatedLoadId,
     sentByUserId,
     sentByAgent = false,
   } = params;
 
+
   let status = "SENT";
   let errorMessage: string | undefined;
 
   try {
     if (!process.env.SENDGRID_API_KEY) {
-      throw new Error("Missing SENDGRID_API_KEY");
+      const error = "Missing SENDGRID_API_KEY";
+      console.error('[email]', error);
+      throw new Error(error);
     }
 
     const { withRetry } = await import('@/lib/resilience/withRetry');
@@ -51,13 +54,14 @@ export async function sendAndLogEmail(params: SendEmailParams) {
     await circuitBreaker.execute(async () => {
       return await withRetry(
         async () => {
-          await sgMail.send({
+          const result = await sgMail.send({
             to,
             from,
             subject,
             html,
             text: text ?? html.replace(/<[^>]+>/g, "").slice(0, 2000),
           });
+          return result;
         },
         {
           maxRetries: 3,
@@ -83,27 +87,35 @@ export async function sendAndLogEmail(params: SendEmailParams) {
       );
     });
   } catch (err: any) {
-    console.error("Error sending email:", err);
+    console.error("[email] Error sending email:", err);
     status = "FAILED";
     errorMessage = err?.message ?? "Unknown error";
+    if (err?.response?.body) {
+      errorMessage = `${errorMessage} - ${JSON.stringify(err.response.body)}`;
+    }
   }
 
   const preview = html.replace(/<[^>]+>/g, "").slice(0, 200);
 
-  await prisma.emailLog.create({
-    data: {
-      venture,
-      fromAddress: from,
-      toAddress: to,
-      subject,
-      bodyPreview: preview,
-      relatedLoadId: relatedLoadId ?? null,
-      sentByUserId: sentByUserId ?? null,
-      sentByAgent,
-      status,
-      errorMessage,
-    },
-  });
+  try {
+    await prisma.emailLog.create({
+      data: {
+        venture,
+        fromAddress: from,
+        toAddress: to,
+        subject,
+        bodyPreview: preview,
+        relatedLoadId: relatedLoadId ?? null,
+        sentByUserId: sentByUserId ?? null,
+        sentByAgent,
+        status,
+        errorMessage,
+      },
+    });
+  } catch (logError: any) {
+    console.error('[email] Failed to create email log:', logError);
+    // Don't throw - logging failure shouldn't break the function
+  }
 
   return { status, errorMessage };
 }

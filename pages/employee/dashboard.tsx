@@ -5,6 +5,7 @@ import { getEffectiveUser } from "@/lib/effectiveUser";
 import useSWR from "swr";
 import Layout from "@/components/Layout";
 import { Skeleton } from "@/components/ui/Skeleton";
+import toast from "react-hot-toast";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -36,16 +37,13 @@ type EmployeeDashboardProps = {
 };
 
 export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
-  const [attendanceStatus, setAttendanceStatus] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
-  const [attendanceError, setAttendanceError] = useState<string | null>(null);
-  const [tasksError, setTasksError] = useState<string | null>(null);
 
   const { data: tasksData, isLoading: tasksLoading, error: tasksApiError } = useSWR<{ tasks: Task[] }>(
     `/api/tasks?limit=20&assignedToId=${userId}`,
     fetcher,
     {
-      onError: () => setTasksError("Unable to load tasks"),
+      onError: () => toast.error("Unable to load tasks"),
     }
   );
 
@@ -54,18 +52,18 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
     fetcher
   );
 
-  const { data: eodData } = useSWR<{ data: EODStatus }>(
+  const { data: eodData } = useSWR(
     "/api/eod-reports/my-status",
     fetcher
   );
 
-  const rawTasks = tasksData?.tasks || [];
-  const tasks = rawTasks.filter((t) => t.assignedToId === userId);
+  const tasks = tasksData?.tasks || [];
   const attendance = attendanceData?.data;
-  const eodStatus = eodData?.data;
+  const eodStatus = eodData?.streak;
+
 
   const myTasks = tasks.filter((t) => t.status !== "COMPLETED");
-  const completedTasks = tasks.filter((t) => t.status === "COMPLETED");
+  const completedTasks = tasks.filter((t) => t.status === "COMPLETED" || t.status === "DONE");
   const overdueTasks = myTasks.filter((t) => {
     if (!t.dueDate) return false;
     return new Date(t.dueDate) < new Date();
@@ -73,7 +71,6 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
 
   const handleMarkAttendance = async (status: string) => {
     setSubmitting(true);
-    setAttendanceError(null);
     try {
       const res = await fetch("/api/attendance/my", {
         method: "POST",
@@ -84,18 +81,14 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
       const data = await res.json();
       
       if (res.ok) {
+        toast.success(`Attendance marked as ${status.replace(/_/g, " ")}`);
         mutateAttendance();
-        setAttendanceStatus("");
-        setAttendanceError(null);
       } else {
-        // Show error message to user
         const errorMessage = data?.error?.message || "Failed to mark attendance";
-        setAttendanceError(errorMessage);
-        console.error("Failed to mark attendance:", errorMessage);
+        toast.error(errorMessage);
       }
     } catch (err) {
-      console.error("Failed to mark attendance:", err);
-      setAttendanceError("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -103,105 +96,90 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "URGENT": return "bg-red-100 text-red-700";
-      case "HIGH": return "bg-orange-100 text-orange-700";
-      case "MEDIUM": return "bg-yellow-100 text-yellow-700";
-      default: return "bg-gray-100 text-gray-600";
+      case "URGENT": return "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300";
+      case "HIGH": return "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300";
+      case "MEDIUM": return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300";
+      default: return "bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-300";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "COMPLETED": return "bg-green-100 text-green-700";
-      case "IN_PROGRESS": return "bg-blue-100 text-blue-700";
-      case "PENDING": return "bg-yellow-100 text-yellow-700";
-      default: return "bg-gray-100 text-gray-600";
+      case "COMPLETED": return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300";
+      case "IN_PROGRESS": return "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300";
+      case "PENDING": return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300";
+      default: return "bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-300";
     }
   };
 
   const getAttendanceColor = (status: string) => {
     switch (status) {
-      case "PRESENT": return "bg-green-100 text-green-700";
-      case "REMOTE": return "bg-blue-100 text-blue-700";
-      case "PTO": return "bg-purple-100 text-purple-700";
-      case "HALF_DAY": return "bg-yellow-100 text-yellow-700";
-      case "SICK": return "bg-red-100 text-red-700";
-      case "LATE": return "bg-orange-100 text-orange-700";
-      default: return "bg-gray-100 text-gray-600";
+      case "PRESENT": return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-800 hover:bg-green-200 dark:hover:bg-green-900/50";
+      case "REMOTE": return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200 dark:border-blue-800 hover:bg-blue-200 dark:hover:bg-blue-900/50";
+      case "PTO": return "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border-purple-200 dark:border-purple-800 hover:bg-purple-200 dark:hover:bg-purple-900/50";
+      case "HALF_DAY": return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800 hover:bg-yellow-200 dark:hover:bg-yellow-900/50";
+      case "SICK": return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 border-red-200 dark:border-red-800 hover:bg-red-200 dark:hover:bg-red-900/50";
+      case "LATE": return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 border-orange-200 dark:border-orange-800 hover:bg-orange-200 dark:hover:bg-orange-900/50";
+      default: return "bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-900/50";
     }
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">My Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">My Dashboard</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
           </p>
         </div>
       </div>
 
-      {(tasksError || tasksApiError) && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-          <p className="text-yellow-800 text-sm">
-            Some data may not be available. Please refresh or contact support if the issue persists.
-          </p>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="text-sm text-gray-500">My Tasks</div>
-          <div className="text-3xl font-bold text-gray-900 mt-1">{myTasks.length}</div>
-          <div className="text-xs text-gray-400 mt-1">Open items</div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <div className="text-sm text-gray-500 dark:text-gray-400">My Tasks</div>
+          <div className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{myTasks.length}</div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">Open items</div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="text-sm text-gray-500">Completed</div>
-          <div className="text-3xl font-bold text-green-600 mt-1">{completedTasks.length}</div>
-          <div className="text-xs text-gray-400 mt-1">This period</div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <div className="text-sm text-gray-500 dark:text-gray-400">Completed</div>
+          <div className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">{completedTasks.length}</div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">This period</div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="text-sm text-gray-500">Overdue</div>
-          <div className="text-3xl font-bold text-red-600 mt-1">{overdueTasks.length}</div>
-          <div className="text-xs text-gray-400 mt-1">Past due date</div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <div className="text-sm text-gray-500 dark:text-gray-400">Overdue</div>
+          <div className="text-3xl font-bold text-red-600 dark:text-red-400 mt-1">{overdueTasks.length}</div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">Past due date</div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="text-sm text-gray-500">EOD Streak</div>
-          <div className="text-3xl font-bold text-blue-600 mt-1">{eodStatus?.streak || 0}</div>
-          <div className="text-xs text-gray-400 mt-1">Days in a row</div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <div className="text-sm text-gray-500 dark:text-gray-400">EOD Streak</div>
+          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">{eodStatus || 0}</div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">Days in a row</div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-900 mb-4">Today&apos;s Attendance</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Today&apos;s Attendance</h2>
           {attendance?.today ? (
             <div className="text-center py-4">
-              <span className={`px-4 py-2 rounded-full text-sm font-medium ${getAttendanceColor(attendance.today.status)}`}>
+              <span className={`px-4 py-2 rounded-full text-sm font-medium border ${getAttendanceColor(attendance.today.status)}`}>
                 {attendance.today.status.replace(/_/g, " ")}
               </span>
-              <p className="text-sm text-gray-500 mt-3">You&apos;ve marked your attendance for today</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">You&apos;ve marked your attendance for today</p>
             </div>
           ) : (
             <div>
-              <p className="text-sm text-gray-500 mb-4">Mark your attendance for today:</p>
-              {attendanceError && (
-                <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-800">{attendanceError}</p>
-                </div>
-              )}
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Mark your attendance for today:</p>
               <div className="grid grid-cols-3 gap-2">
                 {["PRESENT", "REMOTE", "PTO", "HALF_DAY", "SICK", "LATE"].map((status) => (
                   <button
                     key={status}
                     onClick={() => handleMarkAttendance(status)}
                     disabled={submitting}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
-                      submitting
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-50"
-                    } ${getAttendanceColor(status)}`}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium border transition-all duration-150 ${getAttendanceColor(
+                      status
+                    )} hover:shadow-md hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none`}
                   >
                     {status.replace(/_/g, " ")}
                   </button>
@@ -211,24 +189,24 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
           )}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h2 className="font-semibold text-gray-900 mb-4">EOD Report</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <h2 className="font-semibold text-gray-900 dark:text-white mb-4">EOD Report</h2>
           {eodStatus?.submittedToday ? (
             <div className="text-center py-4">
               <div className="text-4xl mb-2">✓</div>
-              <span className="px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-700">
+              <span className="px-4 py-2 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800">
                 Submitted Today
               </span>
-              <p className="text-sm text-gray-500 mt-3">Great job! Your EOD report is in.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">Great job! Your EOD report is in.</p>
             </div>
           ) : (
             <div className="text-center py-4">
               <div className="text-4xl mb-2">📝</div>
-              <p className="text-sm text-gray-500 mb-4">You haven&apos;t submitted your EOD report yet.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">You haven&apos;t submitted your EOD report yet.</p>
               <Link
-                href="/eod"
-                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
-              >
+                href="/eod-reports/submit"
+                className="btn"
+                >
                 Submit EOD Report
               </Link>
             </div>
@@ -237,23 +215,23 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
       </div>
 
       {overdueTasks.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <h2 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
-            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+          <h2 className="font-semibold text-red-800 dark:text-red-300 mb-3 flex items-center gap-2">
+            <span className="w-2 h-2 bg-red-500 dark:bg-red-400 rounded-full animate-pulse"></span>
             Overdue Tasks ({overdueTasks.length})
           </h2>
           <div className="space-y-2">
             {overdueTasks.slice(0, 3).map((task) => (
-              <div key={task.id} className="bg-white rounded-lg p-3 flex items-center justify-between">
+              <div key={task.id} className="bg-white dark:bg-gray-800 rounded-lg p-3 flex items-center justify-between">
                 <div>
-                  <div className="font-medium text-gray-900">{task.title}</div>
-                  <div className="text-sm text-red-600">
+                  <div className="font-medium text-gray-900 dark:text-white">{task.title}</div>
+                  <div className="text-sm text-red-600 dark:text-red-400">
                     Due: {new Date(task.dueDate!).toLocaleDateString()}
                   </div>
                 </div>
                 <Link 
                   href={`/tasks/${task.id}`}
-                  className="px-3 py-1 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  className="px-3 py-1 text-sm bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors"
                 >
                   View
                 </Link>
@@ -263,27 +241,26 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="font-semibold text-gray-900">My Tasks</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="font-semibold text-gray-900 dark:text-white">My Tasks</h2>
         </div>
         
         {tasksLoading ? (
-          // <div className="p-8 text-center text-gray-500">Loading tasks...</div>
           <Skeleton className="w-full h-[85vh]" />
         ) : myTasks.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
             <div className="text-4xl mb-2">🎉</div>
             <p>All caught up! No open tasks.</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {myTasks.map((task) => (
-              <div key={task.id} className="p-4 hover:bg-gray-50">
+              <div key={task.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900">{task.title}</span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-gray-900 dark:text-white">{task.title}</span>
                       <span className={`px-2 py-0.5 rounded text-xs font-medium ${getPriorityColor(task.priority)}`}>
                         {task.priority}
                       </span>
@@ -292,11 +269,11 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
                       </span>
                     </div>
                     {task.description && (
-                      <p className="text-sm text-gray-500 mt-1 line-clamp-1">{task.description}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{task.description}</p>
                     )}
-                    <div className="text-xs text-gray-400 mt-2">
+                    <div className="text-xs text-gray-400 dark:text-gray-500 mt-2">
                       {task.dueDate ? (
-                        <span className={new Date(task.dueDate) < new Date() ? "text-red-500" : ""}>
+                        <span className={new Date(task.dueDate) < new Date() ? "text-red-500 dark:text-red-400" : ""}>
                           Due: {new Date(task.dueDate).toLocaleDateString()}
                         </span>
                       ) : (
@@ -307,7 +284,7 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
                   </div>
                   <Link
                     href={`/tasks/${task.id}`}
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium ml-4"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium ml-4 transition-colors"
                   >
                     View
                   </Link>
@@ -318,36 +295,36 @@ export default function EmployeeDashboard({ userId }: EmployeeDashboardProps) {
         )}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
-        <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Link
             href="/tasks"
-            className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-center"
+            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-center transition-colors"
           >
             <div className="text-2xl mb-2">📋</div>
-            <div className="text-sm font-medium text-gray-900">All Tasks</div>
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">All Tasks</div>
           </Link>
           <Link
-            href="/eod"
-            className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-center"
+            href="/eod-reports"
+            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-center transition-colors"
           >
             <div className="text-2xl mb-2">📝</div>
-            <div className="text-sm font-medium text-gray-900">EOD Report</div>
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">EOD Report</div>
           </Link>
           <Link
             href="/attendance"
-            className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-center"
+            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-center transition-colors"
           >
             <div className="text-2xl mb-2">📅</div>
-            <div className="text-sm font-medium text-gray-900">Attendance</div>
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Attendance</div>
           </Link>
           <Link
             href="/profile"
-            className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-center"
+            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-center transition-colors"
           >
             <div className="text-2xl mb-2">👤</div>
-            <div className="text-sm font-medium text-gray-900">My Profile</div>
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">My Profile</div>
           </Link>
         </div>
       </div>

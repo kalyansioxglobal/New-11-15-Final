@@ -61,7 +61,7 @@ export default withUser(async function handler(
       const assignerName = user.fullName || user.email || "Someone";
       const assetInfo = incident.asset?.tag ? ` (${incident.asset.tag})` : "";
       
-      await prisma.notification.create({
+      const notification = await prisma.notification.create({
         data: {
           userId: assignedUserId,
           title: "New IT Incident Assigned",
@@ -72,6 +72,14 @@ export default withUser(async function handler(
           isTest: user.isTestUser || false,
         },
       });
+      
+      // Push via SSE
+      const { pushNotificationViaSSE, pushUnreadCountViaSSE } = await import("@/lib/notifications/push");
+      await pushNotificationViaSSE(assignedUserId, notification);
+      const unreadCount = await prisma.notification.count({
+        where: { userId: assignedUserId, isRead: false },
+      });
+      await pushUnreadCountViaSSE(assignedUserId, unreadCount);
     }
 
     await logAuditEvent(req, user, {
