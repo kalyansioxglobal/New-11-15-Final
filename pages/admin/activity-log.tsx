@@ -97,101 +97,101 @@ function ActivityLogPage() {
   };
 
   const actionColors: Record<string, string> = {
-    CREATE: 'bg-green-100 text-green-800',
-    UPDATE: 'bg-blue-100 text-blue-800',
-    DELETE: 'bg-red-100 text-red-800',
-    LOGIN: 'bg-purple-100 text-purple-800',
-    LOGOUT: 'bg-gray-100 text-gray-800',
-    VIEW: 'bg-cyan-100 text-cyan-800',
-    IMPORT: 'bg-amber-100 text-amber-800',
-    EXPORT: 'bg-amber-100 text-amber-800',
-    APPROVE: 'bg-green-100 text-green-800',
-    REJECT: 'bg-red-100 text-red-800',
+    CREATE: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800',
+    UPDATE: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800',
+    DELETE: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800',
+    LOGIN: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800',
+    LOGOUT: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600',
+    VIEW: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800',
+    IMPORT: 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800',
+    EXPORT: 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800',
+    APPROVE: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800',
+    REJECT: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800',
   };
 
   const getActionColor = (action: string) => {
     for (const [key, color] of Object.entries(actionColors)) {
       if (action.toUpperCase().includes(key)) return color;
     }
-    return 'bg-gray-100 text-gray-800';
+    return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600';
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Activity Log</h1>
-          <p className="text-sm text-gray-500">{totalCount.toLocaleString()} total activities</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Activity Log</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{totalCount.toLocaleString()} total activities</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-4 shadow-sm border">
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Action</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Action</label>
             <select
               value={filterAction}
               onChange={(e) => setFilterAction(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
             >
-              <option value="">All actions</option>
+              <option value="" className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">All actions</option>
               {filters.actions.map((a) => (
-                <option key={a} value={a}>{a}</option>
+                <option key={a} value={a} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">{a}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Module</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Module</label>
             <select
               value={filterModule}
               onChange={(e) => setFilterModule(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
             >
-              <option value="">All modules</option>
+              <option value="" className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">All modules</option>
               {filters.modules.map((m) => (
-                <option key={m} value={m}>{m}</option>
+                <option key={m} value={m} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">{m}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Start Date</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
             <input
               type="date"
               value={filterStartDate}
               onChange={(e) => setFilterStartDate(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">End Date</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
             <input
               type="date"
               value={filterEndDate}
               onChange={(e) => setFilterEndDate(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Search</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
             <input
               type="text"
               value={filterSearch}
               onChange={(e) => setFilterSearch(e.target.value)}
               placeholder="Search..."
-              className="w-full px-3 py-2 border rounded-lg text-sm"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
             />
           </div>
         </div>
         <div className="flex gap-2 mt-4">
           <button
             onClick={handleFilter}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+            className="btn"
           >
             Apply Filters
           </button>
           <button
             onClick={clearFilters}
-            className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm"
+            className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm transition-colors"
           >
             Clear
           </button>
@@ -201,50 +201,50 @@ function ActivityLogPage() {
       {loading && <Skeleton className="w-full h-[85vh]" />}
 
       {!loading && logs.length === 0 && (
-        <div className="text-center py-12 bg-gray-50 rounded-xl border">
-          <div className="text-gray-500">No activities found</div>
+        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+          <div className="text-gray-500 dark:text-gray-400">No activities found</div>
         </div>
       )}
 
       {!loading && logs.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-900/50">
               <tr>
-                <th className="px-4 py-3 text-left font-medium">Time</th>
-                <th className="px-4 py-3 text-left font-medium">User</th>
-                <th className="px-4 py-3 text-left font-medium">Action</th>
-                <th className="px-4 py-3 text-left font-medium">Module</th>
-                <th className="px-4 py-3 text-left font-medium">Description</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-900 dark:text-white">Time</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-900 dark:text-white">User</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-900 dark:text-white">Action</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-900 dark:text-white">Module</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-900 dark:text-white">Description</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-gray-600">
+                <tr key={log.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
                     <div>{new Date(log.createdAt).toLocaleDateString()}</div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-gray-400 dark:text-gray-500">
                       {new Date(log.createdAt).toLocaleTimeString()}
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="font-medium">{log.userName}</div>
-                    <div className="text-xs text-gray-500">{log.userRole}</div>
+                    <div className="font-medium text-gray-900 dark:text-white">{log.userName}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">{log.userRole}</div>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${getActionColor(log.action)}`}>
                       {log.action}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{log.module}</td>
-                  <td className="px-4 py-3 text-gray-600 max-w-xs truncate">
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{log.module}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400 max-w-xs truncate">
                     {log.description || `${log.entityType} ${log.entityId || ''}`}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => setSelectedLog(log)}
-                      className="text-blue-600 hover:underline text-sm"
+                      className="text-blue-600 dark:text-blue-400 hover:underline text-sm transition-colors"
                     >
                       Details
                     </button>
@@ -256,96 +256,118 @@ function ActivityLogPage() {
         </div>
       )}
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-500">
-            Page {page} of {totalPages}
+      {!loading && logs.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Showing <span className="font-medium text-gray-900 dark:text-white">{(page - 1) * 50 + 1}</span> to{' '}
+            <span className="font-medium text-gray-900 dark:text-white">{Math.min(page * 50, totalCount)}</span> of{' '}
+            <span className="font-medium text-gray-900 dark:text-white">{totalCount}</span> activities
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="px-3 py-1 border rounded text-sm disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="px-3 py-1 border rounded text-sm disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+          {totalPages > 1 ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition ${
+                  page === 1
+                    ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
+              >
+                Previous
+              </button>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Page <span className="font-medium text-gray-900 dark:text-white">{page}</span> of{' '}
+                <span className="font-medium text-gray-900 dark:text-white">{totalPages}</span>
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition ${
+                  page === totalPages
+                    ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Page <span className="font-medium text-gray-900 dark:text-white">1</span> of <span className="font-medium text-gray-900 dark:text-white">1</span>
+            </div>
+          )}
         </div>
       )}
 
       {selectedLog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg shadow-xl max-h-[80vh] overflow-y-auto border border-gray-200 dark:border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Activity Details</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Activity Details</h2>
               <button
                 onClick={() => setSelectedLog(null)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               >
-                ✕
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
             <div className="space-y-3 text-sm">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-gray-500">User</div>
-                  <div className="font-medium">{selectedLog.userName}</div>
-                  <div className="text-xs text-gray-400">{selectedLog.userEmail}</div>
+                  <div className="text-gray-500 dark:text-gray-400 mb-1">User</div>
+                  <div className="font-medium text-gray-900 dark:text-white">{selectedLog.userName}</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-500">{selectedLog.userEmail}</div>
                 </div>
                 <div>
-                  <div className="text-gray-500">Role</div>
-                  <div className="font-medium">{selectedLog.userRole}</div>
+                  <div className="text-gray-500 dark:text-gray-400 mb-1">Role</div>
+                  <div className="font-medium text-gray-900 dark:text-white">{selectedLog.userRole}</div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-gray-500">Action</div>
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${getActionColor(selectedLog.action)}`}>
+                  <div className="text-gray-500 dark:text-gray-400 mb-1">Action</div>
+                  <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${getActionColor(selectedLog.action)}`}>
                     {selectedLog.action}
                   </span>
                 </div>
                 <div>
-                  <div className="text-gray-500">Module</div>
-                  <div className="font-medium">{selectedLog.module}</div>
+                  <div className="text-gray-500 dark:text-gray-400 mb-1">Module</div>
+                  <div className="font-medium text-gray-900 dark:text-white">{selectedLog.module}</div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-gray-500">Entity Type</div>
-                  <div className="font-medium">{selectedLog.entityType}</div>
+                  <div className="text-gray-500 dark:text-gray-400 mb-1">Entity Type</div>
+                  <div className="font-medium text-gray-900 dark:text-white">{selectedLog.entityType}</div>
                 </div>
                 <div>
-                  <div className="text-gray-500">Entity ID</div>
-                  <div className="font-medium">{selectedLog.entityId || '-'}</div>
+                  <div className="text-gray-500 dark:text-gray-400 mb-1">Entity ID</div>
+                  <div className="font-medium text-gray-900 dark:text-white font-mono">{selectedLog.entityId || '-'}</div>
                 </div>
               </div>
               {selectedLog.description && (
                 <div>
-                  <div className="text-gray-500">Description</div>
-                  <div className="font-medium">{selectedLog.description}</div>
+                  <div className="text-gray-500 dark:text-gray-400 mb-1">Description</div>
+                  <div className="font-medium text-gray-900 dark:text-white">{selectedLog.description}</div>
                 </div>
               )}
               <div>
-                <div className="text-gray-500">Timestamp</div>
-                <div className="font-medium">{new Date(selectedLog.createdAt).toLocaleString()}</div>
+                <div className="text-gray-500 dark:text-gray-400 mb-1">Timestamp</div>
+                <div className="font-medium text-gray-900 dark:text-white">{new Date(selectedLog.createdAt).toLocaleString()}</div>
               </div>
               {selectedLog.ipAddress && (
                 <div>
-                  <div className="text-gray-500">IP Address</div>
-                  <div className="font-medium font-mono">{selectedLog.ipAddress}</div>
+                  <div className="text-gray-500 dark:text-gray-400 mb-1">IP Address</div>
+                  <div className="font-medium text-gray-900 dark:text-white font-mono">{selectedLog.ipAddress}</div>
                 </div>
               )}
               {selectedLog.metadata && Object.keys(selectedLog.metadata).length > 0 && (
                 <div>
-                  <div className="text-gray-500 mb-1">Metadata</div>
-                  <pre className="bg-gray-50 p-3 rounded text-xs overflow-x-auto">
+                  <div className="text-gray-500 dark:text-gray-400 mb-1">Metadata</div>
+                  <pre className="bg-gray-50 dark:bg-gray-900/50 p-3 rounded text-xs overflow-x-auto border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                     {JSON.stringify(selectedLog.metadata, null, 2)}
                   </pre>
                 </div>
