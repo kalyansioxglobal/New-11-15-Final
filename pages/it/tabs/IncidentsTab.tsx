@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Select } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
 import toast from "react-hot-toast";
+import CreateIncidentModal from "@/components/it/incidents/CreateIncidentModal";
 
 type User = {
   id: number;
@@ -38,7 +39,6 @@ type Incident = {
   resolvedAt: string | null;
 };
 
-const INCIDENT_CATEGORIES = ["HARDWARE", "SOFTWARE", "NETWORK", "ACCESS", "OTHER"];
 const SEVERITIES = ["LOW", "MEDIUM", "HIGH", "CRITICAL"];
 const STATUSES = ["OPEN", "IN_PROGRESS", "WAITING_FOR_INFO", "RESOLVED", "CANCELLED"];
 
@@ -54,46 +54,49 @@ export default function IncidentsTab() {
   const [statusGroup, setStatusGroup] = useState<"" | "open" | "closed">("");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(50);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
 
-  const [formData, setFormData] = useState({
-    assetId: "",
-    title: "",
-    description: "",
-    category: "OTHER",
-    severity: "LOW",
-    assignedToUserId: "",
-  });
-  const [submitting, setSubmitting] = useState(false);
   const [assigningIncidents, setAssigningIncidents] = useState<Set<number>>(new Set());
   const [updatingStatus, setUpdatingStatus] = useState<Set<number>>(new Set());
+  const [filterLoading, setFilterLoading] = useState(false);
+  const isInitialMount = useRef(true);
 
-  const loadIncidents = async (overrides?: {
+  const loadIncidents = useCallback(async (pageParam = page, overrides?: {
     statusGroup?: string;
     statusFilter?: string;
     severityFilter?: string;
     meFilter?: "" | "reported" | "assigned";
   }) => {
     const params = new URLSearchParams();
+    params.set("page", String(pageParam));
+    params.set("pageSize", String(pageSize));
+
     const group = overrides?.statusGroup !== undefined ? overrides.statusGroup : statusGroup;
     const status = overrides?.statusFilter !== undefined ? overrides.statusFilter : statusFilter;
     const severity = overrides?.severityFilter !== undefined ? overrides.severityFilter : severityFilter;
     const me = overrides?.meFilter !== undefined ? overrides.meFilter : meFilter;
-    
+
     if (group) params.set("statusGroup", group);
     if (status) params.set("status", status);
     if (severity) params.set("severity", severity);
     if (me) params.set("me", me);
-    const query = params.toString() ? `?${params.toString()}` : "";
 
-    const res = await fetch(`/api/it-incidents/list${query}`);
+    const res = await fetch(`/api/it-incidents/list?${params.toString()}`);
     if (res.ok) {
       const payload = await res.json();
-      setIncidents(payload.items || payload || []);
+      setIncidents(payload.items || []);
+      setTotal(payload.total || 0);
+      setTotalPages(payload.totalPages || 1);
+      setPage(payload.page || pageParam);
     }
-  };
+  }, [page, pageSize, statusGroup, statusFilter, severityFilter, meFilter]);
 
   const loadUsers = async () => {
     const res = await fetch("/api/admin/users");
@@ -115,75 +118,45 @@ export default function IncidentsTab() {
   };
 
   useEffect(() => {
-    Promise.all([loadIncidents(), loadUsers(), loadAssets()]).finally(() =>
-      setLoading(false),
-    );
+    Promise.all([loadIncidents(1), loadUsers(), loadAssets()]).finally(() => {
+      setLoading(false);
+      isInitialMount.current = false;
+    });
   }, []);
 
   useEffect(() => {
-    loadIncidents();
-  }, [statusFilter, severityFilter, meFilter, statusGroup]);
+    if (isInitialMount.current) return;
+    setPage(1);
+    setFilterLoading(true);
+    loadIncidents(1).finally(() => setFilterLoading(false));
+  }, [statusFilter, severityFilter, meFilter, statusGroup, loadIncidents]);
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
+  useEffect(() => {
+    if (isInitialMount.current) return;
+    setFilterLoading(true);
+    loadIncidents(page).finally(() => setFilterLoading(false));
+  }, [page, loadIncidents]);
 
-    try {
-      const res = await fetch("/api/it-incidents/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          assetId: Number(formData.assetId),
-          title: formData.title,
-          description: formData.description,
-          category: formData.category,
-          severity: formData.severity,
-          assignedToUserId: formData.assignedToUserId
-            ? Number(formData.assignedToUserId)
-            : null,
-        }),
-      });
+  const handleCreateSuccess = async () => {
+    // Reset filters that might hide the new incident (new incidents are typically "OPEN")
+    // and reload with cleared filters to ensure it appears immediately
+    const newStatusGroup = statusGroup === "closed" ? "" : statusGroup;
+    const newStatusFilter = statusFilter && statusFilter !== "OPEN" ? "" : statusFilter;
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || data.detail || "Failed to create incident");
-      }
-
-      toast.success("Incident created successfully!");
-      setShowCreateModal(false);
-      setFormData({
-        assetId: "",
-        title: "",
-        description: "",
-        category: "OTHER",
-        severity: "LOW",
-        assignedToUserId: "",
-      });
-      
-      // Reset filters that might hide the new incident (new incidents are typically "OPEN")
-      // and reload with cleared filters to ensure it appears immediately
-      const newStatusGroup = statusGroup === "closed" ? "" : statusGroup;
-      const newStatusFilter = statusFilter && statusFilter !== "OPEN" ? "" : statusFilter;
-      
-      // Update filter state
-      if (newStatusGroup !== statusGroup) {
-        setStatusGroup(newStatusGroup);
-      }
-      if (newStatusFilter !== statusFilter) {
-        setStatusFilter(newStatusFilter);
-      }
-      
-      // Reload with cleared filters to ensure new incident appears
-      await loadIncidents({
-        statusGroup: newStatusGroup,
-        statusFilter: newStatusFilter,
-      });
-    } catch (err: any) {
-      const errorMessage = err.message || "Failed to create incident";
-      toast.error(errorMessage);
-    } finally {
-      setSubmitting(false);
+    // Update filter state
+    if (newStatusGroup !== statusGroup) {
+      setStatusGroup(newStatusGroup);
     }
+    if (newStatusFilter !== statusFilter) {
+      setStatusFilter(newStatusFilter);
+    }
+
+    // Reload with cleared filters to ensure new incident appears
+    await loadIncidents(1, {
+      statusGroup: newStatusGroup,
+      statusFilter: newStatusFilter,
+    });
+    setPage(1);
   };
 
   const handleAssign = async (incidentId: number, userId: string) => {
@@ -201,7 +174,7 @@ export default function IncidentsTab() {
       if (res.ok) {
         const updated = await res.json();
         toast.success("Incident assigned successfully!");
-        loadIncidents();
+        loadIncidents(page);
         if (selectedIncident?.id === incidentId) {
           setSelectedIncident(updated);
         }
@@ -234,7 +207,7 @@ export default function IncidentsTab() {
       if (res.ok) {
         const updated = await res.json();
         toast.success("Status updated successfully!");
-        loadIncidents();
+        loadIncidents(page);
         if (selectedIncident?.id === incidentId) {
           setSelectedIncident(updated);
         }
@@ -255,25 +228,15 @@ export default function IncidentsTab() {
     }
   };
 
-  // Filter incidents based on search query
-  const filteredIncidents = incidents.filter((inc) => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      inc.title.toLowerCase().includes(query) ||
-      inc.asset?.tag?.toLowerCase().includes(query) ||
-      inc.assetId?.toString().includes(query)
-    );
-  });
-
-  const openCounts = {
-    total: incidents.length,
+  // Note: openCounts are calculated from current page only (not total counts)
+  const openCounts = useMemo(() => ({
+    total: total,
     open: incidents.filter((i) => i.status === "OPEN").length,
     inProgress: incidents.filter((i) => i.status === "IN_PROGRESS").length,
     critical: incidents.filter(
       (i) => i.severity === "CRITICAL" && i.status !== "RESOLVED",
     ).length,
-  };
+  }), [incidents, total]);
 
   if (loading) {
     return (
@@ -294,8 +257,8 @@ export default function IncidentsTab() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            size="sm" 
+          <Button
+            size="sm"
             onClick={() => setShowCreateModal(true)}
             className="btn"
           >
@@ -373,11 +336,10 @@ export default function IncidentsTab() {
                   setStatusGroup("");
                   setStatusFilter("");
                 }}
-                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all ${
-                  statusGroup === ""
-                    ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
-                    : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
-                }`}
+                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all ${statusGroup === ""
+                  ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
+                  }`}
               >
                 All
               </button>
@@ -387,11 +349,10 @@ export default function IncidentsTab() {
                   setStatusGroup("open");
                   setStatusFilter("");
                 }}
-                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all ${
-                  statusGroup === "open"
-                    ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
-                    : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
-                }`}
+                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all ${statusGroup === "open"
+                  ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
+                  }`}
               >
                 Open
               </button>
@@ -401,11 +362,10 @@ export default function IncidentsTab() {
                   setStatusGroup("closed");
                   setStatusFilter("");
                 }}
-                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all ${
-                  statusGroup === "closed"
-                    ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
-                    : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
-                }`}
+                className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all ${statusGroup === "closed"
+                  ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
+                  }`}
               >
                 Closed
               </button>
@@ -421,33 +381,30 @@ export default function IncidentsTab() {
               <button
                 type="button"
                 onClick={() => setMeFilter("")}
-                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${
-                  meFilter === ""
-                    ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
-                    : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
-                }`}
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${meFilter === ""
+                  ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
+                  }`}
               >
                 All
               </button>
               <button
                 type="button"
                 onClick={() => setMeFilter("reported")}
-                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${
-                  meFilter === "reported"
-                    ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
-                    : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
-                }`}
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${meFilter === "reported"
+                  ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
+                  }`}
               >
                 Reported
               </button>
               <button
                 type="button"
                 onClick={() => setMeFilter("assigned")}
-                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${
-                  meFilter === "assigned"
-                    ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
-                    : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
-                }`}
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${meFilter === "assigned"
+                  ? "bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200"
+                  }`}
               >
                 Assigned
               </button>
@@ -461,7 +418,7 @@ export default function IncidentsTab() {
                 Status
               </label>
               <Select
-                  className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -478,7 +435,7 @@ export default function IncidentsTab() {
                 Severity
               </label>
               <Select
-                  className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                 value={severityFilter}
                 onChange={(e) => setSeverityFilter(e.target.value)}
               >
@@ -510,7 +467,7 @@ export default function IncidentsTab() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-            {filteredIncidents.map((inc) => (
+            {incidents.map((inc) => (
               <tr key={inc.id} className="hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors">
                 <td className="px-4 py-3 font-mono text-gray-500 dark:text-gray-400 text-xs">#{inc.id}</td>
                 <td className="px-4 py-3">
@@ -545,10 +502,10 @@ export default function IncidentsTab() {
                     <Select
                       value={inc.status}
                       onChange={(e) => handleStatusChange(inc.id, e.target.value)}
-                      disabled={updatingStatus.has(inc.id)}
-                      className={`w-40 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white ${
-                        updatingStatus.has(inc.id) ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
+                      disabled={updatingStatus.has(inc.id) || inc.status === "RESOLVED" || inc.status === "CANCELLED"}
+                      className={`w-40 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-700 text-gray-900 dark:text-white ${updatingStatus.has(inc.id) || inc.status === "RESOLVED" || inc.status === "CANCELLED" ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                      title={inc.status === "RESOLVED" || inc.status === "CANCELLED" ? "Cannot change status of resolved or cancelled incidents" : undefined}
                     >
                       {STATUSES.map((s) => (
                         <option key={s} value={s}>
@@ -571,14 +528,14 @@ export default function IncidentsTab() {
                     <Select
                       value={inc.assignedToUserId || ""}
                       onChange={(e) => handleAssign(inc.id, e.target.value)}
-                      disabled={assigningIncidents.has(inc.id)}
-                      className={`w-full max-w-[200px] border rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all ${
-                        assigningIncidents.has(inc.id)
-                          ? "opacity-50 cursor-not-allowed border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-gray-200"
-                          : inc.assignedToUserId
+                      disabled={assigningIncidents.has(inc.id) || inc.status === "RESOLVED" || inc.status === "CANCELLED"}
+                      className={`w-full max-w-[200px] border rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all ${assigningIncidents.has(inc.id) || inc.status === "RESOLVED" || inc.status === "CANCELLED"
+                        ? "opacity-50 cursor-not-allowed border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-gray-200"
+                        : inc.assignedToUserId
                           ? "border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100 font-medium"
                           : "border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
-                      }`}
+                        }`}
+                      title={inc.status === "RESOLVED" || inc.status === "CANCELLED" ? "Cannot assign user to resolved or cancelled incidents" : undefined}
                     >
                       <option value="">Unassigned</option>
                       {users.map((u) => (
@@ -622,7 +579,7 @@ export default function IncidentsTab() {
               </tr>
             ))}
 
-            {filteredIncidents.length === 0 && (
+            {!loading && incidents.length === 0 && (
               <tr>
                 <td colSpan={9} className="p-12 text-center">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
@@ -631,12 +588,10 @@ export default function IncidentsTab() {
                     </svg>
                   </div>
                   <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
-                    {searchQuery.trim() ? "No incidents match your search" : "No incidents found"}
+                    No incidents found
                   </p>
                   <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
-                    {searchQuery.trim() 
-                      ? "Try adjusting your search terms or filters." 
-                      : 'Click "New Incident" to create one.'}
+                    Click "New Incident" to create one.
                   </p>
                 </td>
               </tr>
@@ -645,172 +600,41 @@ export default function IncidentsTab() {
         </table>
       </div>
 
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <div className="sticky top-0 z-10 text-white p-6 rounded-t-2xl flex items-center justify-between">
-              <h2 className="text-xl font-bold">Log New Incident</h2>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <form onSubmit={handleCreate} className="p-6 space-y-5">
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Asset Name<span className="text-red-500">*</span>
-                </label>
-                <Select
-                  required
-                  value={formData.assetId}
-                  onChange={(e) =>
-                    setFormData({ ...formData, assetId: e.target.value })
-                  }
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
-                >
-                  <option value="">Select an asset</option>
-                  {assets.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.tag}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Title <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  placeholder="Brief description of the issue"
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Description <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  required
-                  rows={4}
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Detailed description of the problem..."
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all resize-y"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    Category
-                  </label>
-                  <Select
-                    value={formData.category}
-                    onChange={(e) =>
-                      setFormData({ ...formData, category: e.target.value })
-                    }
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
-                  >
-                    {INCIDENT_CATEGORIES.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    Severity
-                  </label>
-                  <Select
-                    value={formData.severity}
-                    onChange={(e) =>
-                      setFormData({ ...formData, severity: e.target.value })
-                    }
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
-                  >
-                    {SEVERITIES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Assign To
-                </label>
-                <Select
-                  value={formData.assignedToUserId}
-                  onChange={(e) =>
-                    setFormData({ ...formData, assignedToUserId: e.target.value })
-                  }
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
-                >
-                  <option value="" className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">Unassigned</option>
-                  {users.map((u) => (
-                    <option key={u.id} value={u.id} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                      {u.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-5 py-2.5"
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  type="submit" 
-                  size="sm" 
-                  disabled={submitting}
-                  className="btn"
-                >
-                  {submitting ? (
-                    <>
-                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Log Incident
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+          <div className="text-sm text-gray-700 dark:text-gray-300">
+            Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, total)} of {total} results
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="px-3 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              Previous
+            </button>
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              className="px-3 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              Next
+            </button>
           </div>
         </div>
       )}
+
+      <CreateIncidentModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        assets={assets}
+        users={users}
+        onSuccess={handleCreateSuccess}
+      />
 
       {showDetailModal && selectedIncident && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
@@ -825,7 +649,7 @@ export default function IncidentsTab() {
                     </svg>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold">Incident #{selectedIncident.id}</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Incident #{selectedIncident.id}</h2>
                     {/* <p className="text-indigo-100 dark:text-indigo-200 text-sm mt-1">{selectedIncident.title}</p> */}
                   </div>
                 </div>

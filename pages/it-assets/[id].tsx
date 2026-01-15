@@ -47,6 +47,8 @@ type ITAsset = {
     notes: string | null;
     fromUserId: number | null;
     toUserId: number | null;
+    fromUser?: { id: number; fullName: string } | null;
+    toUser?: { id: number; fullName: string } | null;
   }>;
 };
 
@@ -61,6 +63,9 @@ function ITAssetDetailPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showAllHistory, setShowAllHistory] = useState(false);
+  const [allHistory, setAllHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
   const [formData, setFormData] = useState({
     tag: '',
     type: '',
@@ -149,6 +154,8 @@ function ITAssetDetailPage() {
     (o) => !formData.ventureId || o.ventureId === Number(formData.ventureId)
   );
 
+  console.log(users);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -606,18 +613,55 @@ function ITAssetDetailPage() {
             {asset.history && asset.history.length > 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                 <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Asset History ({asset.history.length})
-                  </h2>
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                      <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Asset History ({(asset as any)._historyMeta?.totalCount || asset.history.length})
+                    </h2>
+                    {(asset as any)._historyMeta?.hasMore && !showAllHistory && (
+                      <button
+                        onClick={async () => {
+                          setLoadingHistory(true);
+                          try {
+                            const res = await fetch(`/api/it-assets/${id}/history`);
+                            if (res.ok) {
+                              const data = await res.json();
+                              setAllHistory(data.history || []);
+                              setShowAllHistory(true);
+                            }
+                          } catch (err) {
+                            console.error('Failed to load all history:', err);
+                            toast.error('Failed to load all history');
+                          } finally {
+                            setLoadingHistory(false);
+                          }
+                        }}
+                        disabled={loadingHistory}
+                        className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loadingHistory ? 'Loading...' : `Show all (${(asset as any)._historyMeta?.totalCount || 0} entries)`}
+                      </button>
+                    )}
+                    {showAllHistory && (
+                      <button
+                        onClick={() => {
+                          setShowAllHistory(false);
+                          setAllHistory([]);
+                        }}
+                        className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-medium"
+                      >
+                        Show recent only
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div className="p-6">
                   <div className="space-y-3">
-                    {asset.history.map((entry) => {
-                      const fromUser = entry.fromUserId ? users.find(u => u.id === entry.fromUserId) : null;
-                      const toUser = entry.toUserId ? users.find(u => u.id === entry.toUserId) : null;
+                    {(showAllHistory ? allHistory : asset.history).map((entry) => {
+                      const fromUser = entry.fromUser || (entry.fromUserId ? users.find(u => u.id === entry.fromUserId) : null);
+                      const toUser = entry.toUser || (entry.toUserId ? users.find(u => u.id === entry.toUserId) : null);
                       
                       return (
                         <div
@@ -626,7 +670,10 @@ function ITAssetDetailPage() {
                         >
                           <div className={`flex-shrink-0 w-2 h-2 rounded-full mt-2 ${
                             entry.action === 'ASSIGNED' ? 'bg-indigo-500 dark:bg-indigo-400' :
+                            entry.action === 'REASSIGNED' ? 'bg-purple-500 dark:bg-purple-400' :
                             entry.action === 'RETURNED' ? 'bg-green-500 dark:bg-green-400' :
+                            entry.action === 'INCIDENT_CREATED' ? 'bg-amber-500 dark:bg-amber-400' :
+                            entry.action === 'INCIDENT_RESOLVED' ? 'bg-blue-500 dark:bg-blue-400' :
                             'bg-gray-400 dark:bg-gray-500'
                           }`}></div>
                           <div className="flex-1 min-w-0">
@@ -640,9 +687,27 @@ function ITAssetDetailPage() {
                                 {fromUser && ` (from ${fromUser.fullName})`}
                               </p>
                             )}
+                            {entry.action === 'REASSIGNED' && toUser && (
+                              <p className="text-xs text-gray-600 dark:text-gray-400">
+                                Reassigned to <span className="font-medium">{toUser.fullName}</span>
+                                {fromUser && ` (from ${fromUser.fullName})`}
+                              </p>
+                            )}
                             {entry.action === 'RETURNED' && fromUser && (
                               <p className="text-xs text-gray-600 dark:text-gray-400">
                                 Returned from <span className="font-medium">{fromUser.fullName}</span>
+                              </p>
+                            )}
+                            {entry.action === 'INCIDENT_CREATED' && (
+                              <p className="text-xs text-gray-600 dark:text-gray-400">
+                                {toUser ? `Assigned to ${toUser.fullName} due to incident` : 'Incident created'}
+                                {fromUser && toUser && ` (transferred from ${fromUser.fullName})`}
+                              </p>
+                            )}
+                            {entry.action === 'INCIDENT_RESOLVED' && (
+                              <p className="text-xs text-gray-600 dark:text-gray-400">
+                                Asset made available after incident resolution
+                                {fromUser && ` (was assigned to ${fromUser.fullName})`}
                               </p>
                             )}
                             {entry.notes && (

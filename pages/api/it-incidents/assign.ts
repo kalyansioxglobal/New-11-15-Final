@@ -43,10 +43,11 @@ export default withUser(async function handler(
     }
 
     // Update the incident
+    const newAssignedToId = assignedToId ? Number(assignedToId) : null;
     const incident = await prisma.iTIncident.update({
       where: { id: incidentId },
       data: {
-        assignedToUserId: assignedToId ? Number(assignedToId) : null,
+        assignedToUserId: newAssignedToId,
       },
       include: {
         asset: { select: { id: true, tag: true } },
@@ -54,6 +55,62 @@ export default withUser(async function handler(
         assignedToUser: { select: { id: true, fullName: true, email: true } },
       },
     });
+
+    // If incident has an asset, update asset assignment to match incident assignment
+    if (existing.assetId) {
+      const asset = await prisma.iTAsset.findUnique({
+        where: { id: existing.assetId },
+      });
+
+      if (asset) {
+        const oldAssigneeId = asset.assignedToUserId;
+        await prisma.iTAsset.update({
+          where: { id: existing.assetId },
+          data: {
+            assignedToUserId: newAssignedToId,
+            assignedSince: newAssignedToId ? new Date() : asset.assignedSince,
+            status: "MAINTENANCE", // Ensure status is MAINTENANCE when incident is assigned
+            history: {
+              create: {
+                action: oldAssigneeId ? "REASSIGNED" : "ASSIGNED",
+                fromUserId: oldAssigneeId,
+                toUserId: newAssignedToId,
+                notes: `Asset assignment updated due to incident ${incidentId} assignment`,
+              },
+            },
+          },
+        });
+
+        // Create notification if asset is assigned to a user
+        if (newAssignedToId && newAssignedToId !== oldAssigneeId) {
+          try {
+            const assetInfo = `${asset.tag} (${asset.type})${asset.make && asset.model ? ` - ${asset.make} ${asset.model}` : ''}`;
+            const notification = await prisma.notification.create({
+              data: {
+                userId: newAssignedToId,
+                title: "IT Asset Assigned via Incident",
+                body: `You have been assigned the IT asset: ${assetInfo} due to incident #${incidentId}: "${existing.title}"`,
+                type: "info",
+                entityType: "IT_ASSET",
+                entityId: asset.id,
+                isTest: user.isTestUser || false,
+              },
+            });
+
+            // Push notification via SSE
+            const { pushNotificationViaSSE, pushUnreadCountViaSSE } = await import("@/lib/notifications/push");
+            await pushNotificationViaSSE(newAssignedToId, notification);
+            const unreadCount = await prisma.notification.count({
+              where: { userId: newAssignedToId, isRead: false },
+            });
+            await pushUnreadCountViaSSE(newAssignedToId, unreadCount);
+          } catch (notifErr) {
+            // Don't fail the assignment if notification creation fails
+            console.error("Failed to create notification for asset assignment:", notifErr);
+          }
+        }
+      }
+    }
 
     // Create notification if incident is assigned to a user
     if (assignedToId && Number(assignedToId) !== existing.assignedToUserId) {

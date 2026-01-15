@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { requireUser } from "@/lib/apiAuth";
 import { getUserScope } from "@/lib/scope";
 import { logAuditEvent } from "@/lib/audit";
+import { enrichHistoryWithUsers } from "@/lib/it-assets/historyUtils";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const user = await requireUser(req, res);
@@ -24,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           files: true,
           history: {
             orderBy: { createdAt: "desc" },
+            take: 50, // Limit to most recent 50 entries for performance
           },
           incidents: {
             include: {
@@ -50,7 +52,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(403).json({ error: "FORBIDDEN" });
       }
 
-      return res.json(asset);
+      // Get total history count for display
+      const totalHistoryCount = await prisma.iTAssetHistory.count({
+        where: { assetId: id },
+      });
+
+      // Enrich history entries with user data
+      const historyEntries: any = ((asset as any).history || []) as any;
+      // @ts-ignore - enrichHistoryWithUsers returns enriched entries with fromUser/toUser properties
+      const enrichedHistory: any = historyEntries.length > 0
+        ? (await enrichHistoryWithUsers(historyEntries) as any)
+        : (historyEntries as any);
+
+      // Add metadata about history pagination
+      return res.json({
+        ...(asset as any),
+        history: enrichedHistory,
+        _historyMeta: {
+          totalCount: totalHistoryCount,
+          displayedCount: enrichedHistory?.length || 0,
+          hasMore: totalHistoryCount > (enrichedHistory?.length || 0),
+        },
+      });
     } catch (err: any) {
       console.error("IT asset detail error", err);
       return res.status(500).json({ error: "Internal server error", detail: err.message || String(err) });
@@ -86,15 +109,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Validation: If assigned to a user, status cannot be AVAILABLE
       const finalStatus = status !== undefined ? status.toUpperCase() : existing.status;
-      const finalAssignedToUserId = assignedToUserId !== undefined 
+      const finalAssignedToUserId = assignedToUserId !== undefined
         ? (assignedToUserId ? Number(assignedToUserId) : null)
         : existing.assignedToUserId;
-      
+
       if (finalAssignedToUserId && finalStatus === 'AVAILABLE') {
         return res.status(400).json({
           error: "VALIDATION_ERROR",
           detail: "Status cannot be AVAILABLE when asset is assigned to a user. Please change the status to ASSIGNED or another appropriate status.",
         });
+      }
+
+      // Validation: If asset has open incidents, prevent direct status changes (status must be MAINTENANCE)
+      if (status !== undefined && status.toUpperCase() !== existing.status) {
+        const openIncidents = await prisma.iTIncident.findMany({
+          where: {
+            assetId: id,
+            status: { notIn: ["RESOLVED", "CANCELLED"] },
+          },
+        });
+
+        if (openIncidents.length > 0 && status.toUpperCase() !== "MAINTENANCE") {
+          return res.status(400).json({
+            error: "VALIDATION_ERROR",
+            detail: `Status must remain MAINTENANCE until all incidents are resolved or cancelled.`,
+          });
+        }
       }
 
       const data: any = {};
@@ -114,14 +154,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (isDeleted !== undefined) data.isDeleted = Boolean(isDeleted);
 
       // Track assignment changes for history and notifications
-      const assignmentChanged = assignedToUserId !== undefined && 
+      const assignmentChanged = assignedToUserId !== undefined &&
         existing.assignedToUserId !== (assignedToUserId ? Number(assignedToUserId) : null);
       const oldAssigneeId = existing.assignedToUserId;
-      
+
       if (assignedToUserId !== undefined) {
         const newAssigneeId = assignedToUserId ? Number(assignedToUserId) : null;
         data.assignedToUserId = newAssigneeId;
-        
+
         if (newAssigneeId) {
           // Asset is being assigned or reassigned
           data.assignedSince = assignedSince ? new Date(assignedSince) : new Date();
@@ -129,7 +169,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           if (!data.status || data.status === 'AVAILABLE') {
             data.status = 'ASSIGNED';
           }
-          
+
           // Create history entry
           data.history = {
             create: {
@@ -141,7 +181,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         } else {
           // Asset is being unassigned
           data.assignedSince = null;
-          
+
           // Create history entry
           data.history = {
             create: {
@@ -174,7 +214,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               entityId: updated.id,
             },
           });
-          
+
           // Push via SSE
           const { pushNotificationViaSSE, pushUnreadCountViaSSE } = await import("@/lib/notifications/push");
           await pushNotificationViaSSE(updated.assignedToUserId, notification);

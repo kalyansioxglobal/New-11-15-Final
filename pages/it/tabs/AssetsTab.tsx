@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
 import toast from "react-hot-toast";
+import DeleteAssetModal from "@/components/it/assets/DeleteAssetModal";
 
 const ASSET_TYPES = [
   "LAPTOP",
@@ -16,7 +17,7 @@ const ASSET_TYPES = [
   "OTHER",
 ];
 
-const STATUS_VALUES = ["AVAILABLE", "ASSIGNED", "REPAIR", "LOST", "RETIRED"];
+const STATUS_VALUES = ["AVAILABLE", "ASSIGNED", "MAINTENANCE", "LOST", "RETIRED"];
 
 export default function AssetsTab() {
   const [assets, setAssets] = useState<any[]>([]);
@@ -30,6 +31,8 @@ export default function AssetsTab() {
   const [pageSize] = useState(20);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [assetToDelete, setAssetToDelete] = useState<any | null>(null);
 
   const loadAssets = async (pageParam = page) => {
     setLoading(true);
@@ -98,7 +101,7 @@ export default function AssetsTab() {
     let color = "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300";
     if (s === "AVAILABLE") color = "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300";
     else if (s === "ASSIGNED") color = "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300";
-    else if (s === "REPAIR") color = "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300";
+    else if (s === "MAINTENANCE") color = "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300";
     else if (s === "LOST") color = "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300";
     else if (s === "RETIRED") color = "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400";
 
@@ -294,29 +297,13 @@ export default function AssetsTab() {
                           </svg>
                         </Link>
                         <button
-                          onClick={async () => {
-                            if (!confirm(`Are you sure you want to delete asset "${a.tag}"? This action cannot be undone.`)) {
-                              return;
-                            }
-                            try {
-                              const res = await fetch(`/api/it-assets/${a.id}`, {
-                                method: "PATCH",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ isDeleted: true }),
-                              });
-                              if (res.ok) {
-                                toast.success(`Asset "${a.tag}" deleted successfully`);
-                                loadAssets(page);
-                              } else {
-                                const data = await res.json().catch(() => ({}));
-                                toast.error(data.error || data.detail || "Failed to delete asset");
-                              }
-                            } catch (err: any) {
-                              toast.error(err.message || "Failed to delete asset");
-                            }
+                          onClick={() => {
+                            setAssetToDelete(a);
+                            setDeleteModalOpen(true);
                           }}
-                          className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                          title="Delete"
+                          disabled={a.status !== "AVAILABLE"}
+                          className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:text-gray-400 dark:disabled:text-gray-600"
+                          title={a.status === "AVAILABLE" ? "Delete" : "Only assets with status AVAILABLE can be deleted"}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -385,6 +372,18 @@ export default function AssetsTab() {
           </Button>
         </div>
       </div>
+
+      <DeleteAssetModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setAssetToDelete(null);
+        }}
+        asset={assetToDelete}
+        onSuccess={() => {
+          loadAssets(page);
+        }}
+      />
     </div>
   );
 }
