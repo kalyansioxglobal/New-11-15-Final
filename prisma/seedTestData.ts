@@ -166,19 +166,9 @@ async function main() {
         isTest: true,
       },
     }),
-    prisma.venture.upsert({
-      where: { code: "CHD" },
-      update: { isTest: true },
-      create: {
-        name: "Chokshi Holdings",
-        code: "CHD",
-        type: VentureType.HOLDINGS,
-        isTest: true,
-      },
-    }),
   ]);
 
-  const [v_freight, v_transport, v_hotels, v_bpo, v_saas, v_holdings] = ventures;
+  const [v_freight, v_transport, v_hotels, v_bpo, v_saas] = ventures;
   console.log(`✅ Created ${ventures.length} ventures`);
 
   // ═══════════════════════════════════════════════════════════════
@@ -199,7 +189,6 @@ async function main() {
     { name: "BPO Center Manila", ventureId: v_bpo.id, city: "Manila", country: "Philippines", isTest: true },
     { name: "BPO Center Mexico City", ventureId: v_bpo.id, city: "Mexico City", country: "Mexico", isTest: true },
     { name: "SaaS Headquarters", ventureId: v_saas.id, city: "San Francisco", country: "USA", isTest: true },
-    { name: "Holdings Office", ventureId: v_holdings.id, city: "New York", country: "USA", isTest: true },
   ];
 
   const offices = await Promise.all(
@@ -768,6 +757,8 @@ async function main() {
   const bankNames = ["Chase Bank", "Bank of America", "Wells Fargo", "Citibank", "HDFC Bank", "ICICI Bank", "Capital One", "US Bank"];
   const bankAccounts: any[] = [];
   
+  // Assign bank accounts to existing ventures (rotating through them)
+  const ventureIds = [v_freight.id, v_transport.id, v_hotels.id, v_bpo.id, v_saas.id];
   for (let i = 0; i < CONFIG.NUM_BANK_ACCOUNTS; i++) {
     const account = await prisma.bankAccount.create({
       data: {
@@ -775,7 +766,7 @@ async function main() {
         bankName: randomItem(bankNames),
         accountNumber: `****${randomInt(1000, 9999)}`,
         currency: i < 6 ? "USD" : "INR",
-        ventureId: v_holdings.id,
+        ventureId: ventureIds[i % ventureIds.length],
       },
     });
     bankAccounts.push(account);
@@ -795,12 +786,14 @@ async function main() {
   }
 
   const assetTypes = ["REAL_ESTATE", "EQUIPMENT", "VEHICLE", "INVESTMENT", "INTELLECTUAL_PROPERTY"];
+  // Assets can belong to any venture or no venture (company-wide assets)
+  const assetVentureIds = [v_freight.id, v_transport.id, v_hotels.id, v_bpo.id, v_saas.id, null];
   for (let i = 0; i < CONFIG.NUM_HOLDING_ASSETS; i++) {
     await prisma.holdingAsset.create({
       data: {
         name: `${randomItem(["Downtown", "Suburban", "Industrial", "Commercial", "Residential"])} ${randomItem(["Office Building", "Warehouse", "Property", "Complex", "Land"])} ${i + 1}`,
         type: randomItem(assetTypes),
-        ventureId: v_holdings.id,
+        ventureId: assetVentureIds[i % assetVentureIds.length],
         valueEstimate: randomFloat(500000, 5000000),
         acquiredDate: subtractDays(today, randomInt(180, 1000)),
         notes: "Test asset for development purposes",
@@ -882,7 +875,7 @@ async function main() {
     "Phone": ["iPhone 14 Pro", "Galaxy S23", "Pixel 7", "OnePlus 11", "Surface Duo"],
     "Tablet": ["iPad Pro 12.9", "Galaxy Tab S9", "Surface Pro 9", "Pixel Tablet", "Fire HD 10"],
   };
-  const itStatuses = ["Available", "In Use", "In Repair", "Retired"];
+  const itStatuses = ["Available", "In Use", "In Maintenance", "Retired"];
   const itConditions = ["Excellent", "Good", "Fair", "Poor"];
 
   const itAssets: any[] = [];
@@ -899,7 +892,7 @@ async function main() {
         type: category,
         make,
         model: randomItem(models),
-        status: status === "In Use" ? "ASSIGNED" : status === "Available" ? "AVAILABLE" : status === "In Repair" ? "REPAIR" : "RETIRED",
+        status: status === "In Use" ? "ASSIGNED" : status === "Available" ? "AVAILABLE" : status === "In Maintenance" ? "MAINTENANCE" : "RETIRED",
         purchaseDate: subtractDays(today, randomInt(30, 730)),
         warrantyExpiry: addDays(today, randomInt(-180, 730)),
         assignedToUserId: status === "In Use" ? randomItem(users).id : null,
