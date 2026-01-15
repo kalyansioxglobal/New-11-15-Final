@@ -4,6 +4,7 @@ import { useEffectiveUser } from "@/hooks/useEffectiveUser";
 import { isSuperAdmin } from "@/lib/permissions";
 import type { UserRole } from "@prisma/client";
 import { Skeleton } from "@/components/ui/Skeleton";
+import toast from "react-hot-toast";
 
 type Asset = {
   id: number;
@@ -39,7 +40,6 @@ export default function AssetsListPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [holdingsVentures, setHoldingsVentures] = useState<Venture[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [ventureFilter, setVentureFilter] = useState<string>("");
   const [typeFilter, setTypeFilter] = useState<string>("");
   const [page, setPage] = useState(1);
@@ -52,9 +52,23 @@ export default function AssetsListPage() {
   const allowCreate = isSuperAdmin(role);
 
   useEffect(() => {
-    fetch("/api/ventures?types=HOLDINGS")
-      .then((r) => r.json())
-      .then((data) => setHoldingsVentures(data || []));
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch("/api/ventures");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled) {
+          setHoldingsVentures(data || []);
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -63,7 +77,6 @@ export default function AssetsListPage() {
     async function load() {
       try {
         setLoading(true);
-        setError(null);
 
         const params = new URLSearchParams();
         if (ventureFilter) params.set("ventureId", ventureFilter);
@@ -72,19 +85,30 @@ export default function AssetsListPage() {
         params.set("pageSize", String(pageSize));
 
         const res = await fetch(`/api/holdings/assets?${params.toString()}`);
-        if (!res.ok) throw new Error("Failed to load assets");
+        
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.error || "Failed to load assets");
+        }
 
         const json = await res.json();
         if (!cancelled) {
-          setAssets(json.assets);
-          setSummary(json.summary);
+          setAssets(json.assets || []);
+          setSummary(json.summary || null);
           if (json.pagination) {
             setTotalPages(json.pagination.totalPages || 1);
             setTotalCount(json.pagination.totalCount || 0);
+          } else {
+            // If pagination is missing, show warning
+            toast.error("Pagination data missing from server response", { id: "pagination-warning" });
+            setTotalPages(1);
+            setTotalCount(json.assets?.length || 0);
           }
         }
       } catch (e: any) {
-        if (!cancelled) setError(e.message);
+        if (!cancelled) {
+          toast.error(e.message || "Failed to load assets");
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -124,17 +148,17 @@ export default function AssetsListPage() {
 
       {summary && (
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
             <div className="text-sm text-gray-500 dark:text-gray-400">Total Assets</div>
             <div className="text-2xl font-semibold mt-1 text-gray-900 dark:text-white">{summary.totalAssets}</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
             <div className="text-sm text-gray-500 dark:text-gray-400">Total Value</div>
             <div className="text-2xl font-semibold mt-1 text-green-600 dark:text-green-400">
               ${summary.totalValue.toLocaleString()}
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
             <div className="text-sm text-gray-500 dark:text-gray-400">Asset Types</div>
             <div className="text-2xl font-semibold mt-1 text-gray-900 dark:text-white">
               {Object.keys(summary.byType).length}
@@ -147,7 +171,7 @@ export default function AssetsListPage() {
         <select
           value={ventureFilter}
           onChange={(e) => setVentureFilter(e.target.value)}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
         >
           <option value="">All Ventures</option>
           {holdingsVentures.map((v) => (
@@ -159,7 +183,7 @@ export default function AssetsListPage() {
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
         >
           <option value="">All Types</option>
           {assetTypes.map((t) => (
@@ -170,12 +194,8 @@ export default function AssetsListPage() {
         </select>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg">{error}</div>
-      )}
-
       {loading ? (
-       <Skeleton className="w-full h-[85vh]" />
+        <Skeleton className="w-full h-[85vh]" />
       ) : assets.length === 0 ? (
         <div className="text-center py-12 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800/50">
           <div className="text-gray-400 dark:text-gray-500 text-3xl mb-3">🏠</div>
@@ -238,7 +258,7 @@ export default function AssetsListPage() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
@@ -248,7 +268,7 @@ export default function AssetsListPage() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>

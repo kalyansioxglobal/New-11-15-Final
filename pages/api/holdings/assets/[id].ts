@@ -2,9 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../../lib/prisma';
 import { requireUser } from '@/lib/apiAuth';
 import { getUserScope } from '../../../../lib/scope';
-import { isSuperAdmin } from '../../../../lib/permissions';
-
 const ALLOWED_ROLES = ["CEO", "ADMIN", "COO", "FINANCE"];
+const WRITE_ROLES = ["CEO", "ADMIN", "FINANCE"]; // Roles that can perform CRUD operations
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
@@ -44,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (req.method === 'PATCH') {
-      if (!isSuperAdmin(user.role)) {
+      if (!WRITE_ROLES.includes(user.role)) {
         return res.status(403).json({ error: 'Forbidden' });
       }
 
@@ -70,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (req.method === 'DELETE') {
-      if (!isSuperAdmin(user.role)) {
+      if (!WRITE_ROLES.includes(user.role)) {
         return res.status(403).json({ error: 'Forbidden' });
       }
 

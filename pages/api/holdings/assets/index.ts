@@ -2,9 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../../lib/prisma';
 import { requireUser } from '@/lib/apiAuth';
 import { getUserScope } from '../../../../lib/scope';
-import { isSuperAdmin } from '../../../../lib/permissions';
-
 const ALLOWED_ROLES = ["CEO", "ADMIN", "COO", "FINANCE"];
+const WRITE_ROLES = ["CEO", "ADMIN", "FINANCE"]; // Roles that can perform CRUD operations
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const user = await requireUser(req, res);
@@ -16,12 +15,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const scope = getUserScope(user);
-    const ventureId = req.query.ventureId ? Number(req.query.ventureId) : undefined;
-    const type = req.query.type as string | undefined;
 
     if (req.method === 'GET') {
-      const limit = 30;
+      // Validate and parse pagination parameters
+      const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 30;
       const page = Math.max(Number(req.query.page) || 1, 1);
+      
+      // Validate pagination parameters
+      if (isNaN(page) || page < 1) {
+        return res.status(400).json({ error: 'Invalid page parameter. Must be a positive integer.' });
+      }
+      if (isNaN(pageSize) || pageSize < 1 || pageSize > 100) {
+        return res.status(400).json({ error: 'Invalid pageSize parameter. Must be between 1 and 100.' });
+      }
+      
+      // Validate ventureId if provided
+      let ventureId: number | undefined;
+      if (req.query.ventureId) {
+        ventureId = Number(req.query.ventureId);
+        if (isNaN(ventureId) || ventureId < 1) {
+          return res.status(400).json({ error: 'Invalid ventureId parameter. Must be a positive integer.' });
+        }
+      }
+      
+      const type = req.query.type as string | undefined;
+      const limit = pageSize;
       const skip = (page - 1) * limit;
     
       const where: any = {
@@ -86,7 +104,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }    
 
     if (req.method === 'POST') {
-      if (!isSuperAdmin(user.role)) {
+      if (!WRITE_ROLES.includes(user.role)) {
         return res.status(403).json({ error: 'Forbidden' });
       }
 
