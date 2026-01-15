@@ -109,7 +109,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const { name, type: bodyType, location, valueEstimate, acquiredDate, notes } = req.body;
-      const targetVentureId = req.body.ventureId ? Number(req.body.ventureId) : ventureId;
+      const targetVentureId = req.body.ventureId ? Number(req.body.ventureId) : null;
 
       if (!name || !bodyType) {
         return res.status(400).json({ error: 'name and type are required' });
