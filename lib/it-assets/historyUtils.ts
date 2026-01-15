@@ -19,8 +19,8 @@ export async function enrichHistoryWithUsers(historyEntries: Array<{
   if (!historyEntries || historyEntries.length === 0) {
     return historyEntries.map((entry) => ({
       ...entry,
-      fromUser: null,
-      toUser: null,
+      fromUser: null as { id: number; fullName: string } | null,
+      toUser: null as { id: number; fullName: string } | null,
     }));
   }
 
@@ -35,8 +35,8 @@ export async function enrichHistoryWithUsers(historyEntries: Array<{
     // No user IDs to fetch, return entries with null user objects
     return historyEntries.map((entry) => ({
       ...entry,
-      fromUser: null,
-      toUser: null,
+      fromUser: null as { id: number; fullName: string } | null,
+      toUser: null as { id: number; fullName: string } | null,
     }));
   }
 
@@ -52,8 +52,8 @@ export async function enrichHistoryWithUsers(historyEntries: Array<{
   // Attach user data to history entries
   return historyEntries.map((entry) => ({
     ...entry,
-    fromUser: entry.fromUserId ? userMap.get(entry.fromUserId) || null : null,
-    toUser: entry.toUserId ? userMap.get(entry.toUserId) || null : null,
+    fromUser: (entry.fromUserId ? userMap.get(entry.fromUserId) || null : null) as { id: number; fullName: string } | null,
+    toUser: (entry.toUserId ? userMap.get(entry.toUserId) || null : null) as { id: number; fullName: string } | null,
   }));
 }
 
