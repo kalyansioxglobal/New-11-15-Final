@@ -40,9 +40,6 @@ export default function NewCustomerPage() {
       .then((r) => r.json())
       .then((data) => {
         setSaasVentures(data || []);
-        if (data && data.length > 0) {
-          setForm(f => ({ ...f, ventureId: String(data[0].id) }));
-        }
       })
       .catch(() => {});
   }, []);
@@ -247,7 +244,7 @@ export default function NewCustomerPage() {
                           min="0"
                           value={form.monthlyPrice}
                           onChange={(e) => setForm({ ...form, monthlyPrice: e.target.value })}
-                          className="w-full px-4 py-2.5 pl-7 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                          className="w-full px-4 py-2.5 pl-7 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all inputArrow"
                           placeholder="0.00"
                           required={form.createSubscription}
                         />

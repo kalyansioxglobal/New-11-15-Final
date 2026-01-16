@@ -10,6 +10,7 @@ import {
 } from "../lib/freight/taskRules";
 import { JobName } from "@prisma/client";
 import { runJobWithControl } from "../lib/jobs/jobRunner";
+import { getNewYorkTime, getNextRunTimeSimple as getNextRunTime } from '@/lib/utils/timezone';
 
 type ScheduledJob = {
   name: string;
@@ -19,9 +20,6 @@ type ScheduledJob = {
 };
 
 const TIMEZONE = "America/New_York";
-
-// Use simplified timezone utilities
-import { getNewYorkTime, getNextRunTimeSimple as getNextRunTime } from '@/lib/utils/timezone';
 
 const schedule: ScheduledJob[] = [
   {
@@ -214,7 +212,7 @@ function getNextScheduledJob(): { job: ScheduledJob; runAt: Date } | null {
 
 async function main() {
   console.log(`[${new Date().toISOString()}] Scheduled Jobs Runner started`);
-  console.log(`Timezone: ${TIMEZONE} (DST-aware)`);
+  console.log(`Primary Timezone: ${TIMEZONE} (DST-aware)`);
   console.log("Schedule:");
   for (const job of schedule) {
     const timeStr = `${job.hour.toString().padStart(2, "0")}:${job.minute.toString().padStart(2, "0")}`;
@@ -252,3 +250,5 @@ main().catch((err) => {
   console.error("Scheduler error:", err);
   process.exit(1);
 });
+
+

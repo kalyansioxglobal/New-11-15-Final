@@ -218,6 +218,18 @@ export const ROLE_CONFIG: Record<string, RoleConfig> = {
     canUploadKpis: true,
     canViewKpis: true,
   },
+  SALESPERSON: {
+    label: "Salesperson",
+    ventureScope: "assigned",
+    officeScope: "assigned",
+    canAccessAdminPanel: false,
+    canImpersonate: false,
+    task: { create: true, edit: true, delete: false, assign: false, view: true },
+    policy: { create: false, edit: false, delete: false, view: true },
+    canManageUsers: false,
+    canUploadKpis: false,
+    canViewKpis: true,
+  },
 };
 
 export type UserRole = keyof typeof ROLE_CONFIG;

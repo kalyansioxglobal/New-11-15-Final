@@ -31,11 +31,7 @@ function SaasSubscriptionsPage() {
       .then((r) => r.json())
       .then((list: Venture[]) => {
         setSaasVentures(list || []);
-        if (list && list.length > 0) {
-          setSelectedVentureId(list[0].id);
-        } else {
-          setLoading(false);
-        }
+        setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
@@ -88,7 +84,8 @@ function SaasSubscriptionsPage() {
             onChange={(e) => setSelectedVentureId(Number(e.target.value) || null)}
             className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
           >
-            {saasVentures.length === 0 && <option value="">No SaaS ventures</option>}
+            <option value="">Select a venture...</option>
+            {saasVentures.length === 0 && <option value="" disabled>No SaaS ventures available</option>}
             {saasVentures.map((v) => (
               <option key={v.id} value={v.id}>
                 {v.name}
@@ -124,6 +121,14 @@ function SaasSubscriptionsPage() {
       {loading ? (
         <div className="flex justify-center py-8">
           <Skeleton className="w-full h-[85vh]" />
+        </div>
+      ) : !selectedVentureId ? (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-8 text-center">
+          <div className="text-blue-400 dark:text-blue-500 text-4xl mb-4">📊</div>
+          <h2 className="text-lg font-medium text-blue-700 dark:text-blue-300 mb-2">Please Select a Venture</h2>
+          <p className="text-sm text-blue-600 dark:text-blue-400 max-w-md mx-auto">
+            Choose a venture from the dropdown above to view its subscriptions.
+          </p>
         </div>
       ) : subscriptions.length === 0 ? (
         <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-8 text-center">

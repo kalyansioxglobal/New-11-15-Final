@@ -57,10 +57,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           activeSubscriptions++;
         }
 
-        if (sub.startedAt >= thisMonthStart && sub.isActive) {
+        // Count new MRR: subscriptions that started this month (regardless of current status)
+        if (sub.startedAt >= thisMonthStart) {
           newMrrThisMonth += sub.mrr;
         }
 
+        // Count churned MRR: subscriptions cancelled this month
+        // Use the MRR value at cancellation (which should be preserved in sub.mrr)
         if (sub.cancelledAt && sub.cancelledAt >= thisMonthStart) {
           churnedThisMonth++;
           churnedMrrThisMonth += sub.mrr;
@@ -85,7 +88,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     currentArr = currentMrr * 12;
     const mrrGrowth = lastMonthMrr > 0 ? ((currentMrr - lastMonthMrr) / lastMonthMrr) * 100 : 0;
     const netNewMrr = newMrrThisMonth - churnedMrrThisMonth;
-    const revenueChurnRate = lastMonthMrr > 0 ? (churnedMrrThisMonth / lastMonthMrr) * 100 : 0;
+    // Revenue Churn Rate: If lastMonthMrr is 0 but we have churn, use currentMrr + churnedMrrThisMonth as denominator
+    // This handles the case where subscriptions were created and cancelled in the same month
+    const revenueChurnRate = lastMonthMrr > 0 
+      ? (churnedMrrThisMonth / lastMonthMrr) * 100 
+      : (churnedMrrThisMonth > 0 && (currentMrr + churnedMrrThisMonth) > 0)
+      ? (churnedMrrThisMonth / (currentMrr + churnedMrrThisMonth)) * 100
+      : 0;
 
     const activeCustomers = customers.filter(c =>
       c.subscriptions.some(s => s.isActive)

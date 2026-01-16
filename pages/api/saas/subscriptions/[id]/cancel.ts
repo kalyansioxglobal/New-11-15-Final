@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/lib/prisma';
 import { requireUser } from '@/lib/apiAuth';
 import { logActivity } from '@/lib/activityLog';
+import { canCreateTasks } from '@/lib/permissions';
+import { getUserScope } from '@/lib/scope';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -11,12 +13,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const user = await requireUser(req, res);
   if (!user) return;
 
+  // Permission check
+  if (!canCreateTasks(user.role)) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
   const id = Number(req.query.id);
   if (!id || isNaN(id)) {
     return res.status(400).json({ error: 'Invalid subscription ID' });
   }
 
   try {
+    const scope = getUserScope(user);
+    
     const subscription = await prisma.saasSubscription.findUnique({
       where: { id },
       include: {
@@ -28,6 +37,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!subscription) {
       return res.status(404).json({ error: 'Subscription not found' });
+    }
+
+    // Venture scope check
+    if (!scope.ventureIds.includes(subscription.customer.ventureId) && !scope.allVentures) {
+      return res.status(403).json({ error: 'Not authorized for this subscription' });
     }
 
     if (!subscription.isActive) {

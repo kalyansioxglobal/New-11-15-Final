@@ -45,15 +45,30 @@ export default async function handler(
     }
 
     const where: any = { ventureId: parsedVentureId };
-    const fromDate = from ? new Date(String(from)) : null;
-    const toDate = to ? new Date(String(to)) : null;
+    
+    // Parse date strings (YYYY-MM-DD) and convert to UTC dates for database comparison
+    // The database stores dates in UTC, so we need to convert the date strings to UTC
+    let fromDate: Date | null = null;
+    let toDate: Date | null = null;
+    
+    if (from && typeof from === 'string') {
+      // Parse YYYY-MM-DD as UTC midnight (start of day)
+      const [year, month, day] = from.split('-').map(Number);
+      fromDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    }
+    
+    if (to && typeof to === 'string') {
+      // Parse YYYY-MM-DD as UTC end of day (23:59:59.999)
+      const [year, month, day] = to.split('-').map(Number);
+      toDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+    }
 
     if (fromDate || toDate) {
       where.date = {};
       if (fromDate) where.date.gte = fromDate;
       if (toDate) where.date.lte = toDate;
     }
-
+    
     const rows = await prisma.employeeKpiDaily.findMany({
       where,
       include: {

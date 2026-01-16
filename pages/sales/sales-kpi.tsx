@@ -62,9 +62,26 @@ type SalesKpiResponse = {
 
 type Range = "today" | "7d" | "mtd";
 
+type SalesPerson = {
+  id: number;
+  userId: number;
+  name: string | null;
+  email: string | null;
+  role: string;
+  ventureIds: number[];
+};
+
 function computeRange(range: Range): { from: string; to: string } {
+  // Use local timezone for date calculations
+  const formatLocalDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const now = new Date();
-  const to = now.toISOString().slice(0, 10);
+  const to = formatLocalDate(now);
 
   if (range === "today") {
     return { from: to, to };
@@ -72,13 +89,14 @@ function computeRange(range: Range): { from: string; to: string } {
 
   if (range === "7d") {
     const d = new Date();
-    d.setDate(d.getDate() - 7);
-    return { from: d.toISOString().slice(0, 10), to };
+    d.setDate(d.getDate() - 6); // Include today, so 7 days total (today + 6 days back)
+    return { from: formatLocalDate(d), to };
   }
 
+  // MTD: First day of current month to today
   const d = new Date();
   d.setDate(1);
-  return { from: d.toISOString().slice(0, 10), to };
+  return { from: formatLocalDate(d), to };
 }
 
 function formatDate(dateStr: string): string {
@@ -113,15 +131,24 @@ function SaasSalesKpiPage() {
   const [savingCost, setSavingCost] = useState(false);
 
   const [kpiUserId, setKpiUserId] = useState<number | "">("");
-  const [kpiDate, setKpiDate] = useState<string>(() => {
-    const d = new Date();
-    return d.toISOString().slice(0, 10);
-  });
+  
+  // Get today's date in user's local timezone (not UTC)
+  const getTodayLocalDate = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  const [kpiDate, setKpiDate] = useState<string>(() => getTodayLocalDate());
   const [demosInput, setDemosInput] = useState<string>("");
   const [clientsInput, setClientsInput] = useState<string>("");
   const [callsInput, setCallsInput] = useState<string>("");
   const [hoursInput, setHoursInput] = useState<string>("");
   const [savingKpi, setSavingKpi] = useState(false);
+  const [salespersons, setSalespersons] = useState<SalesPerson[]>([]);
+  const [loadingSalespersons, setLoadingSalespersons] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -130,16 +157,36 @@ function SaasSalesKpiPage() {
       .then((data) => {
         const saasVentures = data as Venture[];
         setVentures(saasVentures);
-        if (saasVentures.length && !selectedVentureId) {
-          setSelectedVentureId(saasVentures[0].id);
-        }
         setLoading(false);
       })
       .catch((err) => {
         toast.error("Failed to load ventures");
         setLoading(false);
       });
-  }, [testMode, selectedVentureId]);
+  }, [testMode]);
+
+  useEffect(() => {
+    if (!selectedVentureId) {
+      setSalespersons([]);
+      return;
+    }
+
+    // Fetch salespersons for the selected venture
+    setLoadingSalespersons(true);
+    fetch(`/api/users/salespersons?ventureId=${selectedVentureId}`)
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to load salespersons");
+        return r.json();
+      })
+      .then((payload) => {
+        setSalespersons(payload.users || []);
+        setLoadingSalespersons(false);
+      })
+      .catch((err) => {
+        toast.error(err.message || "Failed to load salespersons");
+        setLoadingSalespersons(false);
+      });
+  }, [selectedVentureId]);
 
   useEffect(() => {
     if (!selectedVentureId) return;
@@ -217,15 +264,24 @@ function SaasSalesKpiPage() {
 
   async function submitKpi() {
     if (!selectedVentureId) {
-      toast.error("Select a venture first.");
+      toast.error("Please select a venture first.");
       return;
     }
     if (kpiUserId === "" || !kpiUserId) {
-      toast.error("Select a salesperson.");
+      toast.error("Please select a salesperson.");
       return;
     }
     if (!kpiDate) {
-      toast.error("Select a date.");
+      toast.error("Date is required.");
+      return;
+    }
+
+    // Validate that date is today only (in user's local timezone)
+    const todayDateStrLocal = getTodayLocalDate();
+    const selectedDateStr = kpiDate;
+    
+    if (selectedDateStr !== todayDateStrLocal) {
+      toast.error("You can only record KPIs for today's date.");
       return;
     }
 
@@ -233,6 +289,12 @@ function SaasSalesKpiPage() {
     const clients = clientsInput ? Number(clientsInput) : null;
     const calls = callsInput ? Number(callsInput) : null;
     const hours = hoursInput ? Number(hoursInput) : null;
+
+    // Validate at least one value is provided
+    if (demos === null && clients === null && calls === null && hours === null) {
+      toast.error("Please enter at least one KPI value.");
+      return;
+    }
 
     if (
       (demos != null && (isNaN(demos) || demos < 0)) ||
@@ -263,10 +325,21 @@ function SaasSalesKpiPage() {
 
       if (!resp.ok) {
         const body = await resp.json().catch(() => ({}));
-        throw new Error(body.error || "Failed to save KPI");
+        const errorMsg = body.error || "Failed to save KPI";
+        toast.error(errorMsg);
+        return;
       }
 
       toast.success("KPI saved successfully");
+      
+      // Reset form
+      setDemosInput("");
+      setClientsInput("");
+      setCallsInput("");
+      setHoursInput("");
+      setKpiUserId("");
+
+      // Refresh data
       const { from, to } = computeRange(range);
       const kpiResp = await fetch(
         `/api/sales-kpi?ventureId=${selectedVentureId}&from=${from}&to=${to}`,
@@ -275,11 +348,6 @@ function SaasSalesKpiPage() {
         const payload = await kpiResp.json();
         setData(payload);
       }
-
-      setDemosInput("");
-      setClientsInput("");
-      setCallsInput("");
-      setHoursInput("");
     } catch (err: any) {
       toast.error(err.message || "Failed to save KPI");
     } finally {
@@ -302,9 +370,18 @@ function SaasSalesKpiPage() {
 
   const users = data?.users ?? [];
   const recentOnboardings = data?.recentOnboardings ?? [];
-
+  
+  // Get today's date in user's local timezone for date input max/min
+  const todayDateStr = getTodayLocalDate();
+  
+  // Function to get today's date in user's local timezone for validation
+  const getTodayLocalDateForValidation = (): Date => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0);
+  };
+  
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6 p-4 max-w-7xl mx-auto">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">SaaS Sales KPIs</h1>
@@ -315,10 +392,11 @@ function SaasSalesKpiPage() {
 
         <div className="flex flex-col md:flex-row gap-3">
           <select
-            className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+            className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all min-w-[200px]"
             value={selectedVentureId ?? ""}
-            onChange={(e) => setSelectedVentureId(Number(e.target.value))}
+            onChange={(e) => setSelectedVentureId(e.target.value ? Number(e.target.value) : null)}
           >
+            <option value="">Select venture...</option>
             {ventures.map((v) => (
               <option key={v.id} value={v.id}>
                 {v.name}
@@ -326,29 +404,58 @@ function SaasSalesKpiPage() {
             ))}
           </select>
 
-          <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1 h-fit">
-            {(["today", "7d", "mtd"] as Range[]).map((r) => (
-              <button
-                key={r}
-                onClick={() => setRange(r)}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                  range === r
-                    ? "bg-white dark:bg-gray-600 shadow border border-gray-200 dark:border-gray-500 text-gray-900 dark:text-white"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                }`}
-              >
-                {r === "today" ? "Today" : r === "7d" ? "Last 7 Days" : "MTD"}
-              </button>
-            ))}
+          <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1 h-fit border border-gray-200 dark:border-gray-700">
+            {(["today", "7d", "mtd"] as Range[]).map((r) => {
+              const isSelected = range === r;
+              return (
+                <button
+                  key={r}
+                  onClick={() => setRange(r)}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 relative ${
+                    isSelected
+                      ? "bg-emerald-600 dark:bg-emerald-500 text-white shadow-md scale-105 font-semibold"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200"
+                  }`}
+                  aria-pressed={isSelected}
+                >
+                  {isSelected && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 dark:bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></span>
+                  )}
+                  <span className="flex items-center gap-1.5">
+                    {r === "today" ? "Today" : r === "7d" ? "Last 7 Days" : "MTD"}
+                    {isSelected && (
+                      <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {loadingKpi && (
-        <div className="text-sm text-gray-500 dark:text-gray-400">Loading KPIs...</div>
-      )}
-
-      {data && (
+      {!selectedVentureId ? (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 text-center">
+          <p className="text-blue-700 dark:text-blue-300 font-medium">
+            Please select a venture to view sales KPIs
+          </p>
+        </div>
+      ) : loadingKpi ? (
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-8">
+          <div className="flex items-center justify-center gap-3">
+           
+            <Skeleton className="w-full h-5" />
+          </div>
+        </div>
+      ) : !data ? (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
+          <p className="text-red-700 dark:text-red-300 font-medium">
+            Failed to load KPIs. Please try again.
+          </p>
+        </div>
+      ) : (
         <div className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
@@ -409,13 +516,13 @@ function SaasSalesKpiPage() {
 
           {recentOnboardings.length > 0 && (
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Recent Client Onboardings</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-base text-gray-900 dark:text-white">Recent Client Onboardings</h3>
                 <Link
                   href="/saas/subscriptions"
-                  className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+                  className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors"
                 >
-                  View All Subscriptions
+                  View All →
                 </Link>
               </div>
               <div className="overflow-x-auto">
@@ -493,8 +600,15 @@ function SaasSalesKpiPage() {
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {users.length === 0 ? (
                   <tr>
-                    <td colSpan={14} className="px-3 py-4 text-center text-gray-500 dark:text-gray-400">
-                      No KPI records found for this range.
+                    <td colSpan={14} className="px-3 py-8 text-center">
+                      <div className="flex flex-col items-center gap-2">
+                        <p className="text-gray-500 dark:text-gray-400 font-medium">
+                          No KPI records found for this range.
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">
+                          Start recording daily KPIs to see data here.
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -554,7 +668,7 @@ function SaasSalesKpiPage() {
                           {editingUserId === u.userId ? (
                             <input
                               type="number"
-                              className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-xs w-24 text-right bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400"
+                              className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-xs w-24 text-right bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 inputArrow"
                               value={editingCost}
                               onChange={(e) => setEditingCost(e.target.value)}
                               placeholder="3000"
@@ -615,82 +729,138 @@ function SaasSalesKpiPage() {
           </div>
 
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-            <h3 className="font-semibold text-sm mb-3 text-gray-900 dark:text-white">Record Daily KPIs</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Record Daily KPIs</h3>
+              {!selectedVentureId && (
+                <span className="text-xs text-amber-600 dark:text-amber-400">
+                  Select a venture to record KPIs
+                </span>
+              )}
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
               <div>
                 <label className="text-xs text-gray-600 dark:text-gray-300">Salesperson</label>
                 <select
-                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
-                  value={kpiUserId}
-                  onChange={(e) =>
-                    setKpiUserId(e.target.value ? Number(e.target.value) : "")
-                  }
+                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  value={kpiUserId === "" ? "" : String(kpiUserId)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setKpiUserId(val ? Number(val) : "");
+                  }}
+                  disabled={loadingSalespersons || !selectedVentureId}
                 >
-                  <option value="">Select...</option>
-                  {users.map((u) => (
-                    <option key={u.userId} value={u.userId}>
-                      {u.name || u.email || `User ${u.userId}`}
+                  <option value="">
+                    {loadingSalespersons
+                      ? "Loading..."
+                      : !selectedVentureId
+                      ? "Select venture first"
+                      : salespersons.length === 0
+                      ? "No salespersons found"
+                      : "Select salesperson..."}
+                  </option>
+                  {salespersons.map((sp) => (
+                    <option key={sp.id} value={String(sp.id)}>
+                      {sp.name || sp.email || `User ${sp.id}`}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="text-xs text-gray-600 dark:text-gray-300">Date</label>
+                <label className="text-xs text-gray-600 dark:text-gray-300">Date (Today Only)</label>
                 <input
                   type="date"
                   className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
                   value={kpiDate}
-                  onChange={(e) => setKpiDate(e.target.value)}
+                  min={todayDateStr}
+                  max={todayDateStr}
+                  onChange={(e) => {
+                    const selected = e.target.value;
+                    if (selected === todayDateStr) {
+                      setKpiDate(selected);
+                    } else {
+                      toast.error("You can only record KPIs for today's date.");
+                    }
+                  }}
+                  disabled={!selectedVentureId}
                 />
               </div>
               <div>
                 <label className="text-xs text-gray-600 dark:text-gray-300">Calls Made</label>
-                <input
+                  <input
                   type="number"
-                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                  min="0"
+                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all inputArrow disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="0"
                   value={callsInput}
                   onChange={(e) => setCallsInput(e.target.value)}
+                  disabled={!selectedVentureId}
                 />
               </div>
               <div>
                 <label className="text-xs text-gray-600 dark:text-gray-300">Hours Worked</label>
-                <input
+                  <input
                   type="number"
+                  min="0"
                   step="0.5"
-                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all inputArrow disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="0"
                   value={hoursInput}
                   onChange={(e) => setHoursInput(e.target.value)}
+                  disabled={!selectedVentureId}
                 />
               </div>
               <div>
                 <label className="text-xs text-gray-600 dark:text-gray-300">Demos Booked</label>
-                <input
+                  <input
                   type="number"
-                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                  min="0"
+                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all inputArrow disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="0"
                   value={demosInput}
                   onChange={(e) => setDemosInput(e.target.value)}
+                  disabled={!selectedVentureId}
                 />
               </div>
               <div>
                 <label className="text-xs text-gray-600 dark:text-gray-300">Clients Onboarded</label>
-                <input
+                  <input
                   type="number"
-                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all"
+                  min="0"
+                  className="border border-gray-300 dark:border-gray-600 rounded w-full px-2 py-1.5 text-sm mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all inputArrow disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="0"
                   value={clientsInput}
                   onChange={(e) => setClientsInput(e.target.value)}
+                  disabled={!selectedVentureId}
                 />
               </div>
               <div className="flex items-end">
                 <button
-                  className="text-sm rounded px-3 py-1 disabled:opacity-50 transition-colors btn"
-                  onClick={submitKpi}
-                  disabled={savingKpi}
+                  type="button"
+                  className={`btn ${(savingKpi || !selectedVentureId || !kpiUserId) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (savingKpi || !selectedVentureId || !kpiUserId) {
+                      if (!selectedVentureId) {
+                        toast.error("Please select a venture first.");
+                      } else if (!kpiUserId) {
+                        toast.error("Please select a salesperson.");
+                      }
+                      return;
+                    }
+                    
+                    submitKpi();
+                  }}
                 >
-                  {savingKpi ? "Saving..." : "Save KPI"}
+                  {savingKpi ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                      Saving...
+                    </span>
+                  ) : (
+                    "Save KPI"
+                  )}
                 </button>
               </div>
             </div>
